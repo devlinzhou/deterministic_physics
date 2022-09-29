@@ -30,39 +30,19 @@ public:
  
 public:
 
-    inline f32* Ptr(void)
-    {
-        return &x;
-    }
-
-    inline const f32* Ptr(void) const
-    {
-        return &x;
-    }
-
-    inline f32 operator [] ( const uint32_t i ) const
-    {
-        return *( &x + i );
-    }
-
-    inline f32& operator [] ( const uint32_t i )
-    {
-        return *( &x + i );
-    }
+    inline f32* Ptr(void) { return &x; }
+    inline const f32* Ptr(void) const { return &x; }
+    inline f32 operator [] ( const uint32_t i ) const { return *( &x + i ); }
+    inline f32& operator [] ( const uint32_t i ) { return *( &x + i ); }
 
     inline GVector3& operator = ( const GVector3& V )
     {
-        x = V.x;
-        y = V.y;
-        z = V.z;
-        return *this;
+        x = V.x; y = V.y; z = V.z; return *this;
     }
 
     inline GVector3& operator = ( const f32 fScaler )
     {
-        x = fScaler;
-        y = fScaler;
-        z = fScaler;
+        x = fScaler;        y = fScaler;        z = fScaler;
         return *this;
     }
 
@@ -266,52 +246,24 @@ public:
 
     inline bool operator < ( const GVector3& V ) const
     {
-        if( x < V.x && y < V.y && z < V.z )
-        {
-            return true;
-        }
-        else
-            return false;
+        return x < V.x && y < V.y && z < V.z;
     }
 
     inline bool operator <= ( const GVector3& V ) const
     {
-        if( x <= V.x && y <= V.y && z <= V.z )
-        {
-            return true;
-        }
-        else
-            return false;
+        return x <= V.x && y <= V.y && z <= V.z;
     }
 
     inline bool operator > ( const GVector3& V ) const
     {
-        if( x > V.x && y > V.y && z > V.z )
-        {
-            return true;
-        }
-        else
-            return false;
+        return x > V.x && y > V.y && z > V.z ;
     }
 
     inline bool operator >= ( const GVector3& V ) const
     {
-        if( x >= V.x && y >= V.y && z >= V.z )
-        {
-            return true;
-        }
-        else
-            return false;
+        return x >= V.x && y >= V.y && z >= V.z ;
     }
 
-//     inline bool operator == ( const GVector3& V ) const
-//     {
-//         if( x == V.x && y == V.y && z == V.z )
-//         {
-//             return true;
-//         }
-//         return false;
-//     }
 
     inline void MakeFloor( const GVector3& V )
     {

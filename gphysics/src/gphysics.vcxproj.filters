@@ -26,12 +26,18 @@
     <ClInclude Include="..\include\math\glacier_math.h">
       <Filter>include\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\math\glacier_quaternion.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math\glacier_float.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="math\glacier_vector.cpp">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\glacier_quternion.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
   </ItemGroup>
