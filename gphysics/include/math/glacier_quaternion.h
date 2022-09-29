@@ -288,8 +288,8 @@ public:
     inline GVector3 RotateNormal( const GVector3& V )
     {
         GVector3 Vqvec(x, y, z);
-        GVector3 uv = Vqvec.Cross(V);
-        GVector3 uuv = Vqvec.Cross(uv);
+        GVector3 uv = GVector3::CrossProduct(Vqvec, V);
+        GVector3 uuv = GVector3::CrossProduct(Vqvec, uv);
 
         uv *= GMath::Two() * w;
         uuv *= GMath::Two();

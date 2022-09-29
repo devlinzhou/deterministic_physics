@@ -206,9 +206,9 @@ public:
         return ( *this - V ).SizeSquare( );
     }
 
-    inline f32 Dot( const GVector3& V ) const
+    static inline f32 DotProduct( const GVector3& a, const GVector3& V )
     {
-        return x * V.x + y * V.y + z * V.z;
+        return a.x * V.x + a.y * V.y + a.z * V.z;
     }
 
     inline void Normalize( )
@@ -239,9 +239,9 @@ public:
         return GMath::Abs( x * V.x ) + GMath::Abs( y * V.y ) + GMath::Abs( z * V.z );
     }
 
-    inline GVector3 Cross( const GVector3& V ) const
+    static inline GVector3 CrossProduct( const GVector3& a, const GVector3& V )
     {
-        return GVector3( y * V.z - z * V.y, z * V.x - x * V.z, x * V.y - y * V.x );
+        return GVector3( a.y * V.z - a.z * V.y, a.z * V.x - a.x * V.z, a.x * V.y - a.y * V.x );
     }
 
     inline bool operator < ( const GVector3& V ) const
@@ -281,7 +281,7 @@ public:
 
     inline GVector3 ReflectByNormal( const GVector3& VNormal ) const
     {
-        return  *this - VNormal * ( GMath::Two() * this->Dot( VNormal ) );
+        return  *this - VNormal * ( GMath::Two() * DotProduct( *this, VNormal ) );
     }
 
     inline GVector3 Lerp( const GVector3& V2, f32 fLerp ) const
