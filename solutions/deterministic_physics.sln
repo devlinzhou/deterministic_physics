@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gphysics", "..\gphysics\src\gphysics.vcxproj", "{35E517C1-5EA3-45E7-A200-93CD2EEE0D80}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\samples\test.vcxproj", "{762B2695-75AC-4F6B-BBBC-D867AC9FFE3A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{35E517C1-5EA3-45E7-A200-93CD2EEE0D80} = {35E517C1-5EA3-45E7-A200-93CD2EEE0D80}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

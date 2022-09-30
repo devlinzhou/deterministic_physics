@@ -16,11 +16,11 @@ int main()
     
     GTimer T;T.Start();
 
-    for( int i = 0; i < 10000000; i ++)
+    for( int i = 0; i < 20000000; i ++ )
     {
-        Point += GVector3(f32(1), f32(1),f32(1));
+        Point.x += GMath::One();
         GVector3 b = GDistance::ClosestPointTriangle(Point, S0 , S1, S2);
-        ntotal += b.Max().GetWhole();
+        ntotal += b.Max().rawint32;
     }
 
     T.End();
