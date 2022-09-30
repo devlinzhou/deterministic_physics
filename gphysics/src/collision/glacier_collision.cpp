@@ -14,9 +14,74 @@
 
 #include "glacier_collision.h"
 
-void GCollision::Test()
-{
 
+bool GCollision::Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal)
+{ 
+    GVector3 DeltaV = center - boxCenter;
+
+    GVector3 NearestExt = GVector3(
+        DeltaV.x < GMath::Zero() ? -boxExtents.x : boxExtents.x,
+        DeltaV.y < GMath::Zero() ? -boxExtents.y : boxExtents.y,
+        DeltaV.z < GMath::Zero() ? -boxExtents.z : boxExtents.z);
+
+
+    GVector3 DeltaU = GVector3(
+        (-boxExtents.x < DeltaV.x&& DeltaV.x < boxExtents.x) ? GMath::Zero() : DeltaV.x - NearestExt.x,
+        (-boxExtents.y < DeltaV.y&& DeltaV.y < boxExtents.y) ? GMath::Zero() : DeltaV.y - NearestExt.y,
+        (-boxExtents.z < DeltaV.z&& DeltaV.z < boxExtents.z) ? GMath::Zero() : DeltaV.z - NearestExt.z);
+
+    f32 lenthSqr = DeltaU.SizeSquare();
+
+    if (lenthSqr <= radius * radius)
+    {
+        if (lenthSqr > GMath::Epsilon())
+        {
+            GVector3 TNormal = DeltaU * GMath::InvSqrt(lenthSqr);
+            if (pOutNormal != nullptr)
+            {
+                *pOutNormal = TNormal;
+            }
+
+            //finalCenter = center + DeltaU * (FMath::InvSqrt(lenthSqr) * radius - 1.f);
+
+            finalCenter = center + TNormal * radius - DeltaU;
+        }
+        else
+        {
+            GVector3 ABSV = (DeltaV - NearestExt).Abs();
+
+            if (ABSV.x < ABSV.y && ABSV.x < ABSV.z)
+            {
+                finalCenter = GVector3(boxCenter.x + (DeltaV.x < GMath::Zero() ? -boxExtents.x - radius : boxExtents.x + radius), center.y, center.z);
+                if (pOutNormal != nullptr)
+                {
+                    *pOutNormal = GVector3(DeltaV.x < GMath::Zero() ? -GMath::One() : GMath::One(), GMath::Zero(), GMath::Zero());
+                }
+            }
+            else if (ABSV.y < ABSV.z)
+            {
+                finalCenter = GVector3(center.x, boxCenter.y + (DeltaV.y < GMath::Zero() ? -boxExtents.y - radius : boxExtents.y + radius), center.z);
+                if (pOutNormal != nullptr)
+                {
+                    *pOutNormal = GVector3(GMath::Zero(), DeltaV.y < GMath::Zero() ? -GMath::One() : GMath::One(), GMath::Zero());
+                }
+            }
+            else
+            {
+                finalCenter = GVector3(center.x, center.y, boxCenter.z + (DeltaV.z < GMath::Zero() ? -boxExtents.z - radius : boxExtents.z + radius));
+                if (pOutNormal != nullptr)
+                {
+                    *pOutNormal = GVector3(GMath::Zero(), GMath::Zero(), DeltaV.z < GMath::Zero() ? -GMath::One() : GMath::One());
+                }
+            }
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
+
 
 

@@ -301,7 +301,8 @@ public:
             (z * (GMath::One() - TClamp)) + (V2.z * TClamp));
     }
 
-    
+    inline GVector3 Abs() const {return GVector3( GMath::Abs(x), GMath::Abs(y), GMath::Abs(z));}
+
     inline f32 Min( )   const { return GMath::Min3(x, y, z); }
     inline f32 Max( )   const { return GMath::Max3(x, y ,z); }
     inline f32 AbsMin( )const { return GMath::Min3(GMath::Abs(x), GMath::Abs(y), GMath::Abs(z)); }

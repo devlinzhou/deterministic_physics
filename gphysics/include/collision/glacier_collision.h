@@ -31,8 +31,8 @@ public:
     }
 
 
+    static bool Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal);
 
-     void Test();
 };
 
 
