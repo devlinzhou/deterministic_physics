@@ -26,7 +26,7 @@ int main()
        GVector3 t(GMath::One());
        if( GCollision::Sphere_Box( Point, GMath::One(), S0, S1,t, nullptr) )
        {
-            ntotal += t.x;//.rawint32;
+            ntotal += t.x.rawint32;
        }
 
        // ntotal += b.Max().rawint32;

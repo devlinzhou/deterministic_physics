@@ -196,14 +196,14 @@ public:
         return x * x + z * z;
     }
 
-    inline f32 Distance( const GVector3& V ) const
+    static inline f32 Distance(const GVector3& a, const GVector3& V )
     {
-        return (*this - V).Size( );
+        return (a - V).Size( );
     }
 
-    inline f32 DistanceSquare( const GVector3& V ) const
+    static inline f32 DistanceSquare( const GVector3& a, const GVector3& V )
     {
-        return ( *this - V ).SizeSquare( );
+        return ( a - V ).SizeSquare( );
     }
 
     static GFORCE_INLINE f32 DotProduct( const GVector3& a, const GVector3& V )
@@ -307,6 +307,16 @@ public:
     inline f32 Max( )   const { return GMath::Max3(x, y ,z); }
     inline f32 AbsMin( )const { return GMath::Min3(GMath::Abs(x), GMath::Abs(y), GMath::Abs(z)); }
     inline f32 AbsMax( )const { return GMath::Max3(GMath::Abs(x), GMath::Abs(y), GMath::Abs(z)); }
+
+    static inline GVector3 Min(const GVector3& a, const GVector3& b)
+    {
+        return GVector3(GMath::Min(a.x, b.x), GMath::Min(a.y, b.y), GMath::Min(a.z, b.z));
+    }
+
+    static inline GVector3 Max( const GVector3& a, const GVector3& b)
+    {
+        return GVector3(GMath::Max(a.x, b.x), GMath::Max(a.y, b.y), GMath::Max(a.z, b.z) );
+    }
 
     inline bool IsZero( void ) const 
     { 

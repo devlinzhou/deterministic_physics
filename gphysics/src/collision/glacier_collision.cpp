@@ -83,5 +83,75 @@ bool GCollision::Sphere_Box(const GVector3& center, const f32 radius, const GVec
     }
 }
 
+bool GCollision::Sphere_Capsule(
+    const GVector3& sphereCenter,
+    const f32       sphereRadius,
+    const GVector3& capsuleP0,
+    const GVector3& capsuleP1,
+    const f32       Radius0,
+    const f32       Radius1,
+    GVector3& result,
+    GVector3* pOutNormal)
+{
+    f32 deltaRadius = Radius1 - Radius0;
+    f32 distance_sqr = GVector3::DistanceSquare(capsuleP0, capsuleP1);
+
+    if (distance_sqr < GMath::Epsilon())
+    {
+        return Sphere_Sphere(sphereCenter, sphereRadius, capsuleP1, GMath::Max(Radius0, Radius1), result, pOutNormal);
+    }
+    else if ((Radius0 + distance_sqr) <= Radius1)
+    {
+        return Sphere_Sphere(sphereCenter, sphereRadius, capsuleP1, Radius1, result, pOutNormal);
+    }
+    else if ((Radius1 + distance_sqr) <= Radius0)
+    {
+        return Sphere_Sphere(sphereCenter, sphereRadius, capsuleP0, Radius0, result, pOutNormal);
+    }
+    else
+    {
+        GVector3 seg = capsuleP1 - capsuleP0;
+        f32   t = GVector3::DotProduct(sphereCenter - capsuleP0, seg) / distance_sqr;
+
+        f32   inv_dis = GMath::InvSqrt(distance_sqr);
+        f32   fSin = (Radius1 - Radius0) * inv_dis;
+        f32   fCos = GMath::Sqrt(GMath::One() - fSin * fSin);
+        f32   fTan = fSin / fCos;
+
+        f32 factor = fTan * inv_dis;
+
+        GVector3 VOrigNearest = capsuleP0 + (capsuleP1 - capsuleP0) * t;
+        f32   fOriDis = GVector3::Distance(VOrigNearest, sphereCenter);
+
+        f32 Line_t = t + fOriDis * factor;
+
+        f32 Current_t = GMath::Clamp(Line_t, GMath::Zero(), GMath::One());
+
+        GVector3 VNearest = capsuleP0 + (capsuleP1 - capsuleP0) * Current_t;
+        f32   LerpRadius = Radius0 + (Radius1 - Radius0) * Current_t;
+
+        f32 fDistance_sqr = GVector3::DistanceSquare(VNearest, sphereCenter);
+
+        if (fDistance_sqr < (LerpRadius + sphereRadius) * (LerpRadius + sphereRadius))
+        {
+            if (fDistance_sqr < GMath::Epsilon())
+            {
+                result = VNearest + GVector3(GMath::One(), GMath::Zero(), GMath::Zero()) * (LerpRadius + sphereRadius);
+                if (pOutNormal)
+                    *pOutNormal = GVector3(GMath::One(), GMath::Zero(), GMath::Zero());
+            }
+            else
+            {
+                GVector3 VNor = (sphereCenter - VNearest) * GMath::InvSqrt(fDistance_sqr);
+                result = VNearest + VNor * (LerpRadius + sphereRadius);
+                if (pOutNormal)
+                    *pOutNormal = VNor;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 
 

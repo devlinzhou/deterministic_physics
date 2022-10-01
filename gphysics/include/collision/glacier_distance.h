@@ -18,6 +18,21 @@ class GDistance
 {
 public:
 
+    static inline GVector3 closestPtPointSphere(const GVector3& p, const GVector3& a, f32 radius)
+    {
+        return (p - a).GetNormalize() * radius + a;
+    }
+
+    static inline GVector3 closestPtPointPlane(const GVector3&  p, const GVector3&  PlaneNormal, const GVector3&  planePos)
+    {
+        return p - PlaneNormal * GVector3::DotProduct(p - planePos, PlaneNormal);
+    }
+
+    static inline GVector3 closestPtPointLine(const GVector3& p, const GVector3& Pos, const GVector3& Vdir)
+    {
+        return Pos + Vdir * GVector3::DotProduct(Vdir, p - Pos);
+    }
+
     static inline void ClosestPtPointLine(const GVector3& point, const GVector3& sP0, const GVector3& sP1, f32& t, GVector3& d)
     {
         GVector3 seg = sP1 - sP0;
@@ -29,7 +44,6 @@ public:
         t = t / denom;
         d = sP0 + t * seg;
     }
-
 
     static inline void ClosestPtPointSegment(const GVector3& point, const GVector3& sP0, const GVector3& sP1, f32& t, GVector3& d)
     {
@@ -57,9 +71,81 @@ public:
         }
     }
 
-     static GVector3 ClosestPointTriangle(const GVector3& point, const GVector3& a, const GVector3& b, const GVector3& c);
+    static inline GVector3 closestPtPointAABB(const GVector3& p, const GVector3& VHalfSize)
+    {
+        return GVector3(
+            GMath::Clamp(p.x, -VHalfSize.x, VHalfSize.x),
+            GMath::Clamp(p.y, -VHalfSize.y, VHalfSize.y),
+            GMath::Clamp(p.z, -VHalfSize.z, VHalfSize.z));
+    }
 
+    static GVector3 ClosestPointTriangle(const GVector3& point, const GVector3& a, const GVector3& b, const GVector3& c);
+
+    static inline int pointOutsideOfPlane(const GVector3& p, const GVector3& a, const GVector3& b, const GVector3& c, const GVector3& d)
+    {
+        GVector3 normal = GVector3::CrossProduct(b - a, c - a);
+
+        f32 signp = GVector3::DotProduct(p - a, normal); // [AP AB AC]
+        f32 signd = GVector3::DotProduct(d - a, normal); // [AD AB AC]
+
+        if (signd * signd < GMath::Epsilon())
+        {
+            return -1;
+        }
+        // Points on opposite sides if expression signs are opposite
+        return signp * signd < GMath::Zero() ?  1 : 0;
+    }
+
+
+    static inline GVector3 closestPtPointTetrahedron(const GVector3& p, const GVector3& a, const GVector3& b, const GVector3& c, const GVector3& d)
+    {
+         int pointOutsideABC = pointOutsideOfPlane(p, a, b, c, d);
+         int pointOutsideACD = pointOutsideOfPlane(p, a, c, d, b);
+         int pointOutsideADB = pointOutsideOfPlane(p, a, d, b, c);
+         int pointOutsideBDC = pointOutsideOfPlane(p, b, d, c, a);
+
+         if (pointOutsideABC < 0 || pointOutsideACD < 0 || pointOutsideADB < 0 || pointOutsideBDC < 0)
+         {
+             return p;
+         }
+
+         if (pointOutsideABC == 0 && pointOutsideACD == 0 && pointOutsideADB == 0 && pointOutsideBDC == 0)
+         {
+             return p;
+         }
+
+         // If point outside face abc then compute closest point on abc
+         if (pointOutsideABC != 0)
+         {
+             return ClosestPointTriangle(p, a, b, c);
+         }
+
+
+         // Repeat test for face acd
+         if (pointOutsideACD != 0)
+         {
+             return ClosestPointTriangle(p, a, c, d);
+
+         }
+         // Repeat test for face adb
+
+
+         if (pointOutsideADB != 0)
+         {
+             return ClosestPointTriangle(p, a, d, b);
+         }
+         // Repeat test for face bdc
+
+
+         if (pointOutsideBDC != 0)
+         {
+             return ClosestPointTriangle(p, b, d, c);
+         }
+
+         return p;
+     }
 
 };
+
 
 
