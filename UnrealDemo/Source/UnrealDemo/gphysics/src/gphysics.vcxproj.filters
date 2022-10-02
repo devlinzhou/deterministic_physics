@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="include\math">
+      <UniqueIdentifier>{ff9a83ed-50a3-4d93-b405-8c3475a65c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math">
+      <UniqueIdentifier>{24fcd79e-6581-4500-bc2e-e03344394ee3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\collision">
+      <UniqueIdentifier>{efa63c85-62d1-42fe-9ddd-7acd5f08cb75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\collision">
+      <UniqueIdentifier>{0ab87c42-1df9-4ea4-9c0b-a6a74cd14b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utils">
+      <UniqueIdentifier>{7a92ed23-b1e4-4ed1-9db3-3831b04f7e40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{89a2cace-669d-4bee-b604-bd1ab35d5165}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\math\glacier_float.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\math\glacier_vector.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\math\glacier_math.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\math\glacier_quaternion.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_collision_sphere.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_distance.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\glacier_time.h">
+      <Filter>include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_collision_gjk.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_collision_shape.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\math\glacier_transform_qt.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="math\glacier_float.cpp">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\glacier_vector.cpp">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\glacier_quternion.cpp">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\glacier_collision_sphere.cpp">
+      <Filter>src\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\glacier_distance.cpp">
+      <Filter>src\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\glacier_time.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\glacier_collision_gjk.cpp">
+      <Filter>src\collision</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
