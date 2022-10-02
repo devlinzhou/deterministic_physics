@@ -285,7 +285,7 @@ public:
         return QuatTemp;
     }
 
-    inline GVector3 RotateNormal( const GVector3& V )
+    inline GVector3 RotateVector( const GVector3& V ) const
     {
         GVector3 Vqvec(x, y, z);
         GVector3 uv = GVector3::CrossProduct(Vqvec, V);

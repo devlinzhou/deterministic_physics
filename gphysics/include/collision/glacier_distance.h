@@ -45,6 +45,30 @@ public:
         d = sP0 + t * seg;
     }
 
+    static inline GVector3 ClosestPtPointSegment(const GVector3& point, const GVector3& sP0, const GVector3& sP1 )
+    {
+        GVector3 seg = sP1 - sP0;
+
+        f32 t = GVector3::DotProduct(point - sP0, seg);
+        if (t <= GMath::Zero())
+        {
+            return sP0;
+        }
+        else
+        {
+            f32 denom = GVector3::DotProduct(seg, seg);
+            if (t >= denom)
+            {
+                return sP1;
+            }
+            else
+            {
+                t = t / denom;
+                return sP0 + t * seg;
+            }
+        }
+    }
+
     static inline void ClosestPtPointSegment(const GVector3& point, const GVector3& sP0, const GVector3& sP1, f32& t, GVector3& d)
     {
         GVector3 seg = sP1 - sP0;
@@ -97,7 +121,7 @@ public:
     }
 
 
-    static inline GVector3 closestPtPointTetrahedron(const GVector3& p, const GVector3& a, const GVector3& b, const GVector3& c, const GVector3& d)
+    static inline GVector3 ClosestPtPointTetrahedron(const GVector3& p, const GVector3& a, const GVector3& b, const GVector3& c, const GVector3& d)
     {
          int pointOutsideABC = pointOutsideOfPlane(p, a, b, c, d);
          int pointOutsideACD = pointOutsideOfPlane(p, a, c, d, b);

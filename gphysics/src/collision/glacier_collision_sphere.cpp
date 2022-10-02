@@ -12,10 +12,10 @@
  */
 
 
-#include "glacier_collision.h"
+#include "glacier_collision_sphere.h"
 
 
-bool GCollision::Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal)
+bool GCollision_Sphere::Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal)
 { 
     GVector3 DeltaV = center - boxCenter;
 
@@ -83,7 +83,7 @@ bool GCollision::Sphere_Box(const GVector3& center, const f32 radius, const GVec
     }
 }
 
-bool GCollision::Sphere_Capsule(
+bool GCollision_Sphere::Sphere_Capsule(
     const GVector3& sphereCenter,
     const f32       sphereRadius,
     const GVector3& capsuleP0,

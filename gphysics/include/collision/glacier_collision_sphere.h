@@ -14,7 +14,7 @@
 
 #include "glacier_vector.h"
 
-class GCollision
+class GCollision_Sphere
 {
 public:
 

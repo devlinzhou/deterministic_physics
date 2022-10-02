@@ -41,7 +41,7 @@
     <ClInclude Include="..\include\math\glacier_quaternion.h">
       <Filter>include\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\collision\glacier_collision.h">
+    <ClInclude Include="..\include\collision\glacier_collision_sphere.h">
       <Filter>include\collision</Filter>
     </ClInclude>
     <ClInclude Include="..\include\collision\glacier_distance.h">
@@ -49,6 +49,15 @@
     </ClInclude>
     <ClInclude Include="..\include\utils\glacier_time.h">
       <Filter>include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_collision_gjk.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision\glacier_collision_shape.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\math\glacier_transform_qt.h">
+      <Filter>include\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +70,7 @@
     <ClCompile Include="math\glacier_quternion.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="collision\glacier_collision.cpp">
+    <ClCompile Include="collision\glacier_collision_sphere.cpp">
       <Filter>src\collision</Filter>
     </ClCompile>
     <ClCompile Include="collision\glacier_distance.cpp">
@@ -69,6 +78,9 @@
     </ClCompile>
     <ClCompile Include="utils\glacier_time.cpp">
       <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\glacier_collision_gjk.cpp">
+      <Filter>src\collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

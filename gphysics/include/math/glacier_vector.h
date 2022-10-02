@@ -22,7 +22,7 @@ public:
     f32 z;
 
 public:
-
+    GVector3(){}
     inline          constexpr GVector3( const GVector3&) = default;
     inline explicit constexpr GVector3( const f32 fX, const f32 fY, const f32 fZ) :x( fX ),y( fY ), z( fZ )  { }
     inline explicit constexpr GVector3( const f32* pf)     : x( pf[0] ),   y( pf[1] ),     z( pf[2] )   { }

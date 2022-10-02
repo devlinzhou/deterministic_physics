@@ -148,16 +148,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\collision\glacier_collision.h" />
+    <ClInclude Include="..\include\collision\glacier_collision_gjk.h" />
+    <ClInclude Include="..\include\collision\glacier_collision_shape.h" />
+    <ClInclude Include="..\include\collision\glacier_collision_sphere.h" />
     <ClInclude Include="..\include\collision\glacier_distance.h" />
     <ClInclude Include="..\include\math\glacier_float.h" />
     <ClInclude Include="..\include\math\glacier_math.h" />
     <ClInclude Include="..\include\math\glacier_quaternion.h" />
+    <ClInclude Include="..\include\math\glacier_transform_qt.h" />
     <ClInclude Include="..\include\math\glacier_vector.h" />
     <ClInclude Include="..\include\utils\glacier_time.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="collision\glacier_collision.cpp" />
+    <ClCompile Include="collision\glacier_collision_gjk.cpp" />
+    <ClCompile Include="collision\glacier_collision_sphere.cpp" />
     <ClCompile Include="collision\glacier_distance.cpp" />
     <ClCompile Include="math\glacier_float.cpp" />
     <ClCompile Include="math\glacier_quternion.cpp" />
