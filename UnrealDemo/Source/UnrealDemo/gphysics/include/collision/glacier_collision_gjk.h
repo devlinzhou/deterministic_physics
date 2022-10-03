@@ -16,13 +16,14 @@
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 
+class IGLacierDraw;
 class GCollision_GJK
 {
 public:
 
     static bool GJKTest( 
         const GShapeConvexBase& ShapA, const GTransform_QT& TransformShapA,
-        const GShapeConvexBase& ShapB, const GTransform_QT& TransformShapB );
+        const GShapeConvexBase& ShapB, const GTransform_QT& TransformShapB, IGLacierDraw* pDebugDraw = nullptr );
 
 
 

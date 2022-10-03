@@ -14,11 +14,12 @@
 
 #include "glacier_collision_gjk.h"
 #include "glacier_distance.h"
+#include "glacier_debug_draw.h"
 
 
 bool GCollision_GJK::GJKTest(
     const GShapeConvexBase& ShapA, const GTransform_QT& TransformShapA,
-    const GShapeConvexBase& ShapB, const GTransform_QT& TransformShapB)
+    const GShapeConvexBase& ShapB, const GTransform_QT& TransformShapB, IGLacierDraw* pDebugDraw)
 {
     // use shapA local system
 
@@ -56,6 +57,26 @@ bool GCollision_GJK::GJKTest(
     DirectionB = LocalAToLocalB.TransformNormal(-DirectionA);
 
     GVector3 SupportPos4 = ShapA.GetSupportLocalPos( DirectionA ) + LocalBToLocalA.TransformPosition( ShapA.GetSupportLocalPos( DirectionB ) );
+
+    if(pDebugDraw!= nullptr)
+    {
+        GVector3 V0 = TransformShapA.TransformPosition(SupportPos0);
+        GVector3 V1 = TransformShapA.TransformPosition(SupportPos1);
+        GVector3 V2 = TransformShapA.TransformPosition(SupportPos2);
+        GVector3 V3 = TransformShapA.TransformPosition(SupportPos3);
+        //GVector3 V4 = TransformShapA.TransformPosition(SupportPos4);
+
+        pDebugDraw->DrawsSphere(GTransform_QT(GQuaternion::Identity(), V0), f32(0.01f), 0xFFFFFFFF, 18);
+        pDebugDraw->DrawsSphere(GTransform_QT(GQuaternion::Identity(), V1), f32(0.01f), 0xFFFFFFFF, 18);
+        pDebugDraw->DrawsSphere(GTransform_QT(GQuaternion::Identity(), V2), f32(0.01f), 0xFFFFFFFF, 18);
+        pDebugDraw->DrawsSphere(GTransform_QT(GQuaternion::Identity(), V3), f32(0.01f), 0xFFFFFFFF, 18);
+       // pDebugDraw->DrawsSphere(GTransform_QT(GQuaternion::Identity(), V4), 0.01f, 0xFFFFFFFF, 18);
+        pDebugDraw->DrawLine(V0, V1, 0xFFFFFFFF);
+        pDebugDraw->DrawLine(V1, V2, 0xFFFFFFFF);
+        pDebugDraw->DrawLine(V2, V3, 0xFFFFFFFF);
+        pDebugDraw->DrawLine(V3, V0, 0xFFFFFFFF);
+
+    }
 
 
 

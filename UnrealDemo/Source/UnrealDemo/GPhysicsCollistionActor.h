@@ -37,10 +37,12 @@ public:
     UPROPERTY(EditAnywhere, Category = "Triangle")
         FVector        Triangle_p2 = FVector(10, 10, 0);
 
-    UPROPERTY(EditAnywhere, Category = "AABBox")
+    UPROPERTY(EditAnywhere, Category = "Box")
         FVector        BoxCenter = FVector(0, 0, 200);
-    UPROPERTY(EditAnywhere, Category = "AABBox")
+    UPROPERTY(EditAnywhere, Category = "Box")
         FVector        BoxHalfSize = FVector(100, 200, 90);
+    UPROPERTY(EditAnywhere, Category = "Box")
+        FRotator       BoxRot       = FRotator(0, 0, 0);
 
     UPROPERTY(EditAnywhere, Category = "Capsule")
         FVector         CapsuleCenter = FVector(100, 200, 90);

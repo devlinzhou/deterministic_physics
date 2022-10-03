@@ -107,3 +107,24 @@ void IGLacierDraw::DrawsSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t
     }
 }
 
+void IGLacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor)
+{
+   /* GTransform_QT Transform;
+    Transform.m_Translation =  PlaneNormal  * PlaneDis;
+    Transform.SetRotation(FQuat::FindBetweenNormals(FVector(0, 0, 1), Plane.GetNormal()));
+
+    auto P0 = Transform.TransformPosition(FVector(-1, -1, 0) * Size);
+    auto P1 = Transform.TransformPosition(FVector(1, -1, 0) * Size);
+    auto P2 = Transform.TransformPosition(FVector(1, 1, 0) * Size);
+    auto P3 = Transform.TransformPosition(FVector(-1, 1, 0) * Size);
+
+    DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P1), TColor);
+    DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P2), TColor);
+    DrawLine(TTrans.TransformPosition(P2), TTrans.TransformPosition(P3), TColor);
+    DrawLine(TTrans.TransformPosition(P3), TTrans.TransformPosition(P0), TColor);
+    DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P2), TColor);
+    DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P3), TColor);
+    DrawLine(TTrans.TransformPosition(Transform.GetLocation()), TTrans.TransformPosition(Transform.GetLocation() + Plane.GetNormal() * Size * 0.5f), TColor);
+*/
+}
+

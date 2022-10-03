@@ -7,7 +7,29 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "glacier_collision_gjk.h"
+#include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
+
+class GTempDraw  : public  IGLacierDraw
+{
+public:
+    GTempDraw( UWorld* pWorld)
+    {
+        m_World = pWorld;
+    }
+
+
+    virtual void DrawLine(const GVector3& V0, const GVector3& V1, uint32_t uColor)
+    {
+        FVector TV0 = GUtility::Pos_G_to_U( V0 );
+        FVector TV1 = GUtility::Pos_G_to_U( V1 );
+
+        UKismetSystemLibrary::DrawDebugLine(m_World, TV0, TV1, FColor::Yellow);
+    }
+
+
+    UWorld* m_World = nullptr;
+};
 
 // Sets default values
 AGPhysicsCollistionActor::AGPhysicsCollistionActor()
@@ -30,7 +52,7 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation(), TestSphereRadius, 18, FColor::Yellow);
-    UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenter, BoxHalfSize, FColor::Yellow);
+    UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenter, BoxHalfSize, FColor::Yellow, BoxRot);
     UKismetSystemLibrary::DrawDebugCapsule(GetWorld(), CapsuleCenter, CapsuleHalfHeight, CapsuleRadius, FQuat::FindBetween(FVector(0, 0, 1), CapsuleDir).Rotator(), FColor::Yellow);
     UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 28, FColor::Yellow);
 
@@ -39,15 +61,22 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
     UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p1, Triangle_Pos + Triangle_p2, TriangleColor);
     UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p2, TriangleColor);
 
-    GShapeSphere ShapeSphere ( GUtility::U_to_G(TestSphereRadius));
-    GShapeBox ShapeBox( GUtility::U_to_G(BoxHalfSize));
-
-    GTransform_QT TransShapeA(GQuaternion::Identity(), GUtility::U_to_G(SphereCenter) );
-    GTransform_QT TransShapeB(GQuaternion::Identity(), GUtility::U_to_G(BoxCenter));
+    GShapeSphere ShapeSphere ( GUtility::Pos_U_to_G(TestSphereRadius));
+    GShapeBox ShapeBox( GUtility::Pos_U_to_G(BoxHalfSize));
 
 
+    FQuat UBoxRot = BoxRot.Quaternion();
 
-    if (GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB ))
+    GTransform_QT TransShapeA(GQuaternion::Identity(), GUtility::Pos_U_to_G(SphereCenter) );
+    GTransform_QT TransShapeB(GUtility::U_to_G(UBoxRot), GUtility::Pos_U_to_G(BoxCenter));
+
+    GTempDraw Tdraw( GetWorld());
+
+    Tdraw.DrawBox( TransShapeB, GVector3::Zero(), GUtility::Pos_U_to_G(BoxHalfSize - FVector(11,11,11)), 0xFFFFFFFF);
+
+    //GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw )
+
+    if (GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw ))
     {
       //  UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
      //   UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);

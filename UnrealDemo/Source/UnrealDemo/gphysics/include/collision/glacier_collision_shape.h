@@ -68,7 +68,10 @@ public:
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
-        return Dir;// * Raius;
+        return GVector3(
+            Dir.x > 0 ? HalfExtern.x : -HalfExtern.x,
+            Dir.y > 0 ? HalfExtern.y : -HalfExtern.y,
+            Dir.z > 0 ? HalfExtern.z : -HalfExtern.z);
     }
 
     GVector3 HalfExtern;

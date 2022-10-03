@@ -83,7 +83,10 @@ public:
         return *this;
     }
 
-    friend inline GQuaternion operator * ( f32 fScalar, const GQuaternion& Q );
+    friend inline GQuaternion operator * (f32 fScalar, const GQuaternion& Q)
+    {
+        return GQuaternion(fScalar * Q.x, fScalar * Q.y, fScalar * Q.z, fScalar * Q.w);
+    }
 
     inline GQuaternion operator - ( ) const
     {
@@ -307,7 +310,4 @@ public:
      void Test();
 };
 
-inline GQuaternion operator * ( f32 fScalar, const GQuaternion& Q )
-{
-    return GQuaternion( fScalar * Q.x, fScalar * Q.y, fScalar * Q.z, fScalar * Q.w );
-}
+
