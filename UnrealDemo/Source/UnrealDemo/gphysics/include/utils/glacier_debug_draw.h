@@ -13,12 +13,17 @@
 #pragma once
 
 #include "glacier_vector.h"
+#include "glacier_transform_qt.h"
 
 class IGLacierDraw
 {
 public:
 
     virtual void DrawLine( const GVector3& V0, const GVector3& V1, uint32_t uColor ) = 0;
+
+    virtual void DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor);
+
+    virtual void DrawsSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg);
 
 
 };
