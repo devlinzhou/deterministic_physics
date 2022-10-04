@@ -58,6 +58,13 @@ bool GCollision_GJK::GJKTest(
     GVector3 DirectionA     = LocalBToLocalA.TransformPosition(GVector3::Zero()).GetNormalize();
     GVector3 SupportPos0    = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x00FF0000);
         
+    f32 f = SupportPos0.SizeSquare();
+    if (f < GMath::Epsilon())
+    {
+        return true;
+    }
+
+
     if( GVector3::DotProduct( DirectionA, SupportPos0 ) < f32::Zero() )
     {
         return false;
@@ -67,15 +74,25 @@ bool GCollision_GJK::GJKTest(
     DirectionA = (-SupportPos0).GetNormalize();
     GVector3 SupportPos1 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x0000FFFF);
 
+
     if (GVector3::DotProduct(DirectionA, SupportPos1) < f32::Zero())
     {
         return false;
     }
 
     GVector3 closeSeg =  GDistance::ClosestPtPointSegment( GVector3::Zero(),SupportPos0, SupportPos1);
+
+    f = closeSeg.SizeSquare();
+    if (f < GMath::Epsilon())
+    {
+        return true;
+    }
+
+
     DirectionA = (-closeSeg).GetNormalize();
 
     GVector3 SupportPos2 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x000000FF);
+
 
     if (GVector3::DotProduct(DirectionA, SupportPos2) < f32::Zero())
     {
@@ -83,8 +100,17 @@ bool GCollision_GJK::GJKTest(
     }
 
     GVector3 closeTri = GDistance::ClosestPointTriangle( GVector3::Zero(),SupportPos0, SupportPos1, SupportPos2 );
+
+    f = closeTri.SizeSquare();
+    if (f < GMath::Epsilon())
+    {
+        return true;
+    }
     DirectionA = (-closeTri).GetNormalize();
     GVector3 SupportPos3 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x00000000);
+
+
+
 
     if (GVector3::DotProduct(DirectionA, SupportPos3) < f32::Zero())
     {
@@ -92,6 +118,13 @@ bool GCollision_GJK::GJKTest(
     }
 
     GVector3 closeTetra = GDistance::ClosestPtPointTetrahedron( GVector3::Zero(),SupportPos0, SupportPos1, SupportPos2, SupportPos3 );
+
+    f = closeTetra.SizeSquare();
+    if (f < GMath::Epsilon())
+    {
+        return true;
+    }
+
     DirectionA = (-closeTetra).GetNormalize();
 
    // GVector3 SupportPos4 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformShapA, TransformShapB, pDebugDraw, 0x00FFFFFF);
