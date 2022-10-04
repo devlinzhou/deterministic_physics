@@ -17,29 +17,42 @@
 enum EShape
 {
     Null = 0,
+    ConvexBase,
     Sphere,
     Box,
     Capsule,
     Cylinder,
     ConvexHull,
+    ConcaveBase,
+    HightField,
+    TriangleMesh
 };
 
-class GShapeConvexBase
+class GShapeBase
 {
 public:
     EShape  ShapType;
-public:
-    GShapeConvexBase( ) : ShapType(EShape::Null)
+
+    GShapeBase() : ShapType(EShape::Null)
     {
     
     }
+};
+
+class GShapeConvexBase : public GShapeBase
+{
+public:
+
+    GShapeConvexBase() 
+    {
+        ShapType = EShape::ConvexBase;
+    }
+
     // Dir is normalize
     virtual GVector3 GetSupportLocalPos( const GVector3& Dir ) const
     {
         return Dir;
     }
-
-
 
 };
 
@@ -87,9 +100,36 @@ public:
         ShapType = EShape::Capsule;
     }
 
-    GVector3 GetSupportLocalPos(const GVector3& Dir) const
+    virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
-        return Dir * Raius;
+        GVector3 supVec = GVector3::Zero();
+
+        f32  maxDot(f32(-10000));
+
+        f32 newDot;
+        {
+            GVector3 pos = GVector3( f32::Zero(), f32::Zero(), HalfHeight );
+
+            GVector3 vtx = pos + Dir * Raius ;
+            newDot = GVector3::DotProduct( Dir, vtx );
+            if (newDot > maxDot)
+            {
+                maxDot = newDot;
+                supVec = vtx;
+            }
+        }
+        {
+            GVector3 pos = GVector3( f32::Zero(), f32::Zero(),-HalfHeight );
+            GVector3 vtx = pos + Dir * Raius;
+            newDot = GVector3::DotProduct( Dir, vtx );
+            if (newDot > maxDot)
+            {
+                maxDot = newDot;
+                supVec = vtx;
+            }
+        }
+
+        return supVec;
     }
 
     f32 HalfHeight;
@@ -112,4 +152,41 @@ public:
 
     f32 HalfHeight;
     f32 Raius;
+};
+
+
+class GShapeConcaveBase : public GShapeBase
+{
+public:
+
+    GShapeConcaveBase()
+    {
+        ShapType = EShape::ConcaveBase;
+    }
+
+
+};
+
+class GShapeHightField : public GShapeConcaveBase
+{
+public:
+
+    GShapeHightField( )
+    {
+        ShapType = EShape::HightField;
+    }
+
+
+};
+
+class GShapeTriangleMesh : public GShapeConcaveBase
+{
+public:
+
+    GShapeTriangleMesh()
+    {
+        ShapType = EShape::TriangleMesh;
+    }
+
+
 };

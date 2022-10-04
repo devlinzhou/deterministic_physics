@@ -18,15 +18,13 @@ public:
         m_World = pWorld;
     }
 
-
     virtual void DrawLine(const GVector3& V0, const GVector3& V1, uint32_t uColor)
     {
-        FVector TV0 = GUtility::Pos_G_to_U( V0 );
-        FVector TV1 = GUtility::Pos_G_to_U( V1 );
+        FVector TV0 = GUtility::Unit_G_to_U( V0 );
+        FVector TV1 = GUtility::Unit_G_to_U( V1 );
 
-        UKismetSystemLibrary::DrawDebugLine(m_World, TV0, TV1, FColor::Yellow);
+        UKismetSystemLibrary::DrawDebugLine(m_World, TV0, TV1, FColor(uColor) );
     }
-
 
     UWorld* m_World = nullptr;
 };
@@ -51,36 +49,68 @@ void AGPhysicsCollistionActor::BeginPlay()
 void AGPhysicsCollistionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-    UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation(), TestSphereRadius, 18, FColor::Yellow);
-    UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenter, BoxHalfSize, FColor::Yellow, BoxRot);
-    UKismetSystemLibrary::DrawDebugCapsule(GetWorld(), CapsuleCenter, CapsuleHalfHeight, CapsuleRadius, FQuat::FindBetween(FVector(0, 0, 1), CapsuleDir).Rotator(), FColor::Yellow);
-    UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 28, FColor::Yellow);
 
-    FColor TriangleColor = FColor::Yellow;
-    UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p1, TriangleColor);
-    UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p1, Triangle_Pos + Triangle_p2, TriangleColor);
-    UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p2, TriangleColor);
-
-    GShapeSphere ShapeSphere ( GUtility::Pos_U_to_G(TestSphereRadius));
-    GShapeBox ShapeBox( GUtility::Pos_U_to_G(BoxHalfSize));
+    GTempDraw       Tdraw(GetWorld());
 
 
-    FQuat UBoxRot = BoxRot.Quaternion();
+    GShapeSphere    ShapeSphere(GUtility::Unit_U_to_G(TestSphereRadius));
+    GTransform_QT   TransSphere(GQuaternion::Identity(), GUtility::Unit_U_to_G(GetActorLocation()));
 
-    GTransform_QT TransShapeA(GQuaternion::Identity(), GUtility::Pos_U_to_G(SphereCenter) );
-    GTransform_QT TransShapeB(GUtility::U_to_G(UBoxRot), GUtility::Pos_U_to_G(BoxCenter));
-
-    GTempDraw Tdraw( GetWorld());
-
-    Tdraw.DrawBox( TransShapeB, GVector3::Zero(), GUtility::Pos_U_to_G(BoxHalfSize - FVector(11,11,11)), 0xFFFFFFFF);
-
-    //GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw )
-
-    if (GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw ))
+    if( BoxShow )
     {
-      //  UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-     //   UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
+        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenter, BoxHalfSize, FColor::Yellow, BoxRot);
+
+        GShapeBox ShapeBox(GUtility::Unit_U_to_G(BoxHalfSize));
+
+        GTransform_QT TransShapeB(GUtility::U_to_G(BoxRot.Quaternion()), GUtility::Unit_U_to_G(BoxCenter));
+
+        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBox, TransShapeB, &Tdraw))
+        {
+        
+        }
     }
+    if( CapsuleShow )
+    {
+        FQuat TRotation = FQuat::FindBetween(FVector(0, 0, 1), CapsuleDir);
+
+       // UKismetSystemLibrary::DrawDebugCapsule(GetWorld(), CapsuleCenter, CapsuleHalfHeight + CapsuleRadius, CapsuleRadius, TRotation.Rotator(), FColor::Yellow);
+
+        GShapeCapsule ShapeCapusle( GUtility::Unit_U_to_G(CapsuleHalfHeight), GUtility::Unit_U_to_G(CapsuleRadius) );
+
+        GTransform_QT TransCapsule(GUtility::U_to_G(TRotation), GUtility::Unit_U_to_G(CapsuleCenter));
+
+        Tdraw.DrawCapsule( TransCapsule, GUtility::Unit_U_to_G(CapsuleRadius), GUtility::Unit_U_to_G(CapsuleHalfHeight), FColor::Yellow.DWColor(), 24 );
+
+
+
+        FColor TColor = FColor::Yellow;
+
+        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeCapusle, TransCapsule, &Tdraw))
+        {
+            TColor = FColor::Red;
+        }
+
+        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation(), TestSphereRadius, 20, TColor);
+    }
+
+
+    if( SphereShow )
+        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 28, FColor::Yellow);
+
+    if( TriangleShow )
+    {
+        FColor TriangleColor = FColor::Yellow;
+        UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p1, TriangleColor);
+        UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p1, Triangle_Pos + Triangle_p2, TriangleColor);
+        UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p2, TriangleColor);
+    }
+
+
+//     if (GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw ))
+//     {
+//       //  UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
+//      //   UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
+//     }
 
 
    /* FVector VLocation = GetActorLocation();

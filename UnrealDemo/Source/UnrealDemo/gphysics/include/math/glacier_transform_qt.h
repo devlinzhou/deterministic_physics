@@ -78,6 +78,12 @@ public:
         return GTransform_QT( TQ, TQ.RotateVector( -m_Translation) );
     }
 
+    inline GTransform_QT GetInverse_fast() const
+    {
+        GQuaternion TQ = m_Rotate.GetUnitInverse();
+        return GTransform_QT(TQ, TQ.RotateVector(-m_Translation));
+    }
+
     bool IsIdentity( ) const
     {
         return m_Rotate == GQuaternion::Identity( ) && m_Translation == GVector3::Zero( );

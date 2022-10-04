@@ -23,7 +23,10 @@ public:
 
     virtual void DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor);
 
-    virtual void DrawsSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg);
+    virtual void DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg);
+
+    virtual void DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg = 18);
+
 
     virtual void DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor);
 //     {

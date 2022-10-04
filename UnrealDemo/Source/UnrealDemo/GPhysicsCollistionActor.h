@@ -24,10 +24,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
     UPROPERTY(EditAnywhere, Category = "Sphere")
+        bool            SphereShow = false;
+    UPROPERTY(EditAnywhere, Category = "Sphere")
         FVector         SphereCenter = FVector(400, 200, 90);
     UPROPERTY(EditAnywhere, Category = "Sphere")
         float           SphereRadius = 100.f;
 
+    UPROPERTY(EditAnywhere, Category = "Triangle")
+        bool           TriangleShow = false;
     UPROPERTY(EditAnywhere, Category = "Triangle")
         FVector        Triangle_Pos = FVector(111, 0, 0);
     UPROPERTY(EditAnywhere, Category = "Triangle")
@@ -38,12 +42,16 @@ public:
         FVector        Triangle_p2 = FVector(10, 10, 0);
 
     UPROPERTY(EditAnywhere, Category = "Box")
-        FVector        BoxCenter = FVector(0, 0, 200);
+        bool            BoxShow = false;
     UPROPERTY(EditAnywhere, Category = "Box")
-        FVector        BoxHalfSize = FVector(100, 200, 90);
+        FVector         BoxCenter = FVector(0, 0, 200);
     UPROPERTY(EditAnywhere, Category = "Box")
-        FRotator       BoxRot       = FRotator(0, 0, 0);
+        FVector         BoxHalfSize = FVector(100, 200, 90);
+    UPROPERTY(EditAnywhere, Category = "Box")
+        FRotator        BoxRot       = FRotator(0, 0, 0);
 
+    UPROPERTY(EditAnywhere, Category = "Capsule")
+        bool            CapsuleShow = false;
     UPROPERTY(EditAnywhere, Category = "Capsule")
         FVector         CapsuleCenter = FVector(100, 200, 90);
     UPROPERTY(EditAnywhere, Category = "Capsule")

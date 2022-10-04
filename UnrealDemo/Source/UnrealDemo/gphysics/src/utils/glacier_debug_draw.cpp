@@ -37,7 +37,7 @@ void IGLacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCen
     DrawLine(TTrans.TransformPosition(c - dz - dx - dy), TTrans.TransformPosition(c - dz - dx + dy), TColor);
 }
 
-void IGLacierDraw::DrawsSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg)
+void IGLacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg)
 {
     int32_t nStep = nSeg;
 
@@ -106,6 +106,73 @@ void IGLacierDraw::DrawsSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t
         TTLongitude_Last = TLongitude;
     }
 }
+
+void IGLacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg)
+{
+    const f32 AngleIncrement = f32(360) / f32(nSeg);
+
+    GVector3 SeparationDir = GVector3(f32::Zero(), f32::Zero(), f32::One());
+
+    GVector3 VertexPrevious = GVector3(f32::One(), f32::Zero(), f32::Zero());
+
+    GVector3 Center0 = GVector3(f32::Zero(), f32::Zero(), HalfHeight);
+    GVector3 Center1 = GVector3(f32::Zero(), f32::Zero(), -HalfHeight);
+
+
+    for (f32 Angle = AngleIncrement; Angle <= 360.0f; Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
+    {
+        f32 TSin, TCos;
+        GMath::SinCos(GMath::DegreesToRadians(Angle), TSin, TCos);
+
+        GVector3 VLocal = GVector3( TCos,  TSin, f32::Zero());
+
+        GVector3 VertexCurrent = VLocal;
+        DrawLine(TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);  // capsule side segment between spheres
+        DrawLine(TTrans.TransformPosition(Center0 + VertexPrevious * Radius), TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TColor);  // cap-circle segment on sphere S0
+        DrawLine(TTrans.TransformPosition(Center1 + VertexPrevious * Radius), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);  // cap-circle segment on sphere S1
+        VertexPrevious = VertexCurrent;
+
+        GVector3 VertexPrevious_Longitude = SeparationDir;
+
+        GVector3 VertexCurrentDir = GVector3(TCos, TSin, f32::Zero());
+
+        for (f32 Angle_Longitude = AngleIncrement; Angle_Longitude <= f32(180.0f); Angle_Longitude += AngleIncrement)
+        {
+            f32 TfSin, TfCos;
+            GMath::SinCos(GMath::DegreesToRadians(Angle_Longitude), TfSin, TfCos );
+
+            GVector3 VertexCurrent_Longitude = SeparationDir * TfCos + VertexCurrentDir * TfSin;
+
+            if (Angle_Longitude < (f32(90.0f)))
+            {
+                if (Angle_Longitude >= (f32(90.0f) - AngleIncrement))
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center0), TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TColor);
+                }
+
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center0), TTrans.TransformPosition(VertexPrevious_Longitude * Radius + Center0), TColor);
+                }
+            }
+            else
+            {
+                if (Angle_Longitude < (f32(90.0f) + AngleIncrement))
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center1), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);
+                }
+                else
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center1), TTrans.TransformPosition(VertexPrevious_Longitude * Radius + Center1), TColor);
+                }
+            }
+
+            VertexPrevious_Longitude = VertexCurrent_Longitude;
+        }
+    }
+
+}
+
+
 
 void IGLacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor)
 {

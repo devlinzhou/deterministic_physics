@@ -19,10 +19,10 @@ public:
     static inline float         G_to_U(f32 value)                   {return GMath::ToFloat(value); }
     static inline FVector       G_to_U(const GVector3& value)       {return FVector(float(value.x) , float(value.y), float(value.z)); }
     static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(float(value.x), float(value.y), float(value.z), float(value.w)); }
-    static inline f32           Pos_U_to_G(float value)             {return U_to_G(value * fUTG);}
-    static inline GVector3      Pos_U_to_G(const FVector& value)    {return U_to_G(value * fUTG);}
-    static inline float         Pos_G_to_U(f32 value)               {return G_to_U(value) * fGTU;}
-    static inline FVector       Pos_G_to_U(const GVector3& value)   {return G_to_U(value) * fGTU;}
+    static inline f32           Unit_U_to_G(float value)            {return U_to_G(value * fUTG);}
+    static inline GVector3      Unit_U_to_G(const FVector& value)   {return U_to_G(value * fUTG);}
+    static inline float         Unit_G_to_U(f32 value)              {return G_to_U(value) * fGTU;}
+    static inline FVector       Unit_G_to_U(const GVector3& value)  {return G_to_U(value) * fGTU;}
 
 };
 

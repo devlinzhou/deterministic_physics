@@ -17,13 +17,27 @@
 #include "glacier_collision_shape.h"
 
 class IGLacierDraw;
+
+
+class GSimplex
+{
+public:
+
+
+    GVector3 m_Points[4];
+};
+
+
 class GCollision_GJK
 {
 public:
 
     static bool GJKTest( 
-        const GShapeConvexBase& ShapA, const GTransform_QT& TransformShapA,
-        const GShapeConvexBase& ShapB, const GTransform_QT& TransformShapB, IGLacierDraw* pDebugDraw = nullptr );
+        const GShapeConvexBase& ShapA,
+        const GTransform_QT&    TransformA,
+        const GShapeConvexBase& ShapB,
+        const GTransform_QT&    TransformB,
+        IGLacierDraw*           pDebugDraw = nullptr );
 
 
 
