@@ -11,7 +11,6 @@
  * limitations under the License. 
  */
 
-
 #include "glacier_collision_sphere.h"
 
 

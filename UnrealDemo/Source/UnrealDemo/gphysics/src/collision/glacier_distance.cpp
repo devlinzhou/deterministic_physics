@@ -11,7 +11,6 @@
  * limitations under the License. 
  */
 
-
 #include "glacier_distance.h"
 
 GVector3 GDistance::ClosestPointTriangle(const GVector3& p, const GVector3& a, const GVector3& b, const GVector3& c)

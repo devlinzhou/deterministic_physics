@@ -11,7 +11,6 @@
  * limitations under the License. 
  */
 
-
 #include "glacier_collision_gjk.h"
 #include "glacier_distance.h"
 #include "glacier_debug_draw.h"
