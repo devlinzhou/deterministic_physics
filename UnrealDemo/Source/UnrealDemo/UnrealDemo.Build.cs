@@ -16,8 +16,10 @@ public class UnrealDemo : ModuleRules
             {
                 "UnrealDemo/gphysics/include/collision",
                 "UnrealDemo/gphysics/include/math",
-                "UnrealDemo/gphysics/include/utils"
-			});
+                "UnrealDemo/gphysics/include/utils",
+                "UnrealDemo/gphysics/include/world",
+
+            });
         
     }
 }
