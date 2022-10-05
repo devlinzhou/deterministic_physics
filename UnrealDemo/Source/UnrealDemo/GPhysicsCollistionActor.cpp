@@ -10,7 +10,7 @@
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
 
-class GTempDraw  : public  IGLacierDraw
+class GTempDraw  : public  IGlacierDraw
 {
 public:
     GTempDraw( UWorld* pWorld)

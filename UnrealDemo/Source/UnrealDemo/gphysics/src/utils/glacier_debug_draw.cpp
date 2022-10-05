@@ -14,7 +14,7 @@
 #include "glacier_debug_draw.h"
 #include <vector>
 
-void IGLacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor)
+void IGlacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor)
 {
     GVector3 c = LocalCenter;
     GVector3 d = HalfSize;
@@ -36,7 +36,7 @@ void IGLacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCen
     DrawLine(TTrans.TransformPosition(c - dz - dx - dy), TTrans.TransformPosition(c - dz - dx + dy), TColor);
 }
 
-void IGLacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg)
+void IGlacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg)
 {
     int32_t nStep = nSeg;
 
@@ -106,7 +106,7 @@ void IGLacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t 
     }
 }
 
-void IGLacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg)
+void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg)
 {
     const f32 AngleIncrement = f32(360) / f32(nSeg);
 
@@ -173,7 +173,7 @@ void IGLacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
 
 
 
-void IGLacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor)
+void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor)
 {
    /* GTransform_QT Transform;
     Transform.m_Translation =  PlaneNormal  * PlaneDis;

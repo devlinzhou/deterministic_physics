@@ -98,7 +98,7 @@ public:
 
 
 
-    void DebugDraw(IGLacierDraw* pDraw );
+    void DebugDraw(IGlacierDraw* pDraw );
 
 
 
@@ -113,7 +113,7 @@ class GPhysicsWorld
 {
 public:
 
-    void DebugDraw(IGLacierDraw* pDraw );
+    void DebugDraw(IGlacierDraw* pDraw );
 
 private:
 

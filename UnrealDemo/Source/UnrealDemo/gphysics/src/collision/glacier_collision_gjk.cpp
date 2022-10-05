@@ -23,7 +23,7 @@ static inline GVector3 s_GetSupportPos(
     const GTransform_QT&    LocalAToLocalB,
     const GTransform_QT&    TransformShapA,
     const GTransform_QT&    TransformShapB,
-    IGLacierDraw*           pDebugDraw,
+    IGlacierDraw*           pDebugDraw,
     uint32_t                uColor)
 {
     GVector3 DirectionB = LocalAToLocalB.TransformNormal( -DirectionA );
@@ -46,7 +46,7 @@ bool GCollision_GJK::GJKTest(
     const GTransform_QT&        TransformA,
     const GShapeConvexBase&     ShapB, 
     const GTransform_QT&        TransformB,
-    IGLacierDraw*               pDebugDraw)
+    IGlacierDraw*               pDebugDraw)
 {
     // use shapA local system
 

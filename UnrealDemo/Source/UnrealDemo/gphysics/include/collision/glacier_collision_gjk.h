@@ -16,7 +16,7 @@
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 
-class IGLacierDraw;
+class IGlacierDraw;
 
 
 class GSimplex
@@ -37,7 +37,7 @@ public:
         const GTransform_QT&    TransformA,
         const GShapeConvexBase& ShapB,
         const GTransform_QT&    TransformB,
-        IGLacierDraw*           pDebugDraw = nullptr );
+        IGlacierDraw*           pDebugDraw = nullptr );
 
 
 

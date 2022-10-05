@@ -16,12 +16,12 @@
 #include "glacier_collision_shape.h"
 
 
-void GGridCell::DebugDraw(IGLacierDraw* pDraw)
+void GGridCell::DebugDraw(IGlacierDraw* pDraw)
 {
 
 }
 
-void GPhysicsWorld::DebugDraw(IGLacierDraw* pDraw )
+void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw )
 {
 
 

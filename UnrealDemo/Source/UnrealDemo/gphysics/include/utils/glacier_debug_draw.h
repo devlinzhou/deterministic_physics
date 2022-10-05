@@ -15,7 +15,7 @@
 #include "glacier_vector.h"
 #include "glacier_transform_qt.h"
 
-class IGLacierDraw
+class IGlacierDraw
 {
 public:
 
