@@ -3,7 +3,8 @@
 #include <iostream>
 #include "glacier_time.h"
 #include "glacier_distance.h"
-#include "glacier_collision.h"
+#include "glacier_collision_gjk.h"
+#include "glacier_collision_sphere.h"
 
 
 int main()
@@ -24,7 +25,7 @@ int main()
         //GVector3 b = GDistance::ClosestPointTriangle(Point, S0 , S1, S2);
 
        GVector3 t(GMath::One());
-       if( GCollision::Sphere_Box( Point, GMath::One(), S0, S1,t, nullptr) )
+       if( GCollision_Sphere::Sphere_Box( Point, GMath::One(), S0, S1,t, nullptr) )
        {
             ntotal += t.x.rawint32;
        }

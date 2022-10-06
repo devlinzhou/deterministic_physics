@@ -204,11 +204,6 @@ public:
         return GFloat::FromFractionAndExp(TRraction >> 1,exponent - 22);
     }
 
-    explicit inline GFloat(float TValue)
-    {
-        *this = FromFloat(TValue);
-    }
-
     double toDouble() const
     {
         int32_t Texponent = getexponent() - 127;

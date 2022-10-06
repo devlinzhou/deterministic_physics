@@ -66,6 +66,7 @@ struct GGridPosition
     }
 };
 
+class IGlacierDraw;
 class GCollisionObject;
 class GGridCell
 {
