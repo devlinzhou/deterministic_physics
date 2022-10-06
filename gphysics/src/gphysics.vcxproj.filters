@@ -27,6 +27,18 @@
     <Filter Include="src\utils">
       <UniqueIdentifier>{89a2cace-669d-4bee-b604-bd1ab35d5165}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\world">
+      <UniqueIdentifier>{50232f8a-dc09-422b-8702-456be61cc3d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\dynamic">
+      <UniqueIdentifier>{620ba796-5c0f-43a8-b0dc-cb1a0da314e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\world">
+      <UniqueIdentifier>{b8c1b0da-fc3a-41d4-ab09-df24b35bcd3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dynamic">
+      <UniqueIdentifier>{4b68d71d-079a-4398-97b3-75e419c1a96b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\math\glacier_float.h">
@@ -59,6 +71,21 @@
     <ClInclude Include="..\include\math\glacier_transform_qt.h">
       <Filter>include\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\dynamic\glacier_rigid_body.h">
+      <Filter>include\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\dynamic\glacier_rigid_dynamic.h">
+      <Filter>include\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\dynamic\glacier_rigid_static.h">
+      <Filter>include\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\world\glacier_collision_object.h">
+      <Filter>include\world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\world\glacier_physics_world.h">
+      <Filter>include\world</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math\glacier_float.cpp">
@@ -81,6 +108,18 @@
     </ClCompile>
     <ClCompile Include="collision\glacier_collision_gjk.cpp">
       <Filter>src\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamic\glacier_rigid_body.cpp">
+      <Filter>src\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamic\glacier_rigid_dynamic.cpp">
+      <Filter>src\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamic\glacier_rigid_static.cpp">
+      <Filter>src\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="world\glacier_physics_world.cpp">
+      <Filter>src\world</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

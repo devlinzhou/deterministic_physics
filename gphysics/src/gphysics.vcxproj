@@ -120,7 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\include\math;..\include\collision;..\include\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\math;..\include\collision;..\include\utils;..\include\world;..\include\dynamic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\include\math;..\include\collision;..\include\utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\math;..\include\collision;..\include\utils;..\include\world;..\include\dynamic</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -152,21 +152,30 @@
     <ClInclude Include="..\include\collision\glacier_collision_shape.h" />
     <ClInclude Include="..\include\collision\glacier_collision_sphere.h" />
     <ClInclude Include="..\include\collision\glacier_distance.h" />
+    <ClInclude Include="..\include\dynamic\glacier_rigid_body.h" />
+    <ClInclude Include="..\include\dynamic\glacier_rigid_dynamic.h" />
+    <ClInclude Include="..\include\dynamic\glacier_rigid_static.h" />
     <ClInclude Include="..\include\math\glacier_float.h" />
     <ClInclude Include="..\include\math\glacier_math.h" />
     <ClInclude Include="..\include\math\glacier_quaternion.h" />
     <ClInclude Include="..\include\math\glacier_transform_qt.h" />
     <ClInclude Include="..\include\math\glacier_vector.h" />
     <ClInclude Include="..\include\utils\glacier_time.h" />
+    <ClInclude Include="..\include\world\glacier_collision_object.h" />
+    <ClInclude Include="..\include\world\glacier_physics_world.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision\glacier_collision_gjk.cpp" />
     <ClCompile Include="collision\glacier_collision_sphere.cpp" />
     <ClCompile Include="collision\glacier_distance.cpp" />
+    <ClCompile Include="dynamic\glacier_rigid_body.cpp" />
+    <ClCompile Include="dynamic\glacier_rigid_dynamic.cpp" />
+    <ClCompile Include="dynamic\glacier_rigid_static.cpp" />
     <ClCompile Include="math\glacier_float.cpp" />
     <ClCompile Include="math\glacier_quternion.cpp" />
     <ClCompile Include="math\glacier_vector.cpp" />
     <ClCompile Include="utils\glacier_time.cpp" />
+    <ClCompile Include="world\glacier_physics_world.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
