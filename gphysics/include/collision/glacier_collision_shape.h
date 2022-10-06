@@ -17,47 +17,79 @@
 enum EShape
 {
     Null = 0,
+    ConvexBase,
     Sphere,
     Box,
     Capsule,
     Cylinder,
     ConvexHull,
+    ConcaveBase,
+    HightField,
+    TriangleMesh
 };
 
-class GShapeConvexBase
+class GShapeBase
 {
 public:
     EShape  ShapType;
-public:
-    GShapeConvexBase( ) : ShapType(EShape::Null)
+
+    GShapeBase() : ShapType(EShape::Null)
     {
     
     }
+};
+
+class GShapeConvexBase : public GShapeBase
+{
+public:
+
+    GShapeConvexBase() 
+    {
+        ShapType = EShape::ConvexBase;
+    }
+
     // Dir is normalize
-    GVector3 GetSupportLocalPos( const GVector3& Dir ) const
+    virtual GVector3 GetSupportLocalPos( const GVector3& Dir ) const
     {
         return Dir;
     }
-
-
 
 };
 
 class GShapeSphere : public GShapeConvexBase
 {
 public:
-    GShapeSphere( f32 tRaduis ) : Raius(tRaduis)
+    GShapeSphere( f32 tRaduis ) : Radius(tRaduis)
     {
         ShapType = EShape::Sphere;
     }
 
-    GVector3 GetSupportLocalPos(const GVector3& Dir) const
+    virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
-        return Dir * Raius;
+        return Dir * Radius;
     }
 
-    f32 Raius;
+    f32 Radius;
 };
+class GShapeBox : public GShapeConvexBase
+{
+public:
+    GShapeBox(GVector3 tvalue) : HalfExtern(tvalue)
+    {
+        ShapType = EShape::Box;
+    }
+
+    virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
+    {
+        return GVector3(
+            Dir.x > 0 ? HalfExtern.x : -HalfExtern.x,
+            Dir.y > 0 ? HalfExtern.y : -HalfExtern.y,
+            Dir.z > 0 ? HalfExtern.z : -HalfExtern.z);
+    }
+
+    GVector3 HalfExtern;
+};
+
 
 class GShapeCapsule : public GShapeConvexBase
 {
@@ -68,9 +100,36 @@ public:
         ShapType = EShape::Capsule;
     }
 
-    GVector3 GetSupportLocalPos(const GVector3& Dir) const
+    virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
-        return Dir * Raius;
+        GVector3 supVec = GVector3::Zero();
+
+        f32  maxDot(f32(-10000));
+
+        f32 newDot;
+        {
+            GVector3 pos = GVector3( GMath::Zero(), GMath::Zero(), HalfHeight );
+
+            GVector3 vtx = pos + Dir * Raius ;
+            newDot = GVector3::DotProduct( Dir, vtx );
+            if (newDot > maxDot)
+            {
+                maxDot = newDot;
+                supVec = vtx;
+            }
+        }
+        {
+            GVector3 pos = GVector3( GMath::Zero(), GMath::Zero(),-HalfHeight );
+            GVector3 vtx = pos + Dir * Raius;
+            newDot = GVector3::DotProduct( Dir, vtx );
+            if (newDot > maxDot)
+            {
+                maxDot = newDot;
+                supVec = vtx;
+            }
+        }
+
+        return supVec;
     }
 
     f32 HalfHeight;
@@ -93,4 +152,41 @@ public:
 
     f32 HalfHeight;
     f32 Raius;
+};
+
+
+class GShapeConcaveBase : public GShapeBase
+{
+public:
+
+    GShapeConcaveBase()
+    {
+        ShapType = EShape::ConcaveBase;
+    }
+
+
+};
+
+class GShapeHightField : public GShapeConcaveBase
+{
+public:
+
+    GShapeHightField( )
+    {
+        ShapType = EShape::HightField;
+    }
+
+
+};
+
+class GShapeTriangleMesh : public GShapeConcaveBase
+{
+public:
+
+    GShapeTriangleMesh()
+    {
+        ShapType = EShape::TriangleMesh;
+    }
+
+
 };

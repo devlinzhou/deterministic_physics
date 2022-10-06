@@ -54,12 +54,12 @@ public:
         return GTransform_QT( Q * QT.m_Rotate, QT.m_Translation );
     }
 
-    GVector3 TransformNormal( const GVector3& V )
+    GVector3 TransformNormal( const GVector3& V ) const
     {
         return m_Rotate.RotateVector( V );
     }
 
-    GVector3 TransformPosition(const GVector3& V)
+    GVector3 TransformPosition(const GVector3& V) const
     {
         return m_Rotate.RotateVector(V) + m_Translation;
     }
@@ -78,7 +78,13 @@ public:
         return GTransform_QT( TQ, TQ.RotateVector( -m_Translation) );
     }
 
-    bool IsIdentity( )
+    inline GTransform_QT GetInverse_fast() const
+    {
+        GQuaternion TQ = m_Rotate.GetUnitInverse();
+        return GTransform_QT(TQ, TQ.RotateVector(-m_Translation));
+    }
+
+    bool IsIdentity( ) const
     {
         return m_Rotate == GQuaternion::Identity( ) && m_Translation == GVector3::Zero( );
     }

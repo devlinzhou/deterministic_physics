@@ -152,10 +152,10 @@ public:
         *this = Normalize64(TRawn, 127 - exp);
     }
 
-    /*inline Float32(float value )
-    {
-        FromFloat(value);
-    }*/
+//     explicit inline GFloat(float value ) dont use this
+//     {
+//         FromFloat(value);
+//     }
 
     GFORCE_INLINE constexpr int32_t getfraction() const
     {
@@ -204,6 +204,11 @@ public:
         return GFloat::FromFractionAndExp(TRraction >> 1,exponent - 22);
     }
 
+    explicit inline GFloat(float TValue)
+    {
+        *this = FromFloat(TValue);
+    }
+
     double toDouble() const
     {
         int32_t Texponent = getexponent() - 127;
@@ -217,6 +222,12 @@ public:
     {
        return (float)toDouble();
     }
+
+    inline operator float() const
+    {
+        return toFloat();
+    }
+
 
     static GFORCE_INLINE GFloat Normalize32(int32_t Trawvalue, int32_t Texponent)
     {
@@ -272,18 +283,24 @@ public:
 
     GFORCE_INLINE GFloat operator +( const GFloat b) const
     {
+        int32_t a_Frac = getfraction_NoShift();
+        if( a_Frac==0) return b;
+
+        int32_t b_Frac = b.getfraction_NoShift();
+        if (b_Frac == 0) return *this;
+
         int32_t a_e = getexponent();// -127;
         int32_t b_e = b.getexponent();//-127;
 
         if (a_e >= b_e)
         {
             int32_t nShift = a_e - b_e > 23 ? 23 : 1+a_e - b_e;
-            return Normalize32((getfraction_NoShift()>>1) + ((int64_t)b.getfraction_NoShift() >> nShift), a_e - 7);
+            return Normalize32((a_Frac>>1) + ((int64_t)b_Frac >> nShift), a_e - 7);
         }
         else
         {
             int32_t nShift = b_e - a_e > 23 ? 23 : 1+b_e - a_e;
-            return Normalize32((b.getfraction_NoShift()>>1) + ((int64_t)getfraction_NoShift() >> nShift), b_e - 7);
+            return Normalize32((b_Frac>>1) + ((int64_t)a_Frac >> nShift), b_e - 7);
         }         
 
     }
@@ -481,21 +498,72 @@ public:
         {
             return value.getfraction() > 0 ? One() : Zero();
         }
-    
     }
+
     static GFORCE_INLINE GFloat Floor(const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
 
         if (exp >= 0)
             return value;
-        else if( exp > -23 )
+        else if (exp > -23)
         {
             return GFloat::FromFractionAndExp((value.getfraction() >> -exp) << -exp, exp + 127);
         }
         else
         {
             return value.getfraction() > 0 ? Zero() : -One();
+        }
+    }
+
+    static GFORCE_INLINE int32_t FloorToInt( const GFloat value)
+    {
+        int32_t exp = (value.getexponent() - 127);
+        int32_t fra = value.getfraction();
+        if (exp >= 0)
+        {
+            return fra << exp;// exp > 8 will overflow
+        }
+        else if (exp > -23)
+        {
+            return fra >> -exp;
+        }
+        else
+        {
+            if (fra >= 0)
+                return 0;
+            else
+                return -1;
+        }
+    }
+
+    static GFORCE_INLINE int32_t CeilToInt(const GFloat value)
+    {
+        int32_t exp = (value.getexponent() - 127);
+        int32_t fra = value.getfraction();
+        if (exp >= 0)
+        {
+            return fra << exp;// exp > 8 will overflow
+        }
+        else if (exp > -23)
+        {
+            int32_t fraMask = (1 << -exp) - 1;
+
+            if( fraMask & fra )
+            {
+                return (fra >> -exp ) + 1;
+            }
+            else
+            {
+                return (fra >> -exp );
+            }
+        }
+        else
+        {
+            if (fra >= 0)
+                return 0;
+            else
+                return -1;
         }
     }
 

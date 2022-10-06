@@ -83,7 +83,10 @@ public:
         return *this;
     }
 
-    friend inline GQuaternion operator * ( f32 fScalar, const GQuaternion& Q );
+    friend inline GQuaternion operator * (f32 fScalar, const GQuaternion& Q)
+    {
+        return GQuaternion(fScalar * Q.x, fScalar * Q.y, fScalar * Q.z, fScalar * Q.w);
+    }
 
     inline GQuaternion operator - ( ) const
     {
@@ -193,7 +196,7 @@ public:
         return Qtemp;
     }
 
-    void Inverse( void )
+    inline void Inverse( void )
     {
         f32 fNorm = SizeSquare( );
         if( fNorm > GMath::Epsilon() )
@@ -210,14 +213,14 @@ public:
         }
     }
 
-    GQuaternion GetInverse( void ) const
+    inline GQuaternion GetInverse( void ) const
     {
         GQuaternion TQ = *this;
         TQ.Inverse( );
         return TQ;
     }
 
-    void UnitInverse( )
+    inline void UnitInverse( )
     {
         x    =    -x;
         y    =    -y;
@@ -225,11 +228,9 @@ public:
         w    =    w;
     }
 
-    GQuaternion GetUnitInverse( void ) const
+    inline GQuaternion GetUnitInverse( void ) const
     {
-        GQuaternion Qtemp( *this );
-        Qtemp.UnitInverse( );
-        return Qtemp;
+        return GQuaternion( -x, -y, -z, w );
     }
 
     GQuaternion Exp( void ) const
@@ -307,7 +308,4 @@ public:
      void Test();
 };
 
-inline GQuaternion operator * ( f32 fScalar, const GQuaternion& Q )
-{
-    return GQuaternion( fScalar * Q.x, fScalar * Q.y, fScalar * Q.z, fScalar * Q.w );
-}
+
