@@ -498,21 +498,72 @@ public:
         {
             return value.getfraction() > 0 ? One() : Zero();
         }
-    
     }
+
     static GFORCE_INLINE GFloat Floor(const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
 
         if (exp >= 0)
             return value;
-        else if( exp > -23 )
+        else if (exp > -23)
         {
             return GFloat::FromFractionAndExp((value.getfraction() >> -exp) << -exp, exp + 127);
         }
         else
         {
             return value.getfraction() > 0 ? Zero() : -One();
+        }
+    }
+
+    static GFORCE_INLINE int32_t FloorToInt( const GFloat value)
+    {
+        int32_t exp = (value.getexponent() - 127);
+        int32_t fra = value.getfraction();
+        if (exp >= 0)
+        {
+            return fra << exp;// exp > 8 will overflow
+        }
+        else if (exp > -23)
+        {
+            return fra >> -exp;
+        }
+        else
+        {
+            if (fra >= 0)
+                return 0;
+            else
+                return -1;
+        }
+    }
+
+    static GFORCE_INLINE int32_t CeilToInt(const GFloat value)
+    {
+        int32_t exp = (value.getexponent() - 127);
+        int32_t fra = value.getfraction();
+        if (exp >= 0)
+        {
+            return fra << exp;// exp > 8 will overflow
+        }
+        else if (exp > -23)
+        {
+            int32_t fraMask = (1 << -exp) - 1;
+
+            if( fraMask & fra )
+            {
+                return (fra >> -exp ) + 1;
+            }
+            else
+            {
+                return (fra >> -exp );
+            }
+        }
+        else
+        {
+            if (fra >= 0)
+                return 0;
+            else
+                return -1;
         }
     }
 

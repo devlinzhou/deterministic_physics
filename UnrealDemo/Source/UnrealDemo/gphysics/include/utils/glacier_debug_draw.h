@@ -12,41 +12,42 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
-#include "glacier_transform_qt.h"
+#include "glacier_color.h"
 
+class GVector3;
+class GTransform_QT;
 class IGlacierDraw
 {
 public:
 
-    virtual void DrawLine( const GVector3& V0, const GVector3& V1, uint32_t uColor ) = 0;
+    virtual void DrawLine(const GVector3& V0, const GVector3& V1, GColor uColor) = 0;
 
-    virtual void DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor);
+    virtual void DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, GColor TColor);
 
-    virtual void DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg);
+    virtual void DrawSphere(const GTransform_QT& TTrans, f32 Radius, GColor TColor, int32_t nSeg);
 
-    virtual void DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg = 18);
+    virtual void DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg = 18);
 
 
-    virtual void DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor);
-//     {
-//         FTransform Transform;
-//         Transform.SetTranslation(Plane.GetNormal() * Plane.W);
-//         Transform.SetRotation(FQuat::FindBetweenNormals(FVector(0, 0, 1), Plane.GetNormal()));
-// 
-//         auto P0 = Transform.TransformPosition(FVector(-1, -1, 0) * Size);
-//         auto P1 = Transform.TransformPosition(FVector(1, -1, 0) * Size);
-//         auto P2 = Transform.TransformPosition(FVector(1, 1, 0) * Size);
-//         auto P3 = Transform.TransformPosition(FVector(-1, 1, 0) * Size);
-// 
-//         DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P1), TColor);
-//         DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P2), TColor);
-//         DrawLine(TTrans.TransformPosition(P2), TTrans.TransformPosition(P3), TColor);
-//         DrawLine(TTrans.TransformPosition(P3), TTrans.TransformPosition(P0), TColor);
-//         DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P2), TColor);
-//         DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P3), TColor);
-//         DrawLine(TTrans.TransformPosition(Transform.GetLocation()), TTrans.TransformPosition(Transform.GetLocation() + Plane.GetNormal() * Size * 0.5f), TColor);
-//     }
+    virtual void DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, GColor TColor);
+    //     {
+    //         FTransform Transform;
+    //         Transform.SetTranslation(Plane.GetNormal() * Plane.W);
+    //         Transform.SetRotation(FQuat::FindBetweenNormals(FVector(0, 0, 1), Plane.GetNormal()));
+    // 
+    //         auto P0 = Transform.TransformPosition(FVector(-1, -1, 0) * Size);
+    //         auto P1 = Transform.TransformPosition(FVector(1, -1, 0) * Size);
+    //         auto P2 = Transform.TransformPosition(FVector(1, 1, 0) * Size);
+    //         auto P3 = Transform.TransformPosition(FVector(-1, 1, 0) * Size);
+    // 
+    //         DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P1), TColor);
+    //         DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P2), TColor);
+    //         DrawLine(TTrans.TransformPosition(P2), TTrans.TransformPosition(P3), TColor);
+    //         DrawLine(TTrans.TransformPosition(P3), TTrans.TransformPosition(P0), TColor);
+    //         DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P2), TColor);
+    //         DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P3), TColor);
+    //         DrawLine(TTrans.TransformPosition(Transform.GetLocation()), TTrans.TransformPosition(Transform.GetLocation() + Plane.GetNormal() * Size * 0.5f), TColor);
+    //     }
 
 
 

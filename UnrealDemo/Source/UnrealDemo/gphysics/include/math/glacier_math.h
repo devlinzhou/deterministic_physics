@@ -14,7 +14,7 @@
 
 #include "glacier_float.h"
 
-#define  Deterministic_Float
+//#define  Deterministic_Float
 
 #ifdef Deterministic_Float
 typedef GFloat f32;
@@ -66,6 +66,13 @@ public:
     static inline void SinCos(const f32 value, f32& OutSin, f32& OutCos){ GFloat::SinCos(value, OutSin, OutCos);}
 
 
+    static inline f32       Ceil(const f32 value)       { return GFloat::Ceil(value); }
+    static inline f32       Floor(const f32 value)      { return GFloat::Floor(value); }
+    static inline int32_t   CeilToInt(const f32 value)  { return GFloat::CeilToInt(value);}
+    static inline int32_t   FloorToInt(const f32 value) { return GFloat::FloorToInt(value); }
+
+
+
     static inline f32 FromFloat( float value ){  return GFloat::FromFloat(value); }
     static inline float ToFloat( f32 value ){  return value.toFloat(); }
     
@@ -100,6 +107,11 @@ public:
     static inline f32   Sqrt(const f32 value)                   { return sqrtf(value); }
     static inline f32   InvSqrt(const f32 value)                { return 1.f / sqrtf(value); }
     static inline void  SinCos(const f32 value, f32& OutSin, f32& OutCos) { OutSin = sinf(value); OutCos = cosf(value); }
+
+    static inline f32       Ceil(const f32 value) { return ceilf(value); }
+    static inline f32       Floor(const f32 value) { return floorf(value); }
+    static inline int32_t   CeilToInt(const f32 value) { return (int32_t)ceilf(value); }
+    static inline int32_t   FloorToInt(const f32 value) { return (int32_t)floorf(value); }
 
     static inline f32 FromFloat(float value) { return value; }
     static inline float ToFloat(f32 value) { return value; }

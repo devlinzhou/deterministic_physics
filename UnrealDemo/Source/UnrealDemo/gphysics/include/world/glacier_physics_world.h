@@ -26,6 +26,11 @@ struct GGridPosition
     int32_t y;
     int32_t z;
 
+    GGridPosition( )
+    {
+
+    }
+
     GGridPosition(int32_t _x, int32_t _y, int32_t _z) :
         x(_x), y(_y), z(_z)
     {
@@ -41,6 +46,7 @@ struct GGridPosition
     {
         return x != b.x || y != b.y || z != b.z;
     }
+
     inline bool operator < (const GGridPosition& b) const
     {
         if( z != b.z )
@@ -59,18 +65,20 @@ struct GGridPosition
             }
         }
     }
-
 };
 
 class GGridCell
 {
 public:
-    GGridPosition                   m_pos = GGridPosition(0,0,0);
-    std::vector<GCollisionObject*>  m_AllCollisionObject;
-    GVector3                        m_min;// = GVector3(10000, 10000, 10000);
-    GVector3                        m_max;// = GVector3(-10000, -10000, -10000);
+    GGridPosition                   m_pos;
+    std::vector<GCollisionObject*>  m_Objects;
+    GVector3                        m_min = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
+    GVector3                        m_max = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
 
 public:
+    GGridCell( const GGridPosition& TPos ) : m_pos(TPos)
+    {}
+
     GGridCell(int32_t _x, int32_t _y, int32_t _z) : m_pos( GGridPosition(_x,_y,_z))
     {}
 
@@ -85,27 +93,24 @@ public:
             ( abs(m_pos.z - other.m_pos.z) <= 1 );
     }
 
-
     inline GVector3 GetCenter() const
     {
-        (m_min + m_max) * f32::Half();
+        return (m_min + m_max) * GMath::Half();
     }
 
-    inline GVector3 GetHalfSize()
+    inline GVector3 GetHalfSize() const
     {
-        (m_max - m_min ) * f32::Half();
+        return (m_max - m_min) * GMath::Half();
     }
 
+    bool AddCollisionObject(GCollisionObject* pObject);
 
 
-    void DebugDraw(IGlacierDraw* pDraw );
-
+    void DebugDraw(IGlacierDraw* pDraw ) const;
 
 
 private:
   
-
-    
 };
 
 
@@ -113,10 +118,23 @@ class GPhysicsWorld
 {
 public:
 
-    void DebugDraw(IGlacierDraw* pDraw );
+    void Init( int32_t nCellWide = 20, int32_t nCellHeight = 20 )
+    {
+        m_nCellWide     = f32(nCellWide);
+        m_nCellHeight   = f32(nCellHeight);
+    }
+
+    void AddCollisionObject( GCollisionObject* pObject );
+
+    void DebugDraw(IGlacierDraw* pDraw ) const;
 
 private:
 
+    f32 m_nCellWide;
+    f32 m_nCellHeight;
+
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*> m_Grids;
+
+
 };

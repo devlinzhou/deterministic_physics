@@ -59,17 +59,17 @@ public:
 class GShapeSphere : public GShapeConvexBase
 {
 public:
-    GShapeSphere( f32 tRaduis ) : Raius(tRaduis)
+    GShapeSphere( f32 tRaduis ) : Radius(tRaduis)
     {
         ShapType = EShape::Sphere;
     }
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
-        return Dir * Raius;
+        return Dir * Radius;
     }
 
-    f32 Raius;
+    f32 Radius;
 };
 class GShapeBox : public GShapeConvexBase
 {
@@ -108,7 +108,7 @@ public:
 
         f32 newDot;
         {
-            GVector3 pos = GVector3( f32::Zero(), f32::Zero(), HalfHeight );
+            GVector3 pos = GVector3( GMath::Zero(), GMath::Zero(), HalfHeight );
 
             GVector3 vtx = pos + Dir * Raius ;
             newDot = GVector3::DotProduct( Dir, vtx );
@@ -119,7 +119,7 @@ public:
             }
         }
         {
-            GVector3 pos = GVector3( f32::Zero(), f32::Zero(),-HalfHeight );
+            GVector3 pos = GVector3( GMath::Zero(), GMath::Zero(),-HalfHeight );
             GVector3 vtx = pos + Dir * Raius;
             newDot = GVector3::DotProduct( Dir, vtx );
             if (newDot > maxDot)

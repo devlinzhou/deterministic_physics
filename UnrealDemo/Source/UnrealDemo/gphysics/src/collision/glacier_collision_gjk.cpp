@@ -64,7 +64,7 @@ bool GCollision_GJK::GJKTest(
     }
 
 
-    if( GVector3::DotProduct( DirectionA, SupportPos0 ) < f32::Zero() )
+    if( GVector3::DotProduct( DirectionA, SupportPos0 ) < GMath::Zero() )
     {
         return false;
     }
@@ -74,7 +74,7 @@ bool GCollision_GJK::GJKTest(
     GVector3 SupportPos1 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x0000FFFF);
 
 
-    if (GVector3::DotProduct(DirectionA, SupportPos1) < f32::Zero())
+    if (GVector3::DotProduct(DirectionA, SupportPos1) < GMath::Zero())
     {
         return false;
     }
@@ -93,7 +93,7 @@ bool GCollision_GJK::GJKTest(
     GVector3 SupportPos2 = s_GetSupportPos(DirectionA, ShapA, ShapB, LocalBToLocalA, LocalAToLocalB, TransformA, TransformB, pDebugDraw, 0x000000FF);
 
 
-    if (GVector3::DotProduct(DirectionA, SupportPos2) < f32::Zero())
+    if (GVector3::DotProduct(DirectionA, SupportPos2) < GMath::Zero())
     {
         return false;
     }
@@ -111,7 +111,7 @@ bool GCollision_GJK::GJKTest(
 
 
 
-    if (GVector3::DotProduct(DirectionA, SupportPos3) < f32::Zero())
+    if (GVector3::DotProduct(DirectionA, SupportPos3) < GMath::Zero())
     {
         return false;
     }

@@ -14,15 +14,74 @@
 #include "glacier_vector.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+#include "glacier_physics_utils.h"
 
 
-void GGridCell::DebugDraw(IGlacierDraw* pDraw)
+void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
 {
+    pDraw->DrawBox( GTransform_QT::Identity(), GetCenter(), GetHalfSize(),0x00FFFF00 );
+
+    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
+    {
+        const GCollisionObject* pObject = m_Objects[i];
+        GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_pShape, pDraw);
+    }
 
 }
 
-void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw )
+bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
 {
+    for( int32_t i = 0; i < (int32_t)m_Objects.size(); ++i )
+    {
+        if( pObject == m_Objects[i])
+            return false;
+    }
 
+    m_Objects.push_back(pObject);
+
+    return true;
+}
+
+
+void GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
+{
+    GVector3 VPos = pObject->m_Transform.m_Translation;
+
+    GGridPosition CellPos;
+
+    CellPos.x = GMath::FloorToInt(VPos.x / m_nCellWide );
+    CellPos.y = GMath::FloorToInt(VPos.y / m_nCellWide);
+    CellPos.z = GMath::FloorToInt(VPos.z / m_nCellHeight);
+
+    GGridCell* pCell = nullptr;
+
+    std::map<GGridPosition, GGridCell*>::iterator iter = m_Grids.find(CellPos); 
+
+    if( iter != m_Grids.end() )
+    {
+        pCell = iter->second;
+    }
+    else
+    {
+        pCell = new GGridCell( CellPos);
+        m_Grids[CellPos] = pCell;
+    }
+
+    if( pCell != nullptr)
+    {
+        pCell->AddCollisionObject(pObject);
+    }
+
+
+}
+
+void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
+{
+   // std::map<GGridPosition, GGridCell*> m_Grids;
+
+    for( std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter )
+    {
+        iter->second->DebugDraw(pDraw);
+    }
 
 }

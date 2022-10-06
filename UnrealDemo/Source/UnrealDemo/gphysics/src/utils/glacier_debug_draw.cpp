@@ -12,9 +12,11 @@
  */
 
 #include "glacier_debug_draw.h"
+#include "glacier_vector.h"
+#include "glacier_transform_qt.h"
 #include <vector>
 
-void IGlacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, uint32_t TColor)
+void IGlacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, GColor TColor)
 {
     GVector3 c = LocalCenter;
     GVector3 d = HalfSize;
@@ -36,7 +38,7 @@ void IGlacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCen
     DrawLine(TTrans.TransformPosition(c - dz - dx - dy), TTrans.TransformPosition(c - dz - dx + dy), TColor);
 }
 
-void IGlacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t TColor, int32_t nSeg)
+void IGlacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, GColor TColor, int32_t nSeg)
 {
     int32_t nStep = nSeg;
 
@@ -106,16 +108,16 @@ void IGlacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, uint32_t 
     }
 }
 
-void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, uint32_t TColor, int nSeg)
+void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg)
 {
     const f32 AngleIncrement = f32(360) / f32(nSeg);
 
-    GVector3 SeparationDir = GVector3(f32::Zero(), f32::Zero(), f32::One());
+    GVector3 SeparationDir = GVector3(GMath::Zero(), GMath::Zero(), GMath::One());
 
-    GVector3 VertexPrevious = GVector3(f32::One(), f32::Zero(), f32::Zero());
+    GVector3 VertexPrevious = GVector3(GMath::One(), GMath::Zero(), GMath::Zero());
 
-    GVector3 Center0 = GVector3(f32::Zero(), f32::Zero(), HalfHeight);
-    GVector3 Center1 = GVector3(f32::Zero(), f32::Zero(), -HalfHeight);
+    GVector3 Center0 = GVector3(GMath::Zero(), GMath::Zero(), HalfHeight);
+    GVector3 Center1 = GVector3(GMath::Zero(), GMath::Zero(), -HalfHeight);
 
 
     for (f32 Angle = AngleIncrement; Angle <= 360.0f; Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
@@ -123,7 +125,7 @@ void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
         f32 TSin, TCos;
         GMath::SinCos(GMath::DegreesToRadians(Angle), TSin, TCos);
 
-        GVector3 VLocal = GVector3( TCos,  TSin, f32::Zero());
+        GVector3 VLocal = GVector3( TCos,  TSin, GMath::Zero());
 
         GVector3 VertexCurrent = VLocal;
         DrawLine(TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);  // capsule side segment between spheres
@@ -133,7 +135,7 @@ void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
 
         GVector3 VertexPrevious_Longitude = SeparationDir;
 
-        GVector3 VertexCurrentDir = GVector3(TCos, TSin, f32::Zero());
+        GVector3 VertexCurrentDir = GVector3(TCos, TSin, GMath::Zero());
 
         for (f32 Angle_Longitude = AngleIncrement; Angle_Longitude <= f32(180.0f); Angle_Longitude += AngleIncrement)
         {
@@ -173,7 +175,7 @@ void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
 
 
 
-void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, uint32_t TColor)
+void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, GColor TColor)
 {
    /* GTransform_QT Transform;
     Transform.m_Translation =  PlaneNormal  * PlaneDis;

@@ -18,12 +18,12 @@ public:
         m_World = pWorld;
     }
 
-    virtual void DrawLine(const GVector3& V0, const GVector3& V1, uint32_t uColor)
+    virtual void DrawLine(const GVector3& V0, const GVector3& V1, GColor uColor)
     {
         FVector TV0 = GUtility::Unit_G_to_U( V0 );
         FVector TV1 = GUtility::Unit_G_to_U( V1 );
 
-        UKismetSystemLibrary::DrawDebugLine(m_World, TV0, TV1, FColor(uColor) );
+        UKismetSystemLibrary::DrawDebugLine(m_World, TV0, TV1, FColor(uColor.RawValue) );
     }
 
     UWorld* m_World = nullptr;
