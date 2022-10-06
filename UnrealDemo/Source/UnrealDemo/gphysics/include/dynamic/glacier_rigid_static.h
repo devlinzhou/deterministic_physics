@@ -12,17 +12,12 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
-#include "glacier_transform_qt.h"
-#include "glacier_collision_shape.h"
+#include "glacier_rigid_body.h"
 
-class GCollisionObject
+class GStaticRigid : public GRigidBody
 {
 public:
 
-    GTransform_QT   m_Transform;
-    GShapeBase*     m_pShape;  
 
 
-    uint32_t        m_Id;
 };

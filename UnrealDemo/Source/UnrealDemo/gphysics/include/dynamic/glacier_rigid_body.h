@@ -12,11 +12,9 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
-#include "glacier_transform_qt.h"
-#include "glacier_collision_shape.h"
+#include "glacier_collision_object.h"
 
-class GCollisionObject
+class GRigidBody : GCollisionObject
 {
 public:
 
@@ -24,5 +22,4 @@ public:
     GShapeBase*     m_pShape;  
 
 
-    uint32_t        m_Id;
 };

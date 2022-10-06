@@ -15,7 +15,8 @@
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 #include "glacier_physics_utils.h"
-
+#include "glacier_debug_draw.h"
+#include "glacier_collision_object.h"
 
 void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
 {
@@ -74,6 +75,23 @@ void GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 
 
 }
+
+void GPhysicsWorld::PreTick()
+{
+
+}
+
+void GPhysicsWorld::SimulateTick(f32 DetltaTime)
+{
+
+}
+
+void GPhysicsWorld::PostTick()
+{
+
+
+}
+
 
 void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
 {

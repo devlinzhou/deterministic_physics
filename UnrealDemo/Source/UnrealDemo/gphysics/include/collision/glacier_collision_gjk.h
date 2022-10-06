@@ -12,7 +12,6 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 

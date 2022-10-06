@@ -15,9 +15,12 @@ public class UnrealDemo : ModuleRules
             new string[]
             {
                 "UnrealDemo/gphysics/include/collision",
+                "UnrealDemo/gphysics/include/dynamic",
                 "UnrealDemo/gphysics/include/math",
                 "UnrealDemo/gphysics/include/utils",
                 "UnrealDemo/gphysics/include/world",
+
+
 
             });
         

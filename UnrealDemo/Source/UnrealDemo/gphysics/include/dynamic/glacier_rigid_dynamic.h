@@ -12,17 +12,22 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
-#include "glacier_transform_qt.h"
-#include "glacier_collision_shape.h"
+#include "glacier_rigid_body.h"
 
-class GCollisionObject
+class GDynamicRigid : public GRigidBody
 {
 public:
 
-    GTransform_QT   m_Transform;
-    GShapeBase*     m_pShape;  
+    f32             m_Mass;
+    f32             m_InvMass;
+    GVector3        m_Velocity;
+
+    GVector3        m_MoumentInertia;
+    GVector3        m_InvMoumentInertia;
+    GVector3        m_AngleVelocity;
 
 
-    uint32_t        m_Id;
+
+
+
 };

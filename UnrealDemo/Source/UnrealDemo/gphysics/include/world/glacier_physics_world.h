@@ -12,10 +12,9 @@
  */
 #pragma once
 
-#include "glacier_vector.h"
 #include "glacier_transform_qt.h"
-#include "glacier_collision_object.h"
-#include "glacier_debug_draw.h"
+
+
 #include <vector>
 #include <map>
 
@@ -67,6 +66,7 @@ struct GGridPosition
     }
 };
 
+class GCollisionObject;
 class GGridCell
 {
 public:
@@ -125,6 +125,13 @@ public:
     }
 
     void AddCollisionObject( GCollisionObject* pObject );
+
+
+    void PreTick(  );
+
+    void SimulateTick( f32 DetltaTime );
+
+    void PostTick();
 
     void DebugDraw(IGlacierDraw* pDraw ) const;
 
