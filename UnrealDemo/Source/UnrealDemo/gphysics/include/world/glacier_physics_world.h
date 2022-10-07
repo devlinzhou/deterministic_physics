@@ -36,6 +36,19 @@ struct GGridPosition
     
     }
 
+    inline GGridPosition operator + (const GGridPosition& b) const
+    {
+        return GGridPosition(x+b.x, y+b.y, z+b.z);
+    }
+
+    inline GGridPosition& operator += (const GGridPosition& b)
+    {
+         x += b.x;
+         y += b.y;
+         z += b.z;
+         return *this;
+    }
+
     inline bool operator == (const GGridPosition& b) const
     {
         return x == b.x && y == b.y && z == b.z;
@@ -76,12 +89,24 @@ public:
     GVector3                        m_min = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
     GVector3                        m_max = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
 
-public:
-    GGridCell( const GGridPosition& TPos ) : m_pos(TPos)
-    {}
+    GAABB                           m_AABB;
 
-    GGridCell(int32_t _x, int32_t _y, int32_t _z) : m_pos( GGridPosition(_x,_y,_z))
-    {}
+public:
+    GGridCell( const GGridPosition& TPos, f32 CeilWide, f32 CeilHeight ) : m_pos(TPos)
+    {
+        GVector3 VMin = GVector3( 
+            f32(TPos.x) * CeilWide,
+            f32(TPos.y) * CeilWide,
+            f32(TPos.z) * CeilHeight );
+
+        GVector3 VMax = GVector3(
+            f32(TPos.x + 1) * CeilWide,
+            f32(TPos.y + 1) * CeilWide,
+            f32(TPos.z + 1) * CeilHeight);
+       
+        m_AABB = GAABB(VMin, VMax );
+ 
+    }
 
     ~GGridCell() {}
 
@@ -114,6 +139,34 @@ private:
   
 };
 
+class GBroadPhasePair
+{
+public:
+
+    GBroadPhasePair() = default;
+    GBroadPhasePair(const GBroadPhasePair&) = default;
+    GBroadPhasePair(GCollisionObject* p1, GCollisionObject* p2)
+    {
+        if (p1->GetId() == p2->GetId())
+        {
+            pObjectA = nullptr;
+            pObjectB = nullptr;
+        }
+        else if (p1->GetId() < p2->GetId())
+        {
+            pObjectA = p1;
+            pObjectB = p2;
+        }
+        else
+        {
+            pObjectA = p2;
+            pObjectB = p1;
+        }
+    }
+
+    GCollisionObject* pObjectA;
+    GCollisionObject* pObjectB;
+};
 
 class GPhysicsWorld
 {
@@ -144,6 +197,7 @@ private:
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*> m_Grids;
     std::vector<GCollisionObject*>      m_Objects;
+    std::vector<GBroadPhasePair>        m_BroadPhasePairs;
 
 
 };

@@ -28,6 +28,10 @@ class GCollisionObject
 {
 public:
 
+    ECollisionObjectType GetCollisionObjectType() const {return m_CollisionType;}
+
+    uint32_t GetId()const {return m_Id;}
+
     void UpdateAABB()
     {
         if( m_Shape.ShapType == EShape::EShape_Sphere)
@@ -36,9 +40,10 @@ public:
                 m_Transform.m_Translation - GVector3( m_Shape.GetRaiuds() ),
                 m_Transform.m_Translation + GVector3( m_Shape.GetRaiuds() ) );
         }
-
-    
     }
+
+    const GAABB& GetAABB() const { return m_AABB; }
+
     
 
 

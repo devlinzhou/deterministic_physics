@@ -173,18 +173,80 @@ void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
 
 }
 
+void IGlacierDraw::DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg)
+{
+    const f32 AngleIncrement = f32(360) / f32(nSeg);
 
+    GVector3 SeparationDir = GVector3(GMath::Zero(), GMath::Zero(), GMath::One());
+
+    GVector3 VertexPrevious = GVector3(GMath::One(), GMath::Zero(), GMath::Zero());
+
+    GVector3 Center0 = GVector3(GMath::Zero(), GMath::Zero(), HalfHeight);
+    GVector3 Center1 = GVector3(GMath::Zero(), GMath::Zero(), -HalfHeight);
+
+
+    for (f32 Angle = AngleIncrement; Angle <= 360.0f; Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
+    {
+        f32 TSin, TCos;
+        GMath::SinCos(GMath::DegreesToRadians(Angle), TSin, TCos);
+
+        GVector3 VLocal = GVector3(TCos, TSin, GMath::Zero());
+
+        GVector3 VertexCurrent = VLocal;
+        DrawLine(TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);  // capsule side segment between spheres
+        DrawLine(TTrans.TransformPosition(Center0 + VertexPrevious * Radius), TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TColor);  // cap-circle segment on sphere S0
+        DrawLine(TTrans.TransformPosition(Center1 + VertexPrevious * Radius), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);  // cap-circle segment on sphere S1
+        VertexPrevious = VertexCurrent;
+
+        GVector3 VertexPrevious_Longitude = SeparationDir;
+
+        GVector3 VertexCurrentDir = GVector3(TCos, TSin, GMath::Zero());
+
+        for (f32 Angle_Longitude = AngleIncrement; Angle_Longitude <= f32(180.0f); Angle_Longitude += AngleIncrement)
+        {
+            f32 TfSin, TfCos;
+            GMath::SinCos(GMath::DegreesToRadians(Angle_Longitude), TfSin, TfCos);
+
+            GVector3 VertexCurrent_Longitude = SeparationDir * TfCos + VertexCurrentDir * TfSin;
+
+            if (Angle_Longitude < (f32(90.0f)))
+            {
+                if (Angle_Longitude >= (f32(90.0f) - AngleIncrement))
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center0), TTrans.TransformPosition(Center0 + VertexCurrent * Radius), TColor);
+                }
+
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center0), TTrans.TransformPosition(VertexPrevious_Longitude * Radius + Center0), TColor);
+                }
+            }
+            else
+            {
+                if (Angle_Longitude < (f32(90.0f) + AngleIncrement))
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center1), TTrans.TransformPosition(Center1 + VertexCurrent * Radius), TColor);
+                }
+                else
+                {
+                    DrawLine(TTrans.TransformPosition(VertexCurrent_Longitude * Radius + Center1), TTrans.TransformPosition(VertexPrevious_Longitude * Radius + Center1), TColor);
+                }
+            }
+
+            VertexPrevious_Longitude = VertexCurrent_Longitude;
+        }
+    }
+}
 
 void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, GColor TColor)
 {
-   /* GTransform_QT Transform;
+  /*  GTransform_QT Transform;
     Transform.m_Translation =  PlaneNormal  * PlaneDis;
-    Transform.SetRotation(FQuat::FindBetweenNormals(FVector(0, 0, 1), Plane.GetNormal()));
+    Transform.SetRotation(FQuat::FindBetweenNormals(GVector3(GMath::Zero(), GMath::Zero(), GMath::One()), Plane.GetNormal()));
 
-    auto P0 = Transform.TransformPosition(FVector(-1, -1, 0) * Size);
-    auto P1 = Transform.TransformPosition(FVector(1, -1, 0) * Size);
-    auto P2 = Transform.TransformPosition(FVector(1, 1, 0) * Size);
-    auto P3 = Transform.TransformPosition(FVector(-1, 1, 0) * Size);
+    auto P0 = Transform.TransformPosition(GVector3(-GMath::One(), -GMath::One(), GMath::Zero()) * Size);
+    auto P1 = Transform.TransformPosition(GVector3(GMath::One(), -GMath::One(), GMath::Zero()) * Size);
+    auto P2 = Transform.TransformPosition(GVector3(GMath::One(), GMath::One(), GMath::Zero()) * Size);
+    auto P3 = Transform.TransformPosition(GVector3(-GMath::One(), GMath::One(), GMath::Zero()) * Size);
 
     DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P1), TColor);
     DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P2), TColor);

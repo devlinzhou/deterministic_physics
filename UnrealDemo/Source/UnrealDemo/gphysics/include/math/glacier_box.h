@@ -184,8 +184,9 @@ public:
 
     inline bool Intersects( const GAABB& OtherBox ) const
     {
-        if( m_VMax.x < OtherBox.m_VMin.x || m_VMax.y < OtherBox.m_VMin.y ||  m_VMax.z < OtherBox.m_VMin.z || 
-            m_VMin.x > OtherBox.m_VMax.x || m_VMin.y > OtherBox.m_VMax.y || m_VMin.z > OtherBox.m_VMax.z )
+        if( m_VMax.x < OtherBox.m_VMin.x || m_VMin.x > OtherBox.m_VMax.x ||
+            m_VMax.y < OtherBox.m_VMin.y || m_VMin.y > OtherBox.m_VMax.y || 
+            m_VMax.z < OtherBox.m_VMin.z || m_VMin.z > OtherBox.m_VMax.z )
         {
             return false;
         }

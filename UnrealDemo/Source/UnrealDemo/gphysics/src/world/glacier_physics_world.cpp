@@ -73,7 +73,7 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
     }
     else
     {
-        pCell = new GGridCell( CellPos);
+        pCell = new GGridCell( CellPos, m_nCellWide, m_nCellHeight );
         m_Grids[CellPos] = pCell;
     }
 
@@ -90,6 +90,24 @@ void GPhysicsWorld::PreTick()
 
 }
 
+GGridPosition s_BroadPhaseNeighbourt[13] =
+{
+    GGridPosition( 1, -1, -1 ),
+    GGridPosition( 1,  0, -1 ),
+    GGridPosition( 1,  1, -1 ),
+    GGridPosition( 1, -1,  0 ),
+    GGridPosition( 1,  0,  0 ),
+    GGridPosition( 1,  1,  0 ),
+    GGridPosition( 1, -1,  1 ),
+    GGridPosition( 1,  0,  1 ),
+    GGridPosition( 1,  1,  1 ),
+    GGridPosition( 0,  1, -1 ),
+    GGridPosition( 0,  1,  0 ),
+    GGridPosition( 0,  1,  1 ),
+    GGridPosition( 0,  0,  1 )
+};
+
+
 void GPhysicsWorld::SimulateTick(f32 DetltaTime)
 {
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
@@ -101,6 +119,71 @@ void GPhysicsWorld::SimulateTick(f32 DetltaTime)
             pDynamicRigid->Tick_PreTransform( DetltaTime );
         }
     }
+
+    // broadphase
+    m_BroadPhasePairs.clear();
+    for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
+    {
+        // ceil 
+        for( int32_t i = 0; i < (int32_t)iter->second->m_Objects.size(); ++i )
+        {
+            GCollisionObject* pObjectA = iter->second->m_Objects[i];
+
+            if( pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
+            {
+                continue;
+            }
+            const GAABB& BoxA =  pObjectA->GetAABB();
+            for (int32_t j = 0; j < i; ++i)
+            {
+                GCollisionObject* pObjectB = iter->second->m_Objects[j]; 
+                const GAABB& BoxB =  pObjectB->GetAABB();
+                if( BoxA.Intersects(BoxB) )
+                {
+                    m_BroadPhasePairs.push_back( GBroadPhasePair( pObjectA, pObjectB));       
+                }
+            }
+        }
+         // other ceil
+
+        for (int32_t i = 0; i < 13; ++i)
+        {
+            GGridPosition TPos = s_BroadPhaseNeighbourt[i] + iter->first;
+
+            std::map<GGridPosition, GGridCell*>::const_iterator iterB = m_Grids.find( TPos );
+
+            if( iterB == m_Grids.end() )
+                continue;
+
+            for (int32_t LoopA = 0; i < (int32_t)iter->second->m_Objects.size(); ++LoopA)
+            {
+                GCollisionObject* pObjectA = iter->second->m_Objects[LoopA];
+
+                if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
+                {
+                    continue;
+                }
+
+                const GAABB& BoxA =  pObjectA->GetAABB();
+                for (int32_t LoopB = 0; i < (int32_t)iterB->second->m_Objects.size(); ++LoopB)
+                {
+                    GCollisionObject* pObjectB = iter->second->m_Objects[LoopA];
+
+                    if( pObjectA->GetId() <  pObjectB->GetId())
+                    {
+                        const GAABB& BoxB = pObjectB->GetAABB();
+                        if (BoxA.Intersects(BoxB))
+                        {
+                            m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 
+
 }
 
 void GPhysicsWorld::PostTick()
