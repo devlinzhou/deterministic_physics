@@ -125,7 +125,7 @@ public:
         m_nCellHeight   = f32(nCellHeight);
     }
 
-    void AddCollisionObject( GCollisionObject* pObject );
+    bool AddCollisionObject( GCollisionObject* pObject );
 
 
     void PreTick(  );
@@ -143,6 +143,7 @@ private:
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*> m_Grids;
+    std::vector<GCollisionObject*>      m_Objects;
 
 
 };

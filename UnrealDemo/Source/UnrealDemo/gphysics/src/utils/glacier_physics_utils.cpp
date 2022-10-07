@@ -15,55 +15,52 @@
 #include "glacier_collision_shape.h"
 #include "glacier_debug_draw.h"
 
-void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GShapeBase* pShape, IGlacierDraw* pDebugDraw )
+void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw )
 {
-    switch (pShape->ShapType )
+    switch (pShape.ShapType )
     {
-    case  ConvexBase:
+    case  EShape::EShape_ConvexBase:
     {
         
     }
     break;
-    case  Sphere:
+    case  EShape::EShape_Sphere:
     {
-        GShapeSphere* pSphere = (GShapeSphere*)pShape;
-        pDebugDraw->DrawSphere(Trans, pSphere->Radius, GColor::White(), 18 );
+        pDebugDraw->DrawSphere(Trans, pShape.GetRaiuds(), GColor::White(), 18 );
     }
     break;
-    case  Box:
+    case  EShape::EShape_Box:
     {
-        GShapeBox* pBox = (GShapeBox*)pShape;
-        pDebugDraw->DrawBox(Trans, GVector3::Zero(), pBox->HalfExtern, GColor::White());
+        pDebugDraw->DrawBox(Trans, GVector3::Zero(), pShape.GetHalfExtern(), GColor::White());
     }
     break;
-    case  Capsule:
+    case  EShape::EShape_Capsule:
     {
-        GShapeCapsule* pCapsule = (GShapeCapsule*)pShape;
-        pDebugDraw->DrawCapsule(Trans, pCapsule->Raius, pCapsule->HalfHeight, GColor::White());
+        pDebugDraw->DrawCapsule(Trans, pShape.GetRaiuds(), pShape.GetHalfHeight(), GColor::White());
     }
     break;
-    case  Cylinder:
+    case  EShape::EShape_Cylinder:
     {
 
     }
     break;
-    case  ConvexHull:
+    case  EShape::EShape_ConvexHull:
     {
 
     }
     break;
 
-    case  ConcaveBase:
+    case  EShape::EShape_ConcaveBase:
     {
 
     }
     break;
-    case  HightField:
+    case  EShape::EShape_HightField:
     {
 
     }
     break;
-    case  TriangleMesh:
+    case  EShape::EShape_TriangleMesh:
     {
 
     }

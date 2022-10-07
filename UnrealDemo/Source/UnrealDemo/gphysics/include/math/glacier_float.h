@@ -493,15 +493,15 @@ public:
         {
             return value.getfraction() > 0 ? One() : Zero();
         }
+    
     }
-
     static GFORCE_INLINE GFloat Floor(const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
 
         if (exp >= 0)
             return value;
-        else if (exp > -23)
+        else if( exp > -23 )
         {
             return GFloat::FromFractionAndExp((value.getfraction() >> -exp) << -exp, exp + 127);
         }
@@ -556,9 +556,9 @@ public:
         else
         {
             if (fra >= 0)
-                return 0;
+                return 1;
             else
-                return -1;
+                return 0;
         }
     }
 
@@ -583,6 +583,7 @@ public:
     static GFloat Pow(const GFloat base, const GFloat exponent) { if (base.rawint32 <= 0) return Zero(); return Pow2(exponent * Log2(base)); }
     static GFloat InvSqrt(const GFloat value );
     static GFloat Sqrt(const GFloat value){return value * InvSqrt(value);}
+    static GFloat Fmod(const GFloat x, const GFloat y){ GFloat t = x / y; GFloat out = Zero(); t.GetWhole(out); return out * y;   }
 
 public:
     static constexpr int32_t ms_TriTableBit = 8;

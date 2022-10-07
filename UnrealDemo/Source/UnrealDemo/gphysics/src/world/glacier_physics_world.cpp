@@ -17,6 +17,7 @@
 #include "glacier_physics_utils.h"
 #include "glacier_debug_draw.h"
 #include "glacier_collision_object.h"
+#include "glacier_rigid_dynamic.h"
 
 void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
 {
@@ -25,18 +26,18 @@ void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         const GCollisionObject* pObject = m_Objects[i];
-        GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_pShape, pDraw);
+        GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw);
     }
 
 }
 
 bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
 {
-    for( int32_t i = 0; i < (int32_t)m_Objects.size(); ++i )
+    if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
     {
-        if( pObject == m_Objects[i])
-            return false;
+        return false;
     }
+
 
     m_Objects.push_back(pObject);
 
@@ -44,8 +45,16 @@ bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
 }
 
 
-void GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
+bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 {
+    if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
+    {
+        return false;
+    }
+
+    m_Objects.push_back(pObject);
+
+
     GVector3 VPos = pObject->m_Transform.m_Translation;
 
     GGridPosition CellPos;
@@ -73,7 +82,7 @@ void GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
         pCell->AddCollisionObject(pObject);
     }
 
-
+    return true;
 }
 
 void GPhysicsWorld::PreTick()
@@ -83,7 +92,15 @@ void GPhysicsWorld::PreTick()
 
 void GPhysicsWorld::SimulateTick(f32 DetltaTime)
 {
-
+    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
+    {
+        GCollisionObject* pObject = m_Objects[i];
+        if( pObject->m_CollisionType == ECollisionObjectType::Dynamic)
+        {
+            GDynamicRigid* pDynamicRigid = (GDynamicRigid*)pObject;
+            pDynamicRigid->Tick_PreTransform( DetltaTime );
+        }
+    }
 }
 
 void GPhysicsWorld::PostTick()

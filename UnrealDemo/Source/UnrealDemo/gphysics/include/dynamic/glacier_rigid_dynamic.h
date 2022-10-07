@@ -18,6 +18,21 @@ class GDynamicRigid : public GRigidBody
 {
 public:
 
+
+
+    void Tick_PreTransform( const f32 DetalTime )
+    {
+        m_Transform_Pre.m_Translation += m_Velocity * DetalTime;
+        //m_Transform_Pre.
+    
+    }
+
+
+
+public:
+
+    GTransform_QT   m_Transform_Pre;
+
     f32             m_Mass;
     f32             m_InvMass;
     GVector3        m_Velocity;

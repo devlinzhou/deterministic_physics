@@ -13,16 +13,42 @@
 #pragma once
 
 #include "glacier_vector.h"
+#include "glacier_box.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+
+enum ECollisionObjectType
+{
+    Static= 0,
+    Dynamic,
+
+};
 
 class GCollisionObject
 {
 public:
 
-    GTransform_QT   m_Transform;
-    GShapeBase*     m_pShape;  
+    void UpdateAABB()
+    {
+        if( m_Shape.ShapType == EShape::EShape_Sphere)
+        {
+            m_AABB = GAABB( 
+                m_Transform.m_Translation - GVector3( m_Shape.GetRaiuds() ),
+                m_Transform.m_Translation + GVector3( m_Shape.GetRaiuds() ) );
+        }
+
+    
+    }
+    
 
 
-    uint32_t        m_Id;
+public:
+    GCollisionShape         m_Shape;  
+    ECollisionObjectType    m_CollisionType;
+    GTransform_QT           m_Transform;
+    GTransform_QT           m_Transform_Last;
+    GAABB                   m_AABB;
+
+    uint32_t                m_UserId;
+    uint32_t                m_Id;
 };

@@ -21,6 +21,6 @@ class GPhyscsUtils
 {
 public:
 
-     static void DrawShape( const GTransform_QT& Trans, const GShapeBase* pShape, IGlacierDraw* pDebugDraw );
+     static void DrawShape( const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw );
 
 };

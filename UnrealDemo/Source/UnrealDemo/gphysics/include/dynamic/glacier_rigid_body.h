@@ -19,7 +19,7 @@ class GRigidBody : GCollisionObject
 public:
 
     GTransform_QT   m_Transform;
-    GShapeBase*     m_pShape;  
+    GShapeBase*     m_Shape;  
 
 
 };
