@@ -15,26 +15,21 @@
 
 #include "glacier_math.h"
 #include "glacier_vector.h"
-//#include "glacier_sphere.h"
 
-
-#define  GLACIER_MAX_BB    (+99999.0f)
-#define  GLACIER_MIN_BB    (-99999.0f)
-
-    /*
-    y 
-        |
-        |              5--------6
-        |             /|       /|
-        |            / |      / |
-        |     z     4--------7  |
-        |    /      |  1-----|--2
-        |   /       | /      | /
-        |  /        |/       |/
-        | /         0--------3 
-        |/
-        0------------------------>x 
-        */
+/*
+y 
+    |
+    |              5--------6
+    |             /|       /|
+    |            / |      / |
+    |     z     4--------7  |
+    |    /      |  1-----|--2
+    |   /       | /      | /
+    |  /        |/       |/
+    | /         0--------3 
+    |/
+    0------------------------>x 
+    */
 
 enum GGlacierBoxFaceType
 {
@@ -100,7 +95,6 @@ public:
 
         return TV;
     }
-
 
     inline GVector3 GetLoopCorner( int32_t nIndex ) const
     {

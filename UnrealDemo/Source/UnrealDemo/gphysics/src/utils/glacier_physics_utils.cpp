@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-
+#include "glacier_plane.h"
 #include "glacier_physics_utils.h"
 #include "glacier_collision_shape.h"
 #include "glacier_debug_draw.h"
@@ -53,6 +53,11 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     case  EShape::EShape_ConcaveBase:
     {
 
+    }
+    break;
+    case  EShape::EShape_Plane:
+    {
+         pDebugDraw->DrawPlane(Trans, GPlane( pShape.GetPlaneNormal(), GMath::Zero() ), f32(50), GColor::White());
     }
     break;
     case  EShape::EShape_HightField:

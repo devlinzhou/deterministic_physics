@@ -237,7 +237,7 @@ void IGlacierDraw::DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 Hal
     }
 }
 
-void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, GColor TColor)
+void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, f32 Size, GColor TColor)
 {
   /*  GTransform_QT Transform;
     Transform.m_Translation =  PlaneNormal  * PlaneDis;

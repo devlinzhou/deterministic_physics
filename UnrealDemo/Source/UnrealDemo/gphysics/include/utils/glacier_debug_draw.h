@@ -16,6 +16,7 @@
 
 class GVector3;
 class GTransform_QT;
+class GPlane;
 class IGlacierDraw
 {
 public:
@@ -25,7 +26,7 @@ public:
     virtual void DrawSphere(const GTransform_QT& TTrans, f32 Radius, GColor TColor, int32_t nSeg);
     virtual void DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg = 18);
     virtual void DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg = 18);
-    virtual void DrawPlane(const GTransform_QT& TTrans, const GVector3& PlaneNormal, f32 PlaneDis, f32 Size, GColor TColor);
+    virtual void DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, f32 Size, GColor TColor);
 
 
 

@@ -13,7 +13,7 @@
 #pragma once
 
 #include "glacier_vector.h"
-#include "glacier_box.h"
+#include "glacier_aabb.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 
@@ -28,23 +28,21 @@ class GCollisionObject
 {
 public:
 
-    ECollisionObjectType GetCollisionObjectType() const {return m_CollisionType;}
+    ECollisionObjectType GetCollisionObjectType() const
+    {
+        return m_CollisionType;
+    }
 
     uint32_t GetId()const {return m_Id;}
 
     void UpdateAABB()
     {
-        if( m_Shape.ShapType == EShape::EShape_Sphere)
-        {
-            m_AABB = GAABB( 
-                m_Transform.m_Translation - GVector3( m_Shape.GetRaiuds() ),
-                m_Transform.m_Translation + GVector3( m_Shape.GetRaiuds() ) );
-        }
+        m_WorldAABB = m_Transform.TransformAABB( m_LoaclAABB );
     }
 
-    const GAABB& GetAABB() const { return m_AABB; }
+    const GAABB& GetAABB() const { return m_WorldAABB; }
 
-    
+    const GAABB& GetLocalAABB() const { return m_LoaclAABB; }
 
 
 public:
@@ -52,7 +50,9 @@ public:
     ECollisionObjectType    m_CollisionType;
     GTransform_QT           m_Transform;
     GTransform_QT           m_Transform_Last;
-    GAABB                   m_AABB;
+
+    GAABB                   m_LoaclAABB;
+    GAABB                   m_WorldAABB;
 
     uint32_t                m_UserId;
     uint32_t                m_Id;

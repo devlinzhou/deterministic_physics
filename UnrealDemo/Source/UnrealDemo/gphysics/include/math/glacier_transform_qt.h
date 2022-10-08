@@ -14,6 +14,7 @@
 
 #include "glacier_vector.h"
 #include "glacier_quaternion.h"
+#include "glacier_aabb.h"
 
 class GTransform_QT
 {
@@ -64,12 +65,22 @@ public:
         return m_Rotate.RotateVector(V) + m_Translation;
     }
 
+    GAABB TransformAABB( const GAABB& InBox ) const
+    {
+        GAABB TBox( TransformPosition( InBox.GetCorner(0)) );
+        for (uint32_t uLoop = 1; uLoop < 8; ++uLoop)
+        {
+            TBox.Merge( TransformPosition( InBox.GetCorner(uLoop)));
+        }
+        return TBox;
+    }
+
 public:
 
     inline void Inverse( )
     {
         m_Rotate.Inverse( );
-        m_Translation =m_Rotate.RotateVector( -m_Translation);
+        m_Translation = m_Rotate.RotateVector( -m_Translation);
     }
 
     inline GTransform_QT GetInverse( ) const

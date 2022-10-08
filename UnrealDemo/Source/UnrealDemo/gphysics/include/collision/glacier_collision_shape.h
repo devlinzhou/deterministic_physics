@@ -24,6 +24,7 @@ enum EShape
     EShape_Cylinder,
     EShape_ConvexHull,
     EShape_ConcaveBase,
+    EShape_Plane,
     EShape_HightField,
     EShape_TriangleMesh
 };
@@ -52,6 +53,8 @@ public:
     GVector3 GetHalfExtern() const { return HalfSize; }
     void SetHalfExtern(const GVector3& value) { HalfSize = value; }
 
+    GVector3 GetPlaneNormal() const { return HalfSize; }
+    void SetPlaneNormal(const GVector3& value) { HalfSize = value; }
 
 };
 
