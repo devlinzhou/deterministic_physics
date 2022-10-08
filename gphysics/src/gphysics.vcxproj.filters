@@ -89,6 +89,9 @@
     <ClInclude Include="..\include\math\glacier_matrix.h">
       <Filter>include\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\math\glacier_plane.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math\glacier_float.cpp">

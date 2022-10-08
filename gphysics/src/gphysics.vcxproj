@@ -158,6 +158,7 @@
     <ClInclude Include="..\include\math\glacier_float.h" />
     <ClInclude Include="..\include\math\glacier_math.h" />
     <ClInclude Include="..\include\math\glacier_matrix.h" />
+    <ClInclude Include="..\include\math\glacier_plane.h" />
     <ClInclude Include="..\include\math\glacier_quaternion.h" />
     <ClInclude Include="..\include\math\glacier_transform_qt.h" />
     <ClInclude Include="..\include\math\glacier_vector.h" />

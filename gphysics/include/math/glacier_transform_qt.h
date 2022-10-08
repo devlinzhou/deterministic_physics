@@ -69,7 +69,7 @@ public:
     inline void Inverse( )
     {
         m_Rotate.Inverse( );
-        m_Translation =m_Rotate.RotateVector( -m_Translation);
+        m_Translation = m_Rotate.RotateVector( -m_Translation);
     }
 
     inline GTransform_QT GetInverse( ) const
