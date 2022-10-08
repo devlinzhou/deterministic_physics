@@ -73,7 +73,6 @@ public:
         return ( f32* ) m[nRow];
     }
 
-
     bool operator == ( const GMatrix3& M ) const
     {
         return(
@@ -137,15 +136,9 @@ public:
     inline GMatrix3 operator - ( ) const
     {
         return GMatrix3(
-            -m[0][0],
-            -m[0][1],
-            -m[0][2],
-            -m[1][0],
-            -m[1][1],
-            -m[1][2],
-            -m[2][0],
-            -m[2][1],
-            -m[2][2]);
+            -m[0][0], -m[0][1], -m[0][2],
+            -m[1][0], -m[1][1], -m[1][2], 
+            -m[2][0], -m[2][1], -m[2][2]);
     }
 
     inline GMatrix3 operator * ( f32 fScalar ) const
