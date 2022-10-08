@@ -157,6 +157,7 @@
     <ClInclude Include="..\include\dynamic\glacier_rigid_static.h" />
     <ClInclude Include="..\include\math\glacier_float.h" />
     <ClInclude Include="..\include\math\glacier_math.h" />
+    <ClInclude Include="..\include\math\glacier_matrix.h" />
     <ClInclude Include="..\include\math\glacier_quaternion.h" />
     <ClInclude Include="..\include\math\glacier_transform_qt.h" />
     <ClInclude Include="..\include\math\glacier_vector.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="dynamic\glacier_rigid_dynamic.cpp" />
     <ClCompile Include="dynamic\glacier_rigid_static.cpp" />
     <ClCompile Include="math\glacier_float.cpp" />
+    <ClCompile Include="math\glacier_matrix.cpp" />
     <ClCompile Include="math\glacier_quternion.cpp" />
     <ClCompile Include="math\glacier_vector.cpp" />
     <ClCompile Include="utils\glacier_time.cpp" />

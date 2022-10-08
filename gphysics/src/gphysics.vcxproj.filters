@@ -86,6 +86,9 @@
     <ClInclude Include="..\include\world\glacier_physics_world.h">
       <Filter>include\world</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\math\glacier_matrix.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math\glacier_float.cpp">
@@ -120,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="world\glacier_physics_world.cpp">
       <Filter>src\world</Filter>
+    </ClCompile>
+    <ClCompile Include="math\glacier_matrix.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
