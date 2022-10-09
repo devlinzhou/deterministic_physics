@@ -10,8 +10,8 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-#include "glacier_plane.h"
 #include "glacier_physics_utils.h"
+#include "glacier_plane.h"
 #include "glacier_collision_shape.h"
 #include "glacier_debug_draw.h"
 

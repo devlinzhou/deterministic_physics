@@ -13,8 +13,7 @@
 #pragma once
 
 #include "glacier_transform_qt.h"
-
-
+#include "glacier_collision_object.h"
 #include <vector>
 #include <map>
 

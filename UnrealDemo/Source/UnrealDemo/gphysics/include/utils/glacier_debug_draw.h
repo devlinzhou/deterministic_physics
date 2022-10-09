@@ -13,7 +13,7 @@
 #pragma once
 
 #include "glacier_color.h"
-
+#include "glacier_math.h"
 class GVector3;
 class GTransform_QT;
 class GPlane;

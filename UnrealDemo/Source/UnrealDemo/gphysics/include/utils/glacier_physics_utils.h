@@ -15,7 +15,7 @@
 #include "glacier_vector.h"
 #include "glacier_transform_qt.h"
 
-class GShapeBase;
+class GCollisionShape;
 class IGlacierDraw;
 class GPhyscsUtils
 {
