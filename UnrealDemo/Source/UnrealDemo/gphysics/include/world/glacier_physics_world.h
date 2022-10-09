@@ -167,6 +167,13 @@ public:
     GCollisionObject* pObjectB;
 };
 
+class GCollisionContacts
+{
+public:
+    GVector3 m_Point[4];
+
+};
+
 class GPhysicsWorld
 {
 public:
