@@ -230,7 +230,11 @@ void GPhysicsWorld::CollisionNarrowPhase( )
 
 void GPhysicsWorld::SolveContactConstraint( )
 {
-
+     for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
+     {
+     
+     
+     }
 
 }
 

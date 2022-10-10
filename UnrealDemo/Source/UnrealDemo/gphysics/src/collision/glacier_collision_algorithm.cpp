@@ -13,6 +13,38 @@
 
 #include "glacier_collision_algorithm.h"
 
+
+bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+bool GCG_Sphere_Box::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+bool GCG_Sphere_Capusle::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+bool GCG_Sphere_Cylinder::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+bool GCG_Sphere_Plane::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+{
+    return false;
+}
+
+
 GCollisionManerger::GCollisionManerger()
 {
     for (int32_t i = 0; i < EShape_Max; ++i)
@@ -33,6 +65,7 @@ GCollisionManerger::~GCollisionManerger()
             if( m_Glorithm[i][j] != nullptr )
             {
                 delete m_Glorithm[i][j];
+                m_Glorithm[i][j] = nullptr;
             }
         }
     }
