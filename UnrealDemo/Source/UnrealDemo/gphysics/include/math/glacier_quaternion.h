@@ -24,7 +24,7 @@ public:
     f32    w;
 
 public:
-
+    GQuaternion() = default;
     GQuaternion( const GQuaternion& ) = default;
     inline GQuaternion( f32 fX, f32 fY, f32 fZ,f32 fW ): x(fX), y(fY),z(fZ),w(fW) { }
     inline GQuaternion( const f32* pf ): x(pf[0]), y(pf[1]),z(pf[2]),w(pf[3]) { }

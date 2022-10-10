@@ -28,6 +28,14 @@ class GCollisionObject
 {
 public:
 
+    GCollisionObject(  uint32_t uId, EShape TShape, ECollisionObjectType CType )
+        : m_Id(uId), m_CollisionType(CType), m_Shape(TShape), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
+    {
+        m_Transform         = GTransform_QT::Identity();
+        m_Transform_Last    = GTransform_QT::Identity();
+        m_UserId = -1;
+    }
+
     ECollisionObjectType GetCollisionObjectType() const
     {
         return m_CollisionType;
@@ -46,8 +54,9 @@ public:
 
 
 public:
-    GCollisionShape         m_Shape;  
+    uint32_t                m_Id;
     ECollisionObjectType    m_CollisionType;
+    GCollisionShape         m_Shape;  
     GTransform_QT           m_Transform;
     GTransform_QT           m_Transform_Last;
 
@@ -55,5 +64,5 @@ public:
     GAABB                   m_WorldAABB;
 
     uint32_t                m_UserId;
-    uint32_t                m_Id;
+
 };

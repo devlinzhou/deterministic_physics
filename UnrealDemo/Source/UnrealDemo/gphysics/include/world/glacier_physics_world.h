@@ -186,12 +186,14 @@ public:
         m_nCellHeight   = f32(nCellHeight);
     }
 
+    void UnInit(){}
+
     bool AddCollisionObject( GCollisionObject* pObject );
 
 
     void PreTick(  );
 
-    void SimulateTick( f32 DetltaTime );
+    void Tick( f32 DetltaTime );
 
     void PostTick();
 
@@ -199,6 +201,8 @@ public:
 
 
 protected:
+
+    void Simulate( f32 DetltaTime );
 
     void CollisionBroadPhase( );
 

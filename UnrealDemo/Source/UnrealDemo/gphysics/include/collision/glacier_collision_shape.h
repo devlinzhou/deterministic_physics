@@ -33,8 +33,8 @@ class GShapeBase;
 class GCollisionShape
 {
 public:
-    GCollisionShape( EShape TShape, GVector3 THalfSize ) : 
-        ShapType(TShape), HalfSize(THalfSize), pComplexShape(nullptr)
+    GCollisionShape( EShape TShape ) : 
+        ShapType(TShape), HalfSize(GVector3::Identity()), pComplexShape(nullptr)
     {
     
     }

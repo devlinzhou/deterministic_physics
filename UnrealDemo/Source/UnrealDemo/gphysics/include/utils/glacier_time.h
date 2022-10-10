@@ -14,10 +14,16 @@
 
 #include "glacier_vector.h"
 #include <chrono>
+#include <string>
 
 #if defined(_MSC_VER) || (defined(__GNUC__))
 #define UseProfiler_RDTSCP 1
 #endif
+
+
+#define  GProfilerFun GTimeProfiler GProfiler(__FUNCTION__);
+
+
 
 
 typedef std::chrono::high_resolution_clock Myclock;
@@ -153,4 +159,20 @@ private:
     Myclock::time_point t2;
 #endif
 
+};
+
+class GTimeProfiler
+{
+public:
+    GTimeProfiler(const char* Str);
+    ~GTimeProfiler();
+
+    void EndCuptrue();
+    static void DebugOut();
+    static void ClearTime();
+
+    std::string     m_Str;
+    bool            m_bCapture;
+    GTimer          m_Time;
+    bool            m_bOutToScreen;
 };

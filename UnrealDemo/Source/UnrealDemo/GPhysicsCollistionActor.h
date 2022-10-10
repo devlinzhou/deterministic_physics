@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+
 #include "GPhysicsCollistionActor.generated.h"
+
+
 
 UCLASS()
 class UNREALDEMO_API AGPhysicsCollistionActor : public AActor
@@ -18,6 +22,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+
 
 public:	
 	// Called every frame

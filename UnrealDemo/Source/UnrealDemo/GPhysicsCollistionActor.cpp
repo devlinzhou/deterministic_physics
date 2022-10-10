@@ -42,6 +42,8 @@ AGPhysicsCollistionActor::AGPhysicsCollistionActor()
 void AGPhysicsCollistionActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 	
 }
 

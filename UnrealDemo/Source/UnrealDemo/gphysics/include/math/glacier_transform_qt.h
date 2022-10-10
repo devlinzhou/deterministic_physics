@@ -22,6 +22,8 @@ public:
 
     GTransform_QT() = default;
 
+    GTransform_QT(const GTransform_QT&) = default;
+
     inline GTransform_QT( const GQuaternion& Quat, const GVector3& Trans ) :
         m_Rotate(Quat ), m_Translation(Trans)
     {

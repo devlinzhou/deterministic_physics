@@ -22,10 +22,12 @@ public:
 
     void Tick_PreTransform( const f32 DetalTime )
     {
-        m_Transform_Pre.m_Translation += m_Velocity * DetalTime;
-        //m_Transform_Pre.
-    
+        GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
+
+        m_Transform.m_Translation += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
     }
+
+    
 
 
 
@@ -40,6 +42,8 @@ public:
     GVector3        m_MoumentInertia;
     GVector3        m_InvMoumentInertia;
     GVector3        m_AngleVelocity;
+
+    GVector3        m_Gravity;
 
 
 

@@ -18,6 +18,24 @@
 #include "glacier_debug_draw.h"
 #include "glacier_collision_object.h"
 #include "glacier_rigid_dynamic.h"
+#include "glacier_time.h"
+
+GGridPosition s_BroadPhaseNeighbourt[13] =
+{
+    GGridPosition(1, -1, -1),
+    GGridPosition(1,  0, -1),
+    GGridPosition(1,  1, -1),
+    GGridPosition(1, -1,  0),
+    GGridPosition(1,  0,  0),
+    GGridPosition(1,  1,  0),
+    GGridPosition(1, -1,  1),
+    GGridPosition(1,  0,  1),
+    GGridPosition(1,  1,  1),
+    GGridPosition(0,  1, -1),
+    GGridPosition(0,  1,  0),
+    GGridPosition(0,  1,  1),
+    GGridPosition(0,  0,  1)
+};
 
 void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
 {
@@ -87,50 +105,53 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 
 void GPhysicsWorld::PreTick()
 {
-
+    GProfilerFun
 }
 
-GGridPosition s_BroadPhaseNeighbourt[13] =
-{
-    GGridPosition( 1, -1, -1 ),
-    GGridPosition( 1,  0, -1 ),
-    GGridPosition( 1,  1, -1 ),
-    GGridPosition( 1, -1,  0 ),
-    GGridPosition( 1,  0,  0 ),
-    GGridPosition( 1,  1,  0 ),
-    GGridPosition( 1, -1,  1 ),
-    GGridPosition( 1,  0,  1 ),
-    GGridPosition( 1,  1,  1 ),
-    GGridPosition( 0,  1, -1 ),
-    GGridPosition( 0,  1,  0 ),
-    GGridPosition( 0,  1,  1 ),
-    GGridPosition( 0,  0,  1 )
-};
 
 
-void GPhysicsWorld::SimulateTick(f32 DetltaTime)
+
+void GPhysicsWorld::Tick(f32 DetltaTime)
 {
-    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
-    {
-        GCollisionObject* pObject = m_Objects[i];
-        if( pObject->m_CollisionType == ECollisionObjectType::Dynamic)
-        {
-            GDynamicRigid* pDynamicRigid = (GDynamicRigid*)pObject;
-            pDynamicRigid->Tick_PreTransform( DetltaTime );
-        }
-    }
+    GProfilerFun
+    
+    PreTick();
+
+    Simulate(DetltaTime);
+
+    CollisionBroadPhase();
+
+    CollisionNarrowPhase();
+
+    SolveContactConstraint();
  
+    PostTick();
 }
 
 void GPhysicsWorld::PostTick()
 {
+    GTimeProfiler::DebugOut();
 
+}
 
+void GPhysicsWorld::Simulate( f32 DetltaTime )
+{
+
+    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
+    {
+        GCollisionObject* pObject = m_Objects[i];
+        if (pObject->m_CollisionType == ECollisionObjectType::Dynamic)
+        {
+            GDynamicRigid* pDynamicRigid = (GDynamicRigid*)pObject;
+            pDynamicRigid->Tick_PreTransform(DetltaTime);
+        }
+    }
 }
 
 
 void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
 {
+    GProfilerFun
    // std::map<GGridPosition, GGridCell*> m_Grids;
 
     for( std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter )
@@ -142,6 +163,8 @@ void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
 
 void GPhysicsWorld::CollisionBroadPhase( )
 {
+    GProfilerFun
+
     // broadphase
     m_BroadPhasePairs.clear();
     for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
@@ -207,6 +230,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
 
 void GPhysicsWorld::CollisionNarrowPhase( )
 {
+    GProfilerFun
     for( uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i )
     {
         GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
@@ -230,6 +254,7 @@ void GPhysicsWorld::CollisionNarrowPhase( )
 
 void GPhysicsWorld::SolveContactConstraint( )
 {
+    GProfilerFun
      for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
      {
      
