@@ -15,6 +15,7 @@
 #include "glacier_transform_qt.h"
 #include "glacier_collision_object.h"
 #include "glacier_contact.h"
+#include "glacier_collision_algorithm.h"
 #include <vector>
 #include <map>
 
@@ -151,28 +152,28 @@ public:
         {
             pObjectA = nullptr;
             pObjectB = nullptr;
+            PairId   = 0;
         }
         else if (p1->GetId() < p2->GetId())
         {
             pObjectA = p1;
             pObjectB = p2;
+
+            PairId = ((uint64_t)p1->GetId() << 32 ) & (uint64_t)p2->GetId();
         }
         else
         {
             pObjectA = p2;
             pObjectB = p1;
+
+            PairId = ((uint64_t)p2->GetId() << 32 ) & (uint64_t)p1->GetId();
         }
     }
 
+    uint64_t          PairId;
+
     GCollisionObject* pObjectA;
     GCollisionObject* pObjectB;
-};
-
-class GCollisionContacts
-{
-public:
-    GVector3 m_Point[4];
-
 };
 
 class GPhysicsWorld
@@ -196,6 +197,18 @@ public:
 
     void DebugDraw(IGlacierDraw* pDraw ) const;
 
+
+protected:
+
+    void CollisionBroadPhase( );
+
+    void CollisionNarrowPhase( );
+
+    void SolveContactConstraint( );
+
+
+
+
 private:
 
     f32 m_nCellWide;
@@ -206,5 +219,7 @@ private:
     std::vector<GCollisionObject*>      m_Objects;
     std::vector<GBroadPhasePair>        m_BroadPhasePairs;
 
-    GContactManerger                    m_ContactManerger;
+
+    GCollisionManerger                  m_CollisionManager;
+    GContactManerger                    m_ContactManager;
 };

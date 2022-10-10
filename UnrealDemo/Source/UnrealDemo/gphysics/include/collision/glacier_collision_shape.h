@@ -16,17 +16,17 @@
 
 enum EShape
 {
-    Null = 0,
-    EShape_ConvexBase,
-    EShape_Sphere,
-    EShape_Box,
-    EShape_Capsule,
-    EShape_Cylinder,
-    EShape_ConvexHull,
-    EShape_ConcaveBase,
-    EShape_Plane,
-    EShape_HightField,
-    EShape_TriangleMesh
+    EShape_ConvexBase   = 0,
+    EShape_Sphere       = 1,
+    EShape_Box          = 2,
+    EShape_Capsule      = 3,
+    EShape_Cylinder     = 4,
+    EShape_ConvexHull   = 5,
+    EShape_ConcaveBase  = 6,
+    EShape_Plane        = 7,
+    EShape_HightField   = 8,
+    EShape_TriangleMesh = 9,
+    EShape_Max          = 10
 };
 
 class GShapeBase;
@@ -63,7 +63,7 @@ class GShapeBase
 public:
     EShape  ShapType;
 
-    GShapeBase() : ShapType(EShape::Null)
+    GShapeBase() : ShapType(EShape::EShape_Max)
     {
     
     }

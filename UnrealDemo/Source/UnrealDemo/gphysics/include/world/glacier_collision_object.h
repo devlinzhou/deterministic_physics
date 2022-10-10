@@ -33,7 +33,7 @@ public:
         return m_CollisionType;
     }
 
-    uint32_t GetId()const {return m_Id;}
+    inline uint32_t GetId()const {return m_Id;}
 
     void UpdateAABB()
     {
