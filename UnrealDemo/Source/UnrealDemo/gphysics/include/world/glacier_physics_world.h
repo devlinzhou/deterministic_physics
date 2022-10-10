@@ -14,6 +14,7 @@
 
 #include "glacier_transform_qt.h"
 #include "glacier_collision_object.h"
+#include "glacier_contact.h"
 #include <vector>
 #include <map>
 
@@ -205,5 +206,5 @@ private:
     std::vector<GCollisionObject*>      m_Objects;
     std::vector<GBroadPhasePair>        m_BroadPhasePairs;
 
-
+    GContactManerger                    m_ContactManerger;
 };
