@@ -7,6 +7,9 @@
 #include "glacier_physics_world.h"
 #include "GPhysicsActor.generated.h"
 
+
+class GDynamicRigid;
+
 UCLASS()
 class UNREALDEMO_API AGPhysicsActor : public AActor
 {
@@ -27,7 +30,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-    void CreateBox( );
+    GDynamicRigid* CreateRigidBox( GVector3 VPos, GVector3 Halfsize );
 
     GPhysicsWorld m_PhysicsWorld;
 

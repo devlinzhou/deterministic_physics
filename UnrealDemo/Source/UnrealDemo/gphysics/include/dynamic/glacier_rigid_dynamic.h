@@ -18,7 +18,10 @@ class GDynamicRigid : public GRigidBody
 {
 public:
 
+    GDynamicRigid(uint32_t id, EShape TShape) : GRigidBody(id, TShape, ECollisionObjectType::Static)
+    {
 
+    }
 
     void Tick_PreTransform( const f32 DetalTime )
     {
@@ -26,10 +29,6 @@ public:
 
         m_Transform.m_Translation += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
     }
-
-    
-
-
 
 public:
 
@@ -44,9 +43,4 @@ public:
     GVector3        m_AngleVelocity;
 
     GVector3        m_Gravity;
-
-
-
-
-
 };

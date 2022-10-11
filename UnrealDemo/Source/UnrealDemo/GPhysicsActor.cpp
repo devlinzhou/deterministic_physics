@@ -3,6 +3,7 @@
 
 #include "GPhysicsActor.h"
 #include "glacier_rigid_static.h"
+#include "glacier_rigid_dynamic.h"
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
 
@@ -22,11 +23,12 @@ void AGPhysicsActor::BeginPlay()
 
     m_PhysicsWorld.Init();
 
-   GStaticRigid* pFloor = new GStaticRigid( 0, EShape_Box );
+    {
+        GStaticRigid* pFloor = new GStaticRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
+        pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Three(), GMath::Three(), GMath::Half()));
+        m_PhysicsWorld.AddCollisionObject(pFloor);
+    }
 
-   pFloor->m_Shape.SetHalfExtern( GVector3( GMath::Three(), GMath::Three() , GMath::Half() ));
-
-   m_PhysicsWorld.AddCollisionObject( pFloor );
 	
 }
 
@@ -50,9 +52,14 @@ void AGPhysicsActor::Tick(float DeltaTime)
     m_PhysicsWorld.DebugDraw( &TDraw );
 }
 
-void AGPhysicsActor::CreateBox( )
+GDynamicRigid* AGPhysicsActor::CreateRigidBox(  GVector3 VPos, GVector3 Halfsize )
 {
-    //new G
+    GDynamicRigid* pFloor = new GDynamicRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
+    pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
+    m_PhysicsWorld.AddCollisionObject(pFloor);
+    pFloor->m_Transform.m_Translation = VPos;
 
+
+    return pFloor;
 
 }

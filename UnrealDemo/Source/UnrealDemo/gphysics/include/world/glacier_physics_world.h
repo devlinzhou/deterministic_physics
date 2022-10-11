@@ -87,9 +87,6 @@ class GGridCell
 public:
     GGridPosition                   m_pos;
     std::vector<GCollisionObject*>  m_Objects;
-    GVector3                        m_min = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
-    GVector3                        m_max = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
-
     GAABB                           m_AABB;
 
 public:
@@ -122,12 +119,12 @@ public:
 
     inline GVector3 GetCenter() const
     {
-        return (m_min + m_max) * GMath::Half();
+        return m_AABB.GetCenter();
     }
 
     inline GVector3 GetHalfSize() const
     {
-        return (m_max - m_min) * GMath::Half();
+        return m_AABB.GetHalfSize();
     }
 
     bool AddCollisionObject(GCollisionObject* pObject);
@@ -184,6 +181,7 @@ public:
     {
         m_nCellWide     = f32(nCellWide);
         m_nCellHeight   = f32(nCellHeight);
+        CollisionId = 0;
     }
 
     void UnInit(){}
@@ -209,6 +207,10 @@ protected:
     void CollisionNarrowPhase( );
 
     void SolveContactConstraint( );
+
+public:
+
+    uint32_t CollisionId;
 
 
 
