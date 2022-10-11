@@ -14,12 +14,15 @@
 
 #include "glacier_collision_object.h"
 
-class GRigidBody : GCollisionObject
+class GRigidBody : public GCollisionObject
 {
 public:
+    GRigidBody(uint32_t id, EShape TShape, ECollisionObjectType TType) : GCollisionObject(id, TShape, TType)
+    {
 
-    GTransform_QT   m_Transform;
-    GShapeBase*     m_Shape;  
+    }
+
+public:
 
 
 };

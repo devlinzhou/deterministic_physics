@@ -18,6 +18,14 @@ class GStaticRigid : public GRigidBody
 {
 public:
 
+    GStaticRigid( uint32_t id, EShape TShape ) : GRigidBody(id, TShape, ECollisionObjectType::Static)
+    {
+    
+    }
+
+
+public:
+
 
 
 };

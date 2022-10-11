@@ -2,6 +2,10 @@
 
 
 #include "GPhysicsActor.h"
+#include "glacier_rigid_static.h"
+#include "glacier_debug_draw.h"
+#include "GUnrealUtility.h"
+
 
 // Sets default values
 AGPhysicsActor::AGPhysicsActor()
@@ -17,6 +21,12 @@ void AGPhysicsActor::BeginPlay()
 	Super::BeginPlay();
 
     m_PhysicsWorld.Init();
+
+   GStaticRigid* pFloor = new GStaticRigid( 0, EShape_Box );
+
+   pFloor->m_Shape.SetHalfExtern( GVector3( GMath::Three(), GMath::Three() , GMath::Half() ));
+
+   m_PhysicsWorld.AddCollisionObject( pFloor );
 	
 }
 
@@ -34,5 +44,15 @@ void AGPhysicsActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
     m_PhysicsWorld.Tick( GMath::FromFloat(DeltaTime) );
+
+    GPhysicsDraw TDraw(GetWorld());
+
+    m_PhysicsWorld.DebugDraw( &TDraw );
 }
 
+void AGPhysicsActor::CreateBox( )
+{
+    //new G
+
+
+}

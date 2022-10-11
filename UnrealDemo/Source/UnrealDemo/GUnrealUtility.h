@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "glacier_vector.h"
-
+#include "glacier_quaternion.h"
+#include "glacier_debug_draw.h"
 
 class GUtility
 {
@@ -26,4 +27,17 @@ public:
 
 };
 
+
+class GPhysicsDraw : public  IGlacierDraw
+{
+public:
+    GPhysicsDraw(UWorld* pWorld)
+    {
+        m_World = pWorld;
+    }
+
+    virtual void DrawLine(const GVector3& V0, const GVector3& V1, GColor uColor);
+
+    UWorld* m_World = nullptr;
+};
 
