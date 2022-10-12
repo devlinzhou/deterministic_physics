@@ -75,6 +75,8 @@ public:
 
     static inline f32 FromFloat( float value ){  return GFloat::FromFloat(value); }
     static inline float ToFloat( f32 value ){  return value.toFloat(); }
+
+    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return GFloat(a,b,c); }
     
 #else
 
@@ -115,6 +117,8 @@ public:
 
     static inline f32 FromFloat(float value) { return value; }
     static inline float ToFloat(f32 value) { return value; }
+
+    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return a + b/c; }
 #endif 
 
      static inline f32 Clamp(const f32 Value, const f32 fMin, const f32 fMax)

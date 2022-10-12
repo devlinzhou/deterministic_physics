@@ -29,6 +29,11 @@ void AGPhysicsActor::BeginPlay()
         m_PhysicsWorld.AddCollisionObject(pFloor);
     }
 
+    {
+    
+        CreateRigidBox( GVector3(0,0,10), GVector3(1,1,1));
+    
+    }
 	
 }
 

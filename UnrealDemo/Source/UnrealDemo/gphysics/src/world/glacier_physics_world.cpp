@@ -179,7 +179,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
                 continue;
             }
             const GAABB& BoxA = pObjectA->GetAABB();
-            for (int32_t j = 0; j < i; ++i)
+            for (int32_t j = 0; j < i; ++j)
             {
                 GCollisionObject* pObjectB = iter->second->m_Objects[j];
                 const GAABB& BoxB = pObjectB->GetAABB();
@@ -200,7 +200,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
             if (iterB == m_Grids.end())
                 continue;
 
-            for (int32_t LoopA = 0; i < (int32_t)iter->second->m_Objects.size(); ++LoopA)
+            for (int32_t LoopA = 0; LoopA < (int32_t)iter->second->m_Objects.size(); ++LoopA)
             {
                 GCollisionObject* pObjectA = iter->second->m_Objects[LoopA];
 
