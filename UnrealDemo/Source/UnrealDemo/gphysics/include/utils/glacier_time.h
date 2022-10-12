@@ -23,9 +23,6 @@
 
 #define  GProfilerFun GTimeProfiler GProfiler(__FUNCTION__);
 
-
-
-
 typedef std::chrono::high_resolution_clock Myclock;
 typedef std::chrono::nanoseconds Myres;
 
@@ -51,7 +48,7 @@ public:
         return __rdtsc();
 #elif __GNUC__    
 
-#ifdef defined(__x86_64__)
+#if defined(__x86_64__)
         unsigned int lo, hi;
         __asm__ __volatile__("rdtsc" : "=a" (lo), "=d" (hi));
         return ((uint64_t)hi << 32) | lo;
@@ -124,7 +121,7 @@ public:
         }
 #elif __GNUC__
 
-#ifdef defined(__x86_64__) && !defined(__aarch64__)
+#if defined(__x86_64__) && !defined(__aarch64__)
 
         __get_cpuid(0, cpuInfo + 0, cpuInfo + 1, cpuInfo + 2, cpuInfo + 3);
 
