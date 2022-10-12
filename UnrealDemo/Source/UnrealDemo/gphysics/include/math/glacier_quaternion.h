@@ -225,7 +225,7 @@ public:
         x    =    -x;
         y    =    -y;
         z    =    -z;
-        w    =    w;
+        //w    =    w;
     }
 
     inline GQuaternion GetUnitInverse( void ) const

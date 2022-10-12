@@ -53,7 +53,7 @@ void GTimeProfiler::EndCuptrue()
 {
     char name[128];
     float fTime = (float)m_Time.GetDeltaTimeMS() * 1000.f;
-    sprintf_s(name, "Time:% 8.3fms %s\n", fTime, m_Str.c_str());
+    sprintf(name, "Time:% 8.3fms %s\n", fTime, m_Str.c_str());
 
     std::map<std::string, float>::iterator iterm = ms_TotalTime.find(m_Str);
     if (iterm != ms_TotalTime.end())
@@ -93,7 +93,7 @@ void GTimeProfiler::DebugOut()
     std::map<std::string, float>::iterator iterm = ms_TotalTime.begin();
     for (; iterm != ms_TotalTime.end(); ++iterm)
     {
-        sprintf_s(name, "Time:% 8.3fms %s\n", iterm->second, iterm->first.c_str());
+        sprintf(name, "Time:% 8.3fms %s\n", iterm->second, iterm->first.c_str());
        // OutputDebugStringA(name);
     }
 

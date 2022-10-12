@@ -32,10 +32,14 @@ static inline GVector3 s_GetSupportPos(
 
     if( pDebugDraw != nullptr )
     {
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapA.TransformPosition(PosA)), f32(0.02f), uColor, 12);
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapB.TransformPosition(PosB)), f32(0.02f), uColor, 12);
-        pDebugDraw->DrawLine(TransformShapA.m_Translation, TransformShapA.m_Translation + TransformShapA.TransformNormal( DirectionA) * f32(0.4f), uColor);
-        pDebugDraw->DrawLine(TransformShapB.m_Translation, TransformShapB.m_Translation + TransformShapB.TransformNormal( DirectionB) * f32(0.4f), uColor);
+
+        f32 ff = GMath::FromFloat(0.02f);
+        f32 f2 = GMath::FromFloat(0.04f);
+
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapA.TransformPosition(PosA)), ff, uColor, 12);
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapB.TransformPosition(PosB)), ff, uColor, 12);
+        pDebugDraw->DrawLine(TransformShapA.m_Translation, TransformShapA.m_Translation + TransformShapA.TransformNormal( DirectionA) * f2, uColor);
+        pDebugDraw->DrawLine(TransformShapB.m_Translation, TransformShapB.m_Translation + TransformShapB.TransformNormal( DirectionB) * f2, uColor);
     }
 
     return PosA - LocalBToLocalA.TransformPosition(PosB);
@@ -138,11 +142,15 @@ bool GCollision_GJK::GJKTest(
 
         //GVector3 V4 = TransformShapA.TransformPosition(SupportPos4);
 
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), GVector3::Zero()), f32(0.02f), 0x00FFFFFF, 12);
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V0), f32(0.02f), 0x00FF0000, 12);
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V1), f32(0.02f), 0x0000FF00, 12);
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V2), f32(0.02f), 0x000000FF, 12);
-        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V3), f32(0.02f), 0x00000000, 12);
+
+        f32 ff = GMath::FromFloat(0.02f);
+
+
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), GVector3::Zero()), ff, 0x00FFFFFF, 12);
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V0), ff, 0x00FF0000, 12);
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V1), ff, 0x0000FF00, 12);
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V2), ff, 0x000000FF, 12);
+        pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), V3), ff, 0x00000000, 12);
 
          pDebugDraw->DrawLine(V0, V1, 0xFFFFFFFF);
          pDebugDraw->DrawLine(V1, V2, 0xFFFFFFFF);
