@@ -16,6 +16,11 @@
 #include <chrono>
 #include <string>
 
+
+#if defined(__GNUC__) && defined(__x86_64__) && !defined(__aarch64__)
+#include <cpuid.h>
+#endif
+
 #if defined(_MSC_VER) || (defined(__GNUC__))
 #define UseProfiler_RDTSCP 1
 #endif
@@ -123,10 +128,10 @@ public:
 
 #if defined(__x86_64__) && !defined(__aarch64__)
 
-        __get_cpuid(0, cpuInfo + 0, cpuInfo + 1, cpuInfo + 2, cpuInfo + 3);
+        __cpuid(0, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
 
         if (cpuInfo[0] >= 0x16) {
-            __get_cpuid(0x16, cpuInfo + 0, cpuInfo + 1, cpuInfo + 2, cpuInfo + 3);
+            __cpuid(0x16, cpuInfo[0], cpuInfo[1], cpuInfo[2], cpuInfo[3]);
             return cpuInfo[0];
         }
 #elif defined(__ARM_ARCH)
