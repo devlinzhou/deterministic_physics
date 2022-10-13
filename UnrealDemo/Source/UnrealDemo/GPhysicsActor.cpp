@@ -63,7 +63,7 @@ GDynamicRigid* AGPhysicsActor::CreateRigidBox(  GVector3 VPos, GVector3 Halfsize
     pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
     m_PhysicsWorld.AddCollisionObject(pFloor);
     pFloor->m_Transform.m_Translation = VPos;
-
+   // pFloor->m_Gravity = 
 
     return pFloor;
 
