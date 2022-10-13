@@ -129,6 +129,8 @@ public:
 
     bool AddCollisionObject(GCollisionObject* pObject);
 
+    bool RemoveObject(GCollisionObject* pObject);
+
 
     void DebugDraw(IGlacierDraw* pDraw ) const;
 
@@ -186,7 +188,17 @@ public:
 
     void UnInit(){}
 
+    inline GGridPosition GetGridPos( const GVector3& VPos )
+    {
+        return GGridPosition (
+            GMath::FloorToInt(VPos.x / m_nCellWide),
+            GMath::FloorToInt(VPos.y / m_nCellWide),
+            GMath::FloorToInt(VPos.z / m_nCellHeight));
+    }
+
     bool AddCollisionObject( GCollisionObject* pObject );
+
+    bool UpdateCollisionObject( GCollisionObject* pObject );
 
 
     void PreTick(  );
@@ -207,6 +219,8 @@ protected:
     void CollisionNarrowPhase( );
 
     void SolveContactConstraint( );
+
+    void UpdateSceneGrid( );
 
 public:
 

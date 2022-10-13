@@ -33,7 +33,9 @@ public:
     {
         m_Transform         = GTransform_QT::Identity();
         m_Transform_Last    = GTransform_QT::Identity();
-        m_UserId = -1;
+        m_UserId            = -1;
+        m_pGridCell         = nullptr;
+        m_bNeedUpdate           = true;
     }
 
     ECollisionObjectType GetCollisionObjectType() const
@@ -64,5 +66,8 @@ public:
     GAABB                   m_WorldAABB;
 
     uint32_t                m_UserId;
+
+    class GGridCell*        m_pGridCell;
+    bool                    m_bNeedUpdate;
 
 };

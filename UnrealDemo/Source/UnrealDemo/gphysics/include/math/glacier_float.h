@@ -139,7 +139,7 @@ public:
 #endif
     }
 
-    explicit inline GFloat(int32_t Traw32, uint32_t a, uint32_t b)
+    explicit inline GFloat(uint32_t Traw32, uint32_t a, uint32_t b)
     {
         int64_t TValue = (int64_t)b * (int64_t)Traw32 + (int64_t)a;
 

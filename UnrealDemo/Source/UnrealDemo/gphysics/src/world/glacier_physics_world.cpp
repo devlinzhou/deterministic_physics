@@ -56,15 +56,30 @@ bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
         return false;
     }
 
-
     m_Objects.push_back(pObject);
-
     return true;
 }
+
+bool GGridCell::RemoveObject(GCollisionObject* pObject)
+{
+    std::vector<GCollisionObject*>::iterator iter = std::find(m_Objects.begin(), m_Objects.end(), pObject);
+    if (iter != m_Objects.end())
+    {
+        m_Objects.erase(iter);
+
+        return true;
+    }
+
+    return false;
+}
+
+
+
 
 
 bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 {
+
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
     {
         return false;
@@ -72,32 +87,66 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 
     m_Objects.push_back(pObject);
 
-
     GVector3 VPos = pObject->m_Transform.m_Translation;
 
     GGridPosition CellPos;
 
-    CellPos.x = GMath::FloorToInt(VPos.x / m_nCellWide );
+    CellPos.x = GMath::FloorToInt(VPos.x / m_nCellWide);
     CellPos.y = GMath::FloorToInt(VPos.y / m_nCellWide);
     CellPos.z = GMath::FloorToInt(VPos.z / m_nCellHeight);
 
     GGridCell* pCell = nullptr;
 
-    std::map<GGridPosition, GGridCell*>::iterator iter = m_Grids.find(CellPos); 
+    std::map<GGridPosition, GGridCell*>::iterator iter = m_Grids.find(CellPos);
 
-    if( iter != m_Grids.end() )
+    if (iter != m_Grids.end())
     {
         pCell = iter->second;
     }
     else
     {
-        pCell = new GGridCell( CellPos, m_nCellWide, m_nCellHeight );
+        pCell = new GGridCell(CellPos, m_nCellWide, m_nCellHeight);
         m_Grids[CellPos] = pCell;
     }
 
-    if( pCell != nullptr)
+    if (pCell != nullptr)
     {
         pCell->AddCollisionObject(pObject);
+    }
+
+    return true;
+}
+
+bool GPhysicsWorld::UpdateCollisionObject(GCollisionObject* pObject)
+{
+    GVector3 VPos = pObject->m_Transform.m_Translation;
+
+    GGridPosition newCellPos = GetGridPos(VPos);
+
+    if( pObject->m_pGridCell == nullptr || ( pObject->m_pGridCell != nullptr && pObject->m_pGridCell->m_pos != newCellPos ) )
+    {
+        GGridCell* pNewCell = nullptr;
+
+        std::map<GGridPosition, GGridCell*>::iterator iter = m_Grids.find(newCellPos);
+
+        if (iter != m_Grids.end())
+        {
+            pNewCell = iter->second;
+        }
+        else
+        {
+            pNewCell = new GGridCell(newCellPos, m_nCellWide, m_nCellHeight);
+            m_Grids[newCellPos] = pNewCell;
+        }
+
+        pNewCell->AddCollisionObject( pObject );
+
+        if (pObject->m_pGridCell != nullptr)
+        {
+            pObject->m_pGridCell->RemoveObject(pObject);
+        }
+
+        pObject->m_pGridCell = pNewCell;
     }
 
     return true;
@@ -124,6 +173,8 @@ void GPhysicsWorld::Tick(f32 DetltaTime)
     CollisionNarrowPhase();
 
     SolveContactConstraint();
+
+    UpdateSceneGrid();
  
     PostTick();
 }
@@ -136,7 +187,6 @@ void GPhysicsWorld::PostTick()
 
 void GPhysicsWorld::Simulate( f32 DetltaTime )
 {
-
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         GCollisionObject* pObject = m_Objects[i];
@@ -144,6 +194,7 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
         {
             GDynamicRigid* pDynamicRigid = (GDynamicRigid*)pObject;
             pDynamicRigid->Tick_PreTransform(DetltaTime);
+            pDynamicRigid->UpdateAABB();
         }
     }
 }
@@ -158,7 +209,6 @@ void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
     {
         iter->second->DebugDraw(pDraw);
     }
-
 }
 
 void GPhysicsWorld::CollisionBroadPhase( )
@@ -255,11 +305,37 @@ void GPhysicsWorld::CollisionNarrowPhase( )
 void GPhysicsWorld::SolveContactConstraint( )
 {
     GProfilerFun
-     for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
-     {
+    for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
+    {
      
      
-     }
+    }
 
+}
+
+void GPhysicsWorld::UpdateSceneGrid( )
+{
+    GProfilerFun
+
+    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
+    {
+        GCollisionObject* pObject = m_Objects[i];
+        if( pObject->m_bNeedUpdate )
+        {
+            pObject->UpdateAABB();
+
+            UpdateCollisionObject(pObject);  
+            pObject->m_bNeedUpdate = false;
+        }
+    }
+
+    for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
+    {
+        if( iter->second->m_Objects.size() == 0 )
+        {
+            delete iter->second;
+            m_Grids.erase( iter++ );
+        }
+    }
 }
 
