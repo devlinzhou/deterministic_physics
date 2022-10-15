@@ -28,7 +28,7 @@ public:
     
     }
 
-    virtual bool ProcessCollision( const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr );
+    virtual bool ProcessCollision( const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr );
 
     bool    m_bSwap;
     int32_t CallTimes;
@@ -37,36 +37,37 @@ public:
 class GCG_Sphere_Sphere : public GCollisionAlgorithm
 {
 public:
-
-    virtual bool ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr  ) override;
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr  ) override;
 };
 
 class GCG_Sphere_Box : public GCollisionAlgorithm
 {
 public:
-
-    virtual bool ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Capusle : public GCollisionAlgorithm
 {
 public:
-
-    virtual bool ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Cylinder : public GCollisionAlgorithm
 {
 public:
-
-    virtual bool ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Plane : public GCollisionAlgorithm
 {
 public:
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+};
 
-    virtual bool ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact = nullptr) override;
+class GCG_Box_Box : public GCollisionAlgorithm
+{
+public:
+    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 
@@ -79,16 +80,14 @@ public:
     ~GCollisionManerger();
 
 
-
     void Init( );
-
     
     inline GCollisionAlgorithm* GetAlgrithm( int32_t nShapeA, int32_t nShapeB)
     {
-        return m_Glorithm[nShapeA][nShapeB];
+        return m_Algorithm[nShapeA][nShapeB];
     }
 
 private:
-    GCollisionAlgorithm* m_Glorithm[EShape_Max][EShape_Max];
+    GCollisionAlgorithm* m_Algorithm[EShape_Max][EShape_Max];
 
 };

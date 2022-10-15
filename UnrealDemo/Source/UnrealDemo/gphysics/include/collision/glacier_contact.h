@@ -23,7 +23,7 @@ class GManifoldPoint
 {
 public:
 
-    GVector3    m_PosWorld;
+    GVector3    m_PosOnSurfaceB_World;
     GVector3    m_NormalOnB;
     f32         m_depth;
 };
@@ -34,23 +34,26 @@ class GCollisionContact
 {
 public:
 
-     GCollisionContact() = default;
-     GCollisionContact(const GCollisionContact&) = default;
+    GCollisionContact() = default;
+    GCollisionContact(const GCollisionContact&) = default;
 
 
-     void AddContactPoint( const GVector3& PosWorld, const GVector3& NormalOnB, f32 depth );
-
-
+    void AddContactPoint( const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth );
 
     void Clear()
     {
         PairId = 0;
     }
 
+    void ClearPoint()
+    {
+        m_nPointCount = 0;
+    }
+
     uint64_t PairId;
 
     int32_t         m_nPointCount;
-    GManifoldPoint m_Point[4];
+    GManifoldPoint  m_Point[4];
 };
 
 

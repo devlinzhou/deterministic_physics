@@ -26,12 +26,13 @@ void AGPhysicsActor::BeginPlay()
     {
         GStaticRigid* pFloor = new GStaticRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
         pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Three(), GMath::Three(), GMath::Half()));
+        pFloor->UpdateLocalBox();
         m_PhysicsWorld.AddCollisionObject(pFloor);
     }
 
     {
     
-        CreateRigidBox( GVector3(0,0,10), GVector3(1,1,1));
+        CreateRigidBox( GVector3(0,0,10), GVector3(1,1,1) );
     
     }
 	
@@ -61,8 +62,10 @@ GDynamicRigid* AGPhysicsActor::CreateRigidBox(  GVector3 VPos, GVector3 Halfsize
 {
     GDynamicRigid* pFloor = new GDynamicRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
     pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
+    pFloor->UpdateLocalBox();
     m_PhysicsWorld.AddCollisionObject(pFloor);
     pFloor->m_Transform.m_Translation = VPos;
+
    // pFloor->m_Gravity = 
 
     return pFloor;

@@ -13,6 +13,7 @@
 #pragma once
 
 #include "glacier_vector.h"
+#include "glacier_aabb.h"
 
 enum EShape
 {
@@ -55,6 +56,8 @@ public:
 
     GVector3 GetPlaneNormal() const { return HalfSize; }
     void SetPlaneNormal(const GVector3& value) { HalfSize = value; }
+
+    GAABB GetLocalBox() const;
 
 };
 

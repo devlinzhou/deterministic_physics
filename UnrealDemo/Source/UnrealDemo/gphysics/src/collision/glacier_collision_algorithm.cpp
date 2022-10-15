@@ -12,36 +12,84 @@
  */
 
 #include "glacier_collision_algorithm.h"
+#include "glacier_collision_sphere.h"
+#include "glacier_collision_gjk.h"
 
 
-bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+{
+    GVector3 d = ObjA->m_Transform.m_Translation - ObjB->m_Transform.m_Translation;
+    f32 len2 = d.SizeSquare();
+    f32 TRadius = ObjA->m_Shape.GetRaiuds() + ObjB->m_Shape.GetRaiuds();
+
+    if( len2 < (TRadius * TRadius) )
+    {
+        if (pContact != nullptr)
+        {
+            f32 InvLen = GMath::InvSqrt(len2);
+
+            GVector3 VNormalOnB = len2 < GMath::Epsilon() ? GVector3::UnitX() : d * InvLen;
+            GVector3 VPosOnB = ObjB->m_Transform.m_Translation + VNormalOnB * ObjB->m_Shape.GetRaiuds();
+
+            pContact->ClearPoint();
+
+            pContact->AddContactPoint( VPosOnB, VNormalOnB, len2 * InvLen - TRadius );
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+bool GCG_Sphere_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Box::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCG_Sphere_Capusle::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Capusle::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCG_Sphere_Cylinder::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Cylinder::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCG_Sphere_Plane::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Plane::ProcessCollision(const GCollisionObject* ShapA, const GCollisionObject* ShapB, GCollisionContact* pContact )
+bool GCG_Box_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
+
+    GShapeBox BoxA(ObjA->m_Shape.GetHalfExtern());
+    GShapeBox BoxB(ObjB->m_Shape.GetHalfExtern());
+
+
+    if (GCollision_GJK::GJKTest(
+        BoxA, ObjA->m_Transform,
+        BoxB ,ObjB->m_Transform))
+    {
+        if (pContact != nullptr)
+        {
+
+            //pContact->AddContactPoint()
+
+        }
+
+        return true;
+    }
+
     return false;
+
 }
 
 
@@ -51,7 +99,7 @@ GCollisionManerger::GCollisionManerger()
     {
         for (int32_t j = 0; j < EShape_Max; ++j)
         {
-            m_Glorithm[i][j] = nullptr;
+            m_Algorithm[i][j] = nullptr;
         }
     }
 }
@@ -62,10 +110,10 @@ GCollisionManerger::~GCollisionManerger()
     {
         for (int32_t j = 0; j < EShape_Max; ++j)
         {
-            if( m_Glorithm[i][j] != nullptr )
+            if( m_Algorithm[i][j] != nullptr )
             {
-                delete m_Glorithm[i][j];
-                m_Glorithm[i][j] = nullptr;
+                delete m_Algorithm[i][j];
+                m_Algorithm[i][j] = nullptr;
             }
         }
     }
@@ -75,7 +123,9 @@ GCollisionManerger::~GCollisionManerger()
 void GCollisionManerger::Init( )
 {
 
-    m_Glorithm[EShape_Sphere][EShape_Sphere]= new GCG_Sphere_Sphere();
+    m_Algorithm[EShape_Sphere][EShape_Sphere]    = new GCG_Sphere_Sphere();
+    m_Algorithm[EShape_Box][EShape_Box]          = new GCG_Box_Box();
+
 
 
 

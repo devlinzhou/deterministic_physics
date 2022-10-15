@@ -15,15 +15,15 @@
 
 
 
-void GCollisionContact::AddContactPoint(const GVector3& PosWorld, const GVector3& NormalOnB, f32 depth)
+void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth)
 {
     if(0<= m_nPointCount && m_nPointCount < 4 )
     {
         GManifoldPoint& TPoint = m_Point[m_nPointCount-1];
 
-        TPoint.m_PosWorld = PosWorld;
-        TPoint.m_NormalOnB = NormalOnB;
-        TPoint.m_depth = depth;
+        TPoint.m_PosOnSurfaceB_World    = PosOnSurfaceB_World;
+        TPoint.m_NormalOnB              = NormalOnB;
+        TPoint.m_depth                  = depth;
     }
 
 }

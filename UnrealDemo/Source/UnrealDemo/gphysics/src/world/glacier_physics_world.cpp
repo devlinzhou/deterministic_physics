@@ -44,7 +44,11 @@ void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         const GCollisionObject* pObject = m_Objects[i];
-        GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw);
+       // GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw);
+
+        GAABB TAABB = pObject->GetAABB();
+
+        pDraw->DrawBox( GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(),0x00FFFF00 );
     }
 
 }

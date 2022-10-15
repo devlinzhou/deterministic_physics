@@ -52,6 +52,11 @@ public:
 
     const GAABB& GetAABB() const { return m_WorldAABB; }
 
+
+    void UpdateLocalBox()
+    {
+        m_LoaclAABB = m_Shape.GetLocalBox();
+    }
     const GAABB& GetLocalAABB() const { return m_LoaclAABB; }
 
 

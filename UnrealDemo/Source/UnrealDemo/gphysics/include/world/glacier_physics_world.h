@@ -184,6 +184,8 @@ public:
         m_nCellWide     = f32(nCellWide);
         m_nCellHeight   = f32(nCellHeight);
         CollisionId = 0;
+
+        m_CollisionManager.Init();
     }
 
     void UnInit(){}
