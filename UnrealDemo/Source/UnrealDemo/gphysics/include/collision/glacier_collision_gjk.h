@@ -31,7 +31,7 @@ class GCollision_GJK
 {
 public:
 
-    static const f32 s_DefaultEpsilon = GMath::Makef32(0,1,1000);
+    static const f32 s_DefaultEpsilon;// = GMath::Makef32(0,1,1000);
 
     static bool GJKTest( 
         const GShapeConvexBase& ShapA,

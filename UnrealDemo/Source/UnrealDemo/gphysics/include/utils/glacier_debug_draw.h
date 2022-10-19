@@ -27,6 +27,7 @@ public:
     virtual void DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg = 18);
     virtual void DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 HalfHeight, GColor TColor, int nSeg = 18);
     virtual void DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, f32 Size, GColor TColor);
+    virtual void DrawArrow(const GVector3& V0, const GVector3& VDirection, f32 Size, GColor TColor);
 
 
 

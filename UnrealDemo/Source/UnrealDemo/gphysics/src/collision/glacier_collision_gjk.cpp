@@ -15,6 +15,8 @@
 #include "glacier_distance.h"
 #include "glacier_debug_draw.h"
 
+const f32 GCollision_GJK::s_DefaultEpsilon = GMath::Makef32(0,1,1000);
+
 static inline GVector3 s_GetSupportPos(
     const GVector3&         DirectionA,
     const GShapeConvexBase& ShapA,

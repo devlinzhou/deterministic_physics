@@ -258,3 +258,32 @@ void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, 
 */
 }
 
+void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, f32 Size, GColor TColor)
+{
+    DrawLine( V0, V0 + VDirection * Size, TColor);
+
+    GVector3 VEnd = V0 + VDirection * Size;
+    GVector3 VCurrentUp = GVector3::UnitZ();
+
+    if (GVector3::CrossProduct(VDirection, VCurrentUp).SizeSquare() < 0.00001f)
+    {
+        VCurrentUp = GVector3::UnitX();
+    }
+
+    GVector3 V2 = GVector3::CrossProduct(VDirection, VCurrentUp).GetNormalize();
+    GVector3 V3 = GVector3::CrossProduct(V2, VDirection).GetNormalize();
+
+    f32 fWind = GMath::Makef32(0,13,100);
+    f32 fLeng = GMath::Makef32(0,25,100);
+
+    DrawLine(V0, VEnd, TColor);
+
+    GVector3 VCenter = VEnd - VDirection * Size * fLeng;
+
+    DrawLine(VEnd, VCenter + V2 * Size * fWind, TColor);
+    DrawLine(VEnd, VCenter - V2 * Size * fWind, TColor);
+
+    DrawLine(VEnd, VCenter + V3 * Size * fWind, TColor);
+    DrawLine(VEnd, VCenter - V3 * Size * fWind, TColor);
+}
+
