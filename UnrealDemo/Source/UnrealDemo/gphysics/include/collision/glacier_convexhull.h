@@ -58,6 +58,8 @@ public:
         return Dir;// * Radius;
     }
 
+    void BuildEdges();
+
 
     void Draw( class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor ) const;
 

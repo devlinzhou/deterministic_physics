@@ -15,6 +15,44 @@
 #include "glacier_convexhull.h"
 #include "glacier_debug_draw.h"
 
+void GConvexHull::BuildEdges()
+{
+    m_Edges.clear();
+
+    for (int i = 0; i < m_Polygons.size(); ++i)
+    {
+        const GConvexPolygon& polygenA = m_Polygons[i];
+        for (int j = 0; j < i; ++j)
+        {
+            const GConvexPolygon& polygenB = m_Polygons[j];
+            for (int nPA = 0; nPA < polygenA.m_NbVerts; ++nPA)
+            {
+                uint16_t IdA1 = m_Indexes[polygenA.m_IndexBase + nPA];
+                uint16_t IdA2 = m_Indexes[polygenA.GetNext(nPA)];
+
+                for (int nPB = 0; nPB < polygenB.m_NbVerts; ++nPB)
+                {
+                    uint16_t IdB1 = m_Indexes[polygenB.m_IndexBase + nPB];
+                    uint16_t IdB2 = m_Indexes[polygenB.GetNext(nPB)];
+
+                    if ((IdA1 == IdB1 && IdA2 == IdB2) || (IdA1 == IdB2 && IdA2 == IdB1))
+                    {
+                        GConvexEdge TEdge;
+                        TEdge.PolygenId_A = i;
+                        TEdge.PolygenId_B = j;
+
+                        TEdge.PolygenA_Point_Index = nPA;
+                        TEdge.PolygenB_Point_Index = nPB;
+
+                        m_Edges.push_back(TEdge);
+                    }
+                }
+            }
+        }
+    }
+
+}
+
 
 void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor ) const
 {
