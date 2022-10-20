@@ -8,7 +8,10 @@
 #include "DrawDebugHelpers.h"
 #include "glacier_collision_gjk.h"
 #include "glacier_debug_draw.h"
+#include "glacier_convexhull.h"
 #include "GUnrealUtility.h"
+
+
 
 // Sets default values
 AGPhysicsCollistionActor::AGPhysicsCollistionActor()
@@ -24,8 +27,19 @@ void AGPhysicsCollistionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+    pConvexHull = new GConvexHull();
 
-	
+    std::vector<GVector3> Poss;
+
+    for( int i = 0; i < CovexRandomCount; ++i )
+    {
+        FVector TPos = UKismetMathLibrary::RandomPointInBoundingBox( FVector(0,0,0), FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize));     
+        Poss.push_back( GUtility::Unit_U_to_G(TPos) );
+    }
+
+    pBuilder = new GConvexHullBuilder();
+
+	pBuilder->BuildConvex( Poss, *pConvexHull );
 }
 
 // Called every frame
@@ -85,6 +99,23 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p1, TriangleColor);
         UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p1, Triangle_Pos + Triangle_p2, TriangleColor);
         UKismetSystemLibrary::DrawDebugLine(GetWorld(), Triangle_Pos + Triangle_p0, Triangle_Pos + Triangle_p2, TriangleColor);
+    }
+
+    if( CovexHullShow )
+    {
+        if( pBuilder != nullptr )
+        {
+            pBuilder->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
+
+
+        }
+        
+
+
+        if( pConvexHull != nullptr )
+        {
+            pConvexHull->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
+        }
     }
 
 

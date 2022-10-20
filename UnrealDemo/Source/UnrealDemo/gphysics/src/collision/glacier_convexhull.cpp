@@ -107,3 +107,277 @@ void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GC
         }
     }
 }
+
+
+
+
+void GConvexHull::BuildMinkowskiSum(
+    const GConvexHull&  CA,
+    GTransform_QT       TA,
+    const GConvexHull&  CB,
+    GTransform_QT       TB,
+    GConvexHull&        CResult )
+{
+
+    f32 fRel = GMath::Makef32(0,1,100);
+
+    std::vector<GVector3> NewPoints;//.Clear();
+   // SplitPoints.Clear();
+   //NewIndecs.Clear();
+
+
+    int32_t nAPointCount = (int32_t)CA.m_VPoints.size();
+    int32_t nBPointCount = (int32_t)CB.m_VPoints.size();
+
+    for (int i = 0; i < nAPointCount; ++i)
+    {
+        GVector3 Vi = TA.TransformPosition(CA.m_VPoints[i]);
+        for (int j = 0; j < nBPointCount; ++j)
+        {
+            GVector3 Vj = TB.TransformPosition(CB.m_VPoints[i]);
+
+            GVector3 VNew = Vi + Vj;
+
+            bool bFind = false;
+            for (int32_t n = 0; n < (int32_t)NewPoints.size(); n++)
+            {
+                f32 TVMax = (NewPoints[n] - VNew).AbsMax();
+
+                if (TVMax < fRel )
+                {
+                    bFind = true;
+                    break;
+                }
+            }
+            if (!bFind)
+                NewPoints.push_back(VNew);
+        }
+    }
+
+   // CResult
+
+
+    //Convexnew.BuildConvex(NewPoints, CResult.m_VPoints, NewIndecs);
+
+}
+
+
+
+void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, GConvexHull& CResult )
+{
+    m_VPoints.clear();
+    m_Polygons.clear();
+    CResult.Clear();
+
+    AddInputPoints( InputPoints );
+
+    f32 TEpsilon_Positive = GMath::Makef32(0, 1, 100000);
+    f32 TEpsilon_Negative = -TEpsilon_Positive;
+
+    for (int i = 0; i < (int32_t)m_VPoints.size(); i++)
+    {
+        const GVector3& Vi = m_VPoints[i];
+        for (int j = 0; j < i; j++)
+        {
+            const GVector3& Vj = m_VPoints[j];
+            GVector3 Vji = Vj - Vi;
+
+            for (int k = 0; k < j; k++)
+            {
+                const GVector3& Vk = m_VPoints[k];
+                GVector3 Vki = Vk - Vi;
+
+                GVector3 Dir = GVector3::CrossProduct(Vji, Vki);
+
+                f32 Distance = GVector3::DotProduct(Dir, Vi);
+
+                int OP = 0;
+                int Re = 0;
+
+                for (int n = 0; n < (int32_t)m_VPoints.size(); n++)
+                {
+                    if (n == i || n == j || n == k)
+                        continue;
+
+                    f32 TDis = GVector3::DotProduct(Dir, m_VPoints[n]) - Distance;
+
+                    if (TDis > TEpsilon_Positive) OP++;
+                    if (TDis < TEpsilon_Negative) Re++;
+
+                    if (OP > 0 && Re > 0)
+                        break;
+                }
+
+                if ( (OP > 0 && Re == 0) || (OP == 0 && Re > 0) )
+                {
+                    GVector3 VNormal = Dir.GetNormalize();
+
+                    if(Re == 0)
+                        VNormal = -VNormal;
+
+                    AddFace(GSortPlane( GPlane( VNormal, Vi ) ), i, j, k  );
+                }
+            }
+        }
+    }
+
+    for (std::map<GSortPlane, GBuildPolygon>::iterator iter = m_Polygons.begin(); iter != m_Polygons.end(); ++iter)
+    {
+        SimpleliseFace(iter->second );
+    }
+
+}
+
+
+void GConvexHullBuilder::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor) const
+{
+    for (int i = 0; i < m_VPoints.size(); ++i)
+    {
+        pDraw->DrawSphere( Trans.TransformPosition(m_VPoints[i] ), GMath::Inv_100(), TColor, 8 );
+    }
+
+    for (std::map<GSortPlane, GBuildPolygon>::const_iterator iter = m_Polygons.begin(); iter != m_Polygons.end(); ++iter)
+    {
+        for( int i = 0; i < iter->second.m_ListPoints.size(); ++i )
+        {
+            int iLast = i == 0 ? iter->second.m_ListPoints.size() - 1 : i - 1;
+            pDraw->DrawLine( m_VPoints[i], m_VPoints[iLast], TColor);
+        }
+    }
+
+}
+
+void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoints)
+{
+    int nInputCount = InputPoints.size();
+    for (int i = 0; i < nInputCount; i++)
+    {
+        const GVector3& TV = InputPoints[i];
+
+        bool bFind = false;
+        for (int j = 0; j < m_VPoints.size(); ++j)
+        {
+            if ((TV - m_VPoints[j]).AbsMax() < GMath::Inv_1000())
+            {
+                bFind = true;
+                break;
+            }
+        }
+
+        if( !bFind )
+            m_VPoints.push_back(TV);
+    }
+}
+
+void GConvexHullBuilder::AddFace(const GSortPlane& TPlane, uint16_t i, uint16_t j, uint16_t k )
+{
+    GBuildPolygon* pPolygon = nullptr;
+
+    std::map<GSortPlane, GBuildPolygon>::iterator Titer = m_Polygons.find( TPlane );
+    if( Titer != m_Polygons.end() )
+    {
+        pPolygon = &(Titer->second);
+    }
+    else
+    {
+        pPolygon = &(m_Polygons[TPlane]);
+
+        pPolygon->m_Plane = TPlane.m_Plane;
+    }
+
+    pPolygon->m_Points.insert( i );
+    pPolygon->m_Points.insert( j );
+    pPolygon->m_Points.insert( k );
+}
+
+void GConvexHullBuilder::SimpleliseFace(GBuildPolygon& TPolygon)
+{
+    m_PolygonPoints.clear();
+
+    GVector3 VCenter = GVector3::Zero();
+    for (std::set<int32_t> ::iterator iter = TPolygon.m_Points.begin(); iter != TPolygon.m_Points.end(); ++iter)
+    {
+        m_PolygonPoints.push_back( *iter );
+
+        VCenter += m_VPoints[*iter ];
+    }
+
+    if(  m_PolygonPoints.size() != 0 )
+    {
+        VCenter /= f32(m_PolygonPoints.size());
+
+        int32_t nStartPoint =  -1;
+
+        f32 Tmax = GMath::Zero();
+
+        for( int i = 0; i < m_PolygonPoints.size(); ++i )
+        {
+            f32 FDS = GVector3::DistanceSquare( m_VPoints[m_PolygonPoints[i]], VCenter );
+
+            if( FDS > Tmax )
+            {
+                nStartPoint = m_PolygonPoints[i];
+                Tmax = FDS;
+            }       
+        }
+
+        if( nStartPoint != -1 )
+        {
+            TPolygon.m_ListPoints.clear();
+            
+            int32_t  nCurrent   =   nStartPoint;       
+            GVector3 VDir       =   GVector3::CrossProduct( TPolygon.m_Plane.m_Normal, m_VPoints[nStartPoint] - VCenter );
+
+            while( std::find(TPolygon.m_ListPoints.begin(), TPolygon.m_ListPoints.end(), nCurrent) == TPolygon.m_ListPoints.end())
+            {
+                TPolygon.m_ListPoints.push_back(nCurrent);
+
+                GVector3 VCurrent   =   m_VPoints[nStartPoint];
+                GVector3 VRight     =   GVector3::CrossProduct( TPolygon.m_Plane.m_Normal, VDir );
+
+                f32 fAtanYX = GMath::Zero();
+                int32_t nFind = -1;
+                for (int i = 0; i < m_PolygonPoints.size(); ++i)
+                {
+                    int32_t nTest = m_PolygonPoints[i];
+                    if (nTest != nCurrent)
+                    {
+                        GVector3 VTest = m_VPoints[nTest];
+
+                        GVector3 VDelta = VTest - VCurrent;
+
+                        f32 fY = GVector3::DotProduct( VDir, VDelta);
+                        f32 fX = GVector3::DotProduct( VRight, VDelta);
+
+                        if( fX > GMath::Epsilon() )
+                        {
+                            f32 TYX = fY / fX;
+
+                            if( TYX > fAtanYX )
+                            {
+                                fAtanYX = TYX;
+                                nFind = nTest;
+                            }
+                        }
+                        else
+                        {
+                            //todo
+                        }
+                    }
+                }
+
+                if( nFind != -1 )
+                {
+                    nCurrent = nFind;
+
+                    VDir = m_VPoints[nFind] - VCurrent;
+                }
+                else
+                {
+                    break;
+                }
+            
+            }
+        }
+    }
+}

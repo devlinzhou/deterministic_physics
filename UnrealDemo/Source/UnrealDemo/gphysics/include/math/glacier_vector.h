@@ -285,6 +285,22 @@ public:
         return  *this - VNormal * ( GMath::Two() * DotProduct( *this, VNormal ) );
     }
 
+    static inline GVector3 GetNoParallel( const GVector3& V )
+    {
+        if( V.x >= V.y && V.x >= V.z)
+        {
+            return GVector3::UnitY();
+        }
+        else if(V.y >= V.z )
+        {
+            return GVector3::UnitZ();
+        }
+        else
+        {
+            return GVector3::UnitX();
+        }
+    }
+
     inline GVector3 Lerp( const GVector3& V2, f32 fLerp ) const
     {
         return GVector3(
@@ -323,6 +339,12 @@ public:
     { 
         return x == GMath::Zero() && y == GMath::Zero() && z == GMath::Zero();
     }
+
+    inline bool IsNearlyZero( f32 Epsilon = GMath::Epsilon() ) const
+    {
+        return AbsMax() < Epsilon;
+    }
+
 
     static inline GVector3 Identity( )  { return GVector3( GMath::One(),  GMath::One(),  GMath::One()); }
     static inline GVector3 Zero( )      { return GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero()); }

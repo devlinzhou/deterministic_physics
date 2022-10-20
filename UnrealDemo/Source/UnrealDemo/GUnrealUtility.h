@@ -14,9 +14,9 @@ public:
     static constexpr float fUTG = 0.01f;
     static constexpr float fGTU = 100.f;
 
-    static inline f32           U_to_G(float value)                 {return f32(value );}
-    static inline GVector3      U_to_G(const FVector& value)        {return GVector3( f32(value.X ),f32(value.Y ),f32(value.Z )); }
-    static inline GQuaternion   U_to_G(const FQuat& value)          {return GQuaternion(f32(value.X), f32(value.Y), f32(value.Z),f32(value.W)); }
+    static inline f32           U_to_G(float value)                 {return GMath::FromFloat(value );}
+    static inline GVector3      U_to_G(const FVector& value)        {return GVector3( GMath::FromFloat(value.X ),GMath::FromFloat(value.Y ),GMath::FromFloat(value.Z )); }
+    static inline GQuaternion   U_to_G(const FQuat& value)          {return GQuaternion(GMath::FromFloat(value.X), GMath::FromFloat(value.Y), GMath::FromFloat(value.Z),GMath::FromFloat(value.W)); }
     static inline float         G_to_U(f32 value)                   {return GMath::ToFloat(value); }
     static inline FVector       G_to_U(const GVector3& value)       {return FVector(float(value.x) , float(value.y), float(value.z)); }
     static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(float(value.x), float(value.y), float(value.z), float(value.w)); }

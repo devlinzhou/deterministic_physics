@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
-
 #include "GPhysicsCollistionActor.generated.h"
 
 
@@ -67,6 +65,18 @@ public:
     UPROPERTY(EditAnywhere, Category = "Capsule")
         float           CapsuleHalfHeight = 20.f;
 
+
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        bool            CovexHullShow = false;
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        FVector         CovexHullCenter = FVector(0, 0, 190);
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        float           CovexRandomSize = 100.f;
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        int           CovexRandomCount = 10;
+
+    class GConvexHull*  pConvexHull = nullptr;
+    class GConvexHullBuilder* pBuilder = nullptr;
 
 
     UPROPERTY(EditAnywhere, Category = "TestSphere")

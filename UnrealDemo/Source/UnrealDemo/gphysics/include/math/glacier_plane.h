@@ -59,6 +59,31 @@ public:
         return ( P.m_fDis != m_fDis || P.m_Normal != m_Normal );
     }
 
+    GPlane operator + (const GPlane& P) const
+    {
+        return GPlane( m_Normal + P.m_Normal, m_fDis + P.m_fDis);
+    }
+
+    GPlane operator - (const GPlane& P) const
+    {
+        return GPlane(m_Normal - P.m_Normal, m_fDis - P.m_fDis);
+    }
+
+    void Normalize()
+    {
+        f32 fLength = GVector3::DotProduct(m_Normal, m_Normal) + m_fDis * m_fDis;
+        if (fLength < GMath::Epsilon())
+        {
+            GPlane( GVector3::UnitX(), GMath::Zero());
+        }
+        else
+        {
+            f32 fInvLength = GMath::InvSqrt(fLength);
+            m_Normal *= fInvLength;
+            m_fDis *= fInvLength;
+        }
+    }
+
 public:
 
     inline GPlane Flip( void ) const

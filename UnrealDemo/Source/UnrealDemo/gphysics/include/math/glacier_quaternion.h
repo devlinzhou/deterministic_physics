@@ -105,9 +105,9 @@ public:
 
 public:
 
-    inline f32* Ptr( void ) {  return &x; }
+    inline f32* Ptr( ) {  return &x; }
 
-    inline const f32* Ptr( void ) const
+    inline const f32* Ptr( ) const
     {
         return &x;
     }
@@ -162,17 +162,17 @@ public:
         return z * Q.z + x * Q.x + y * Q.y;
     }
 
-    f32 Size( void ) const
+    f32 Size( ) const
     {
         return GMath::Sqrt( w * w + x * x + y * y + z * z );
     }
 
-    f32 SizeSquare( void ) const
+    f32 SizeSquare( ) const
     {
         return w * w + x * x + y * y + z * z;
     }
 
-    void Normalize( void )
+    void Normalize( )
     {
         f32 fLength = SizeSquare();
         if (fLength < GMath::Epsilon() )
@@ -189,14 +189,14 @@ public:
         }
     }
 
-    inline GQuaternion GetNormalize( void ) const
+    inline GQuaternion GetNormalize( ) const
     {
         GQuaternion Qtemp( *this );
         Qtemp.Normalize( );
         return Qtemp;
     }
 
-    inline void Inverse( void )
+    inline void Inverse( )
     {
         f32 fNorm = SizeSquare( );
         if( fNorm > GMath::Epsilon() )
@@ -213,7 +213,7 @@ public:
         }
     }
 
-    inline GQuaternion GetInverse( void ) const
+    inline GQuaternion GetInverse( ) const
     {
         GQuaternion TQ = *this;
         TQ.Inverse( );
@@ -228,12 +228,12 @@ public:
         //w    =    w;
     }
 
-    inline GQuaternion GetUnitInverse( void ) const
+    inline GQuaternion GetUnitInverse( ) const
     {
         return GQuaternion( -x, -y, -z, w );
     }
 
-    GQuaternion Exp( void ) const
+    GQuaternion Exp( ) const
     {
         f32 RAngle = GMath::Sqrt( x * x + y * y + z * z );
 
@@ -258,7 +258,7 @@ public:
         return QuatTemp;
     }
 
-    GQuaternion Log( void ) const
+    GQuaternion Log( ) const
     {
         GQuaternion QuatTemp = Identity();
         QuatTemp.w = GMath::Zero();
@@ -301,8 +301,8 @@ public:
     static inline GQuaternion Identity() { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::One());}
     static inline GQuaternion Zero()     { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::Zero()); }
 
-    inline bool IsIdentity( void )  const{return *this == Identity();}
-    inline bool IsZero( void )      const{return *this == Zero();}
+    inline bool IsIdentity( )  const{return *this == Identity();}
+    inline bool IsZero( )      const{return *this == Zero();}
 
 
      void Test();

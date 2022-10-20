@@ -53,6 +53,14 @@ public:
     static inline constexpr GFloat e()          { return GFloat(0x56fc2a,   0x6a); };
     static inline constexpr GFloat e_Inv()      { return GFloat(0x5e2d58,   0x67); };
     static inline constexpr GFloat e_Div_2()    { return GFloat(0x5c551d,   0x69); };
+    static inline const GFloat Inv_10()         { return GFloat(0, 1, 10); };
+    static inline const GFloat Inv_100()        { return GFloat(0, 1, 100); };
+    static inline const GFloat Inv_1000()       { return GFloat(0, 1, 1000); };
+    static inline const GFloat Inv_10000()      { return GFloat(0, 1, 10000); };
+    static inline const GFloat Inv_100000()     { return GFloat(0, 1, 100000); };
+    static inline const GFloat Inv_1000000()    { return GFloat(0, 1, 1000000); };
+
+
 
     static GFORCE_INLINE uint32_t GBitScanReverse64( uint64_t num)
     {

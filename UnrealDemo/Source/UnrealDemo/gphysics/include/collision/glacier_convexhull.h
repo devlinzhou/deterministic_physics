@@ -20,6 +20,9 @@
 
 
 #include <vector>
+#include <set>
+#include <map>
+
 
 struct GConvexPolygon
 {
@@ -52,6 +55,18 @@ public:
     {
         ShapType = EShape::EShape_ConvexHull;
     }
+    virtual ~GConvexHull()
+    {
+    
+    }
+
+    void Clear()
+    {
+        m_VPoints.clear();
+        m_Indexes.clear();
+        m_Polygons.clear();
+        m_Edges.clear();
+    }
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
     {
@@ -63,9 +78,123 @@ public:
 
     void Draw( class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor ) const;
 
+
+    //void BuildConvex( const std::vector<GVector3>& Points );
+
+    static void BuildMinkowskiSum(
+        const GConvexHull&  CA,
+        GTransform_QT       TA,
+        const GConvexHull&  CB,
+        GTransform_QT       TB,
+        GConvexHull&        CResult );
+
+
+protected:
+
+
+
+
+
     std::vector<GVector3>       m_VPoints;
     std::vector<uint16_t>       m_Indexes;
     std::vector<GConvexPolygon> m_Polygons;
     std::vector<GConvexEdge>    m_Edges;
+
+};
+
+
+class GSortPlane
+{
+public:
+
+    GPlane m_Plane;
+
+    GSortPlane()
+    {
+
+    }
+
+    GSortPlane(GPlane TPlane) : m_Plane(TPlane)
+    {
+
+    }
+
+    GSortPlane(const GSortPlane&) = default;
+
+    inline bool operator == (const GSortPlane& b) const
+    {
+        return  
+            GVector3::DotProduct( m_Plane.m_Normal, b.m_Plane.m_Normal ) < GMath::Inv_100000() &&
+            GMath::Abs( m_Plane.m_fDis - b.m_Plane.m_fDis ) < GMath::Inv_10000();
+    }
+
+    inline bool operator != (const GSortPlane& b) const
+    {
+        return !( *this == b );
+    }
+
+    inline bool operator < (const GSortPlane& b) const
+    {
+        if( *this == b )
+            return false;
+        else
+        {
+            const GVector3& Va = m_Plane.m_Normal;
+            const GVector3& Vb = b.m_Plane.m_Normal;
+
+            if (Va.z != Vb.z)
+            {
+                return Va.z < Vb.z;
+            }
+            else
+            {
+                if (Va.y != Vb.y)
+                {
+                    return Va.y < Vb.y;
+                }
+                else
+                {
+                    return Va.x < Vb.x;
+                }
+            }
+        }
+    }
+};
+
+
+struct GBuildPolygon
+{
+    GPlane                  m_Plane;
+    std::set<int32_t>       m_Points;
+    std::vector<int32_t>    m_ListPoints;
+};
+
+class GConvexHullBuilder
+{
+public:
+
+    void BuildConvex(const std::vector<GVector3>& Points, GConvexHull& CResult );
+
+
+    void Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor) const;
+
+protected:
+
+
+    void AddInputPoints(const std::vector<GVector3>& InputPoints);
+
+    void AddFace(const GSortPlane& TPlane, uint16_t i, uint16_t j, uint16_t k);
+
+
+
+    void SimpleliseFace( GBuildPolygon& TPolygon );
+
+
+public:
+    std::vector<GVector3>                   m_VPoints;
+    std::map<GSortPlane, GBuildPolygon>     m_Polygons;
+
+
+    std::vector<int32_t>                   m_PolygonPoints;
 
 };

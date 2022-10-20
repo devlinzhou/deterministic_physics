@@ -47,6 +47,13 @@ public:
     static constexpr f32 Pi_Two()   { return GFloat::Pi_Two(); }
     static constexpr f32 Pi_Quarter(){return GFloat::Pi_Quarter(); }
 
+    static inline const GFloat Inv_10() { return GFloat(0, 1, 10); };
+    static inline const GFloat Inv_100() { return GFloat(0, 1, 100); };
+    static inline const GFloat Inv_1000() { return GFloat(0, 1, 1000); };
+    static inline const GFloat Inv_10000() { return GFloat(0, 1, 10000); };
+    static inline const GFloat Inv_100000() { return GFloat(0, 1, 100000); };
+    static inline const GFloat Inv_1000000() { return GFloat(0, 1, 1000000); };
+
     static inline f32 Abs( const f32 value )    { return GFloat::Abs(value); }
     static inline f32 Sin( const f32 value )    { return GFloat::Sin(value); }
     static inline f32 Cos( const f32 value )    { return GFloat::Cos(value); }
@@ -90,6 +97,13 @@ public:
     static constexpr f32 Pi_Half()      { return Pi() * 0.5f; }
     static constexpr f32 Pi_Two()       { return Pi() * 2.f; }
     static constexpr f32 Pi_Quarter()   { return Pi() * 0.25f; }
+
+    static inline const f32 Inv_10()        { return 0.1f; };
+    static inline const f32 Inv_100()       { return 0.01f; };
+    static inline const f32 Inv_1000()      { return 0.001f; };
+    static inline const f32 Inv_10000()     { return 0.0001f; };
+    static inline const f32 Inv_100000()    { return 0.00001f; };
+    static inline const f32 Inv_1000000()   { return 0.000001f; };
 
 
     static inline f32   Abs(const f32 value)                    { return abs(value); }
