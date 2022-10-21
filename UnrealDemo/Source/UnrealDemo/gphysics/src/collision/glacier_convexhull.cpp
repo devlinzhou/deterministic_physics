@@ -150,8 +150,9 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
 
                 f32 Distance = GVector3::DotProduct(Dir, Vi);
 
-                int OP = 0;
-                int Re = 0;
+                int nPositive = 0;
+                int nOnPlane  = 0;
+                int nNegative = 0;
 
                 for (int n = 0; n < (int32_t)m_VPoints.size(); n++)
                 {
@@ -160,18 +161,22 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
 
                     f32 TDis = GVector3::DotProduct(Dir, m_VPoints[n]) - Distance;
 
-                    if (TDis > TEpsilon_Positive) OP++;
-                    if (TDis < TEpsilon_Negative) Re++;
+                    if (TDis > TEpsilon_Positive)
+                        nPositive++;
+                    else if (TDis < TEpsilon_Negative)
+                        nNegative++;
+                    else
+                        nOnPlane++;
 
-                    if (OP > 0 && Re > 0)
+                    if (nPositive > 0 && nNegative > 0)
                         break;
                 }
 
-                if ( (OP > 0 && Re == 0) || (OP == 0 && Re > 0) )
+                if ( (nPositive > 0 && nNegative == 0) || (nPositive == 0 && nNegative > 0) )
                 {
                     GVector3 VNormal = Dir.GetNormalize();
 
-                    if(Re == 0)
+                    if(nNegative == 0)
                         VNormal = -VNormal;
 
                     AddFace(GSortPlane( GPlane( VNormal, Vi ) ), i, j, k  );
