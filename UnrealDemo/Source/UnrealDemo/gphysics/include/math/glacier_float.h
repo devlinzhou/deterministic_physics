@@ -41,9 +41,11 @@ class GFloat // Get Glacier first char "G" for Name
 {
 public:
     static inline constexpr GFloat Zero()       { return GFloat(0,          0x00); };
-    static inline constexpr GFloat One()        { return GFloat(0x400000,   0x69); };
     static inline constexpr GFloat Half()       { return GFloat(0x400000,   0x68); };
+    static inline constexpr GFloat One()        { return GFloat(0x400000,   0x69); };
     static inline constexpr GFloat Two()        { return GFloat(0x400000,   0x6A); };
+    static inline constexpr GFloat Three()      { return GFloat(0x300000,   0x6A); };
+    static inline constexpr GFloat Four()       { return GFloat(0x400000,   0x6B); };
     static inline constexpr GFloat Pi()         { return GFloat(0x6487ef,   0x6a); };//Float(3,141592654, 1000000000); 
     static inline constexpr GFloat Pi_Half()    { return GFloat(0x6487ef,   0x69); };
     static inline constexpr GFloat Pi_Quarter() { return GFloat(0x6487ef,   0x68); };
@@ -53,6 +55,8 @@ public:
     static inline constexpr GFloat e()          { return GFloat(0x56fc2a,   0x6a); };
     static inline constexpr GFloat e_Inv()      { return GFloat(0x5e2d58,   0x67); };
     static inline constexpr GFloat e_Div_2()    { return GFloat(0x5c551d,   0x69); };
+    static inline constexpr GFloat Epsilon()    { return GFloat(0x400000,   0x57); };
+
     static inline const GFloat Inv_10()         { return GFloat(0, 1, 10); };
     static inline const GFloat Inv_100()        { return GFloat(0, 1, 100); };
     static inline const GFloat Inv_1000()       { return GFloat(0, 1, 1000); };

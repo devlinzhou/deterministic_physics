@@ -31,13 +31,23 @@ void AGPhysicsCollistionActor::BeginPlay()
 
     std::vector<GVector3> Poss;
 
+    FVector UBoxHalf = FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize);
+
+    GVector3 VMin = GUtility::Unit_U_to_G( -UBoxHalf);
+    GVector3 VMax = GUtility::Unit_U_to_G(UBoxHalf);
+
+
     for( int i = 0; i < CovexRandomCount; ++i )
     {
         FVector TPos = UKismetMathLibrary::RandomPointInBoundingBox( FVector(0,0,0), FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize));     
         Poss.push_back( GUtility::Unit_U_to_G(TPos) );
     }
 
+
+
     pBuilder = new GConvexHullBuilder();
+
+    GConvexHullBuilder::AddBoxPoints( Poss, VMin, VMax );
 
 	pBuilder->BuildConvex( Poss, *pConvexHull );
 }
@@ -114,7 +124,7 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         if( pConvexHull != nullptr )
         {
-            pConvexHull->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
+           // pConvexHull->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
         }
     }
 

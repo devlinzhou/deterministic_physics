@@ -75,31 +75,17 @@ public:
 
     void BuildEdges();
 
-
     void Draw( class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor ) const;
 
-
-    //void BuildConvex( const std::vector<GVector3>& Points );
-
-    static void BuildMinkowskiSum(
-        const GConvexHull&  CA,
-        GTransform_QT       TA,
-        const GConvexHull&  CB,
-        GTransform_QT       TB,
-        GConvexHull&        CResult );
-
-
 protected:
-
-
-
-
 
     std::vector<GVector3>       m_VPoints;
     std::vector<uint16_t>       m_Indexes;
     std::vector<GConvexPolygon> m_Polygons;
     std::vector<GConvexEdge>    m_Edges;
 
+
+    friend class GConvexHullBuilder;
 };
 
 
@@ -146,16 +132,17 @@ public:
             {
                 return Va.z < Vb.z;
             }
+            else if (Va.y != Vb.y)
+            {
+                return Va.y < Vb.y;
+            }
+            else if (Va.x != Vb.x)
+            {
+                return Va.x < Vb.x;
+            }
             else
             {
-                if (Va.y != Vb.y)
-                {
-                    return Va.y < Vb.y;
-                }
-                else
-                {
-                    return Va.x < Vb.x;
-                }
+                return m_Plane.m_fDis < b.m_Plane.m_fDis;
             }
         }
     }
@@ -174,7 +161,17 @@ class GConvexHullBuilder
 {
 public:
 
+
+    static void AddBoxPoints(std::vector<GVector3>& Points, const GVector3& VMin, const GVector3& VMax );
+
     void BuildConvex(const std::vector<GVector3>& Points, GConvexHull& CResult );
+
+    void BuildMinkowskiSum(
+        const GConvexHull&  CA,
+        GTransform_QT       TA,
+        const GConvexHull&  CB,
+        GTransform_QT       TB,
+        GConvexHull&        CResult);
 
 
     void Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor) const;

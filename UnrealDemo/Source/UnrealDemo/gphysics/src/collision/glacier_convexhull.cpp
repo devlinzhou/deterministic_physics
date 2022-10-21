@@ -104,71 +104,29 @@ void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GC
 
             GVector3 VCenter = Trans.TransformPosition(TPolygon.m_CenterPos);
 
-            pDraw->DrawArrow( VCenter, Trans.TransformNormal(TPolygon.m_Plane.m_Normal), GMath::Makef32(8,0,100), TColor);
+            pDraw->DrawArrow( VCenter, Trans.TransformNormal(TPolygon.m_Plane.m_Normal), GMath::Makef32(0,8,100), TColor);
         }
     }
 }
 
-
-
-
-void GConvexHull::BuildMinkowskiSum(
-    const GConvexHull&  CA,
-    GTransform_QT       TA,
-    const GConvexHull&  CB,
-    GTransform_QT       TB,
-    GConvexHull&        CResult )
+void GConvexHullBuilder::AddBoxPoints(std::vector<GVector3>& Points, const GVector3& VMin, const GVector3& VMax)
 {
-
-    f32 fRel = GMath::Makef32(0,1,100);
-
-    std::vector<GVector3> NewPoints;//.Clear();
-   // SplitPoints.Clear();
-   //NewIndecs.Clear();
-
-
-    int32_t nAPointCount = (int32_t)CA.m_VPoints.size();
-    int32_t nBPointCount = (int32_t)CB.m_VPoints.size();
-
-    for (int i = 0; i < nAPointCount; ++i)
-    {
-        GVector3 Vi = TA.TransformPosition(CA.m_VPoints[i]);
-        for (int j = 0; j < nBPointCount; ++j)
-        {
-            GVector3 Vj = TB.TransformPosition(CB.m_VPoints[i]);
-
-            GVector3 VNew = Vi + Vj;
-
-            bool bFind = false;
-            for (int32_t n = 0; n < (int32_t)NewPoints.size(); n++)
-            {
-                f32 TVMax = (NewPoints[n] - VNew).AbsMax();
-
-                if (TVMax < fRel )
-                {
-                    bFind = true;
-                    break;
-                }
-            }
-            if (!bFind)
-                NewPoints.push_back(VNew);
-        }
-    }
-
-   // CResult
-
-
-    //Convexnew.BuildConvex(NewPoints, CResult.m_VPoints, NewIndecs);
-
+    Points.push_back(GVector3(VMin.x, VMin.y, VMin.z));
+    Points.push_back(GVector3(VMin.x, VMin.y, VMax.z));
+    Points.push_back(GVector3(VMin.x, VMax.y, VMin.z));
+    Points.push_back(GVector3(VMin.x, VMax.y, VMax.z));
+    Points.push_back(GVector3(VMax.x, VMin.y, VMin.z));
+    Points.push_back(GVector3(VMax.x, VMin.y, VMax.z));
+    Points.push_back(GVector3(VMax.x, VMax.y, VMin.z));
+    Points.push_back(GVector3(VMax.x, VMax.y, VMax.z));
 }
-
 
 
 void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, GConvexHull& CResult )
 {
     m_VPoints.clear();
     m_Polygons.clear();
-    CResult.Clear();
+
 
     AddInputPoints( InputPoints );
 
@@ -218,7 +176,7 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
 
                     AddFace(GSortPlane( GPlane( VNormal, Vi ) ), i, j, k  );
                 }
-            }
+            } 
         }
     }
 
@@ -227,7 +185,84 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
         SimpleliseFace(iter->second );
     }
 
+    std::vector<int32_t> TmappingPoints(m_VPoints.size(), -1);
+
+    CResult.Clear();
+    for (std::map<GSortPlane, GBuildPolygon>::iterator iter = m_Polygons.begin(); iter != m_Polygons.end(); ++iter)
+    {
+        const GBuildPolygon& TBuildPolygon = iter->second;
+
+        GConvexPolygon TCP;
+        TCP.m_Plane         = TBuildPolygon.m_Plane;
+        TCP.m_CenterPos     = TBuildPolygon.m_VCenter;
+        TCP.m_NbVerts       = TBuildPolygon.m_ListPoints.size();
+        TCP.m_IndexBase     = CResult.m_Indexes.size();
+
+        for( int32_t i = 0; i < TBuildPolygon.m_ListPoints.size(); ++i )
+        {
+            int nId = TBuildPolygon.m_ListPoints[i];
+            int newIndex = -1;
+            if( TmappingPoints[nId] == -1 )
+            {
+                newIndex            = CResult.m_VPoints.size();
+                CResult.m_VPoints.push_back( m_VPoints[nId] );
+                TmappingPoints[nId]   = newIndex;
+            }
+            else
+            {
+                newIndex = TmappingPoints[nId];
+            }
+
+            CResult.m_Indexes.push_back( newIndex );
+        }
+
+        CResult.m_Polygons.push_back( TCP );
+    }
+
 }
+
+void GConvexHullBuilder::BuildMinkowskiSum(
+    const GConvexHull& CA,
+    GTransform_QT       TA,
+    const GConvexHull& CB,
+    GTransform_QT       TB,
+    GConvexHull&        CResult)
+{
+    f32 fRel = GMath::Makef32(0, 1, 100);
+
+    std::vector<GVector3> VPoints;
+
+    int32_t nAPointCount = (int32_t)CA.m_VPoints.size();
+    int32_t nBPointCount = (int32_t)CB.m_VPoints.size();
+
+    for (int i = 0; i < nAPointCount; ++i)
+    {
+        GVector3 Vi = TA.TransformPosition(CA.m_VPoints[i]);
+        for (int j = 0; j < nBPointCount; ++j)
+        {
+            GVector3 Vj = TB.TransformPosition(CB.m_VPoints[i]);
+
+            GVector3 VNew = Vi + Vj;
+
+            bool bFind = false;
+            for (int32_t n = 0; n < (int32_t)VPoints.size(); n++)
+            {
+                f32 TVMax = (VPoints[n] - VNew).AbsMax();
+
+                if (TVMax < fRel)
+                {
+                    bFind = true;
+                    break;
+                }
+            }
+            if (!bFind)
+                VPoints.push_back(VNew);
+        }
+    }
+
+    BuildConvex(VPoints, CResult);
+}
+
 
 
 void GConvexHullBuilder::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor) const
