@@ -240,9 +240,22 @@ void GConvexHullBuilder::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Tr
     {
         for( int i = 0; i < iter->second.m_ListPoints.size(); ++i )
         {
+
             int iLast = i == 0 ? iter->second.m_ListPoints.size() - 1 : i - 1;
-            pDraw->DrawLine( m_VPoints[i], m_VPoints[iLast], TColor);
+
+            int nIndexi = iter->second.m_ListPoints[i];
+            int nIndexj = iter->second.m_ListPoints[iLast];
+
+
+            pDraw->DrawLine( Trans.TransformPosition(m_VPoints[nIndexi] ), Trans.TransformPosition(m_VPoints[nIndexj]), TColor);
         }
+
+        for (std::set<int32_t> ::iterator iterPos = iter->second.m_Points.begin(); iterPos != iter->second.m_Points.end(); ++iterPos)
+        {
+            pDraw->DrawLine( Trans.TransformPosition(iter->second.m_VCenter), Trans.TransformPosition(m_VPoints[*iterPos]), GColor::White());
+        }
+
+        pDraw->DrawArrow( Trans.TransformPosition(iter->second.m_VCenter), Trans.TransformNormal(iter->second.m_Plane.m_Normal), GMath::Inv_10(), TColor);
     }
 
 }
@@ -306,6 +319,8 @@ void GConvexHullBuilder::SimpleliseFace(GBuildPolygon& TPolygon)
     {
         VCenter /= f32(m_PolygonPoints.size());
 
+        TPolygon.m_VCenter = VCenter;
+
         int32_t nStartPoint =  -1;
 
         f32 Tmax = GMath::Zero();
@@ -335,7 +350,7 @@ void GConvexHullBuilder::SimpleliseFace(GBuildPolygon& TPolygon)
                 GVector3 VCurrent   =   m_VPoints[nStartPoint];
                 GVector3 VRight     =   GVector3::CrossProduct( TPolygon.m_Plane.m_Normal, VDir );
 
-                f32 fAtanYX = GMath::Zero();
+                f32 fAtanYX = -f32(100000);
                 int32_t nFind = -1;
                 for (int i = 0; i < m_PolygonPoints.size(); ++i)
                 {

@@ -165,6 +165,7 @@ public:
 struct GBuildPolygon
 {
     GPlane                  m_Plane;
+    GVector3                m_VCenter;
     std::set<int32_t>       m_Points;
     std::vector<int32_t>    m_ListPoints;
 };
