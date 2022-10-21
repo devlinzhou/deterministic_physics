@@ -14,6 +14,7 @@
 
 #include "glacier_convexhull.h"
 #include "glacier_debug_draw.h"
+#include "glacier_distance.h"
 
 void GConvexHull::BuildEdges()
 {
@@ -263,22 +264,58 @@ void GConvexHullBuilder::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Tr
 void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoints)
 {
     int nInputCount = InputPoints.size();
-    for (int i = 0; i < nInputCount; i++)
+    for (int i = 0; i < nInputCount; i++) // remove nearly points
     {
         const GVector3& TV = InputPoints[i];
 
-        bool bFind = false;
+        bool bFindnearly = false;
         for (int j = 0; j < m_VPoints.size(); ++j)
         {
             if ((TV - m_VPoints[j]).AbsMax() < GMath::Inv_1000())
             {
-                bFind = true;
+                bFindnearly = true;
                 break;
             }
         }
 
-        if( !bFind )
-            m_VPoints.push_back(TV);
+        if( bFindnearly )
+            continue;
+
+        bool bisInline = false;
+
+        for (int m = 0; m < m_VPoints.size(); ++m ) // remove three point collinear
+        {
+            if( m == i )
+                continue;
+
+            for (int n = 0; n < m; ++n)
+            {
+                 if( n == i ) 
+                     continue;
+
+                 GVector3 P1 = m_VPoints[m];
+                 GVector3 P2 = m_VPoints[n];
+
+                 if( GVector3::DistanceSquare(P1, P2) > GMath::Inv_100000() )
+                 {
+                     if (GVector3::DistanceSquare(GDistance::ClosestPtPointSegment(TV, P1, P2), TV) < GMath::Inv_100000())
+                     {
+                         bisInline = true;
+                         break;
+                     }
+                 }
+
+                 if( bisInline )
+                 {
+                    break;
+                 }
+            }
+        }
+
+        if( bisInline )
+            continue;
+
+        m_VPoints.push_back(TV);
     }
 }
 
