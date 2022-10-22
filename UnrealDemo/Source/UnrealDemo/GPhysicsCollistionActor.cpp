@@ -27,9 +27,13 @@ void AGPhysicsCollistionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-    pConvexHull = new GConvexHull();
+    pConvexHullA = new GConvexHull();
+    pConvexHullB = new GConvexHull();
 
-    std::vector<GVector3> Poss;
+
+    std::vector<GVector3> PossA;
+    std::vector<GVector3> PossB;
+
 
     FVector UBoxHalf = FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize);
 
@@ -40,16 +44,17 @@ void AGPhysicsCollistionActor::BeginPlay()
     for( int i = 0; i < CovexRandomCount; ++i )
     {
         FVector TPos = UKismetMathLibrary::RandomPointInBoundingBox( FVector(0,0,0), FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize));     
-        Poss.push_back( GUtility::Unit_U_to_G(TPos) );
+        PossA.push_back( GUtility::Unit_U_to_G(TPos) );
     }
 
 
 
     pBuilder = new GConvexHullBuilder();
+    pBuilder->BuildConvex( PossA, *pConvexHullA );
 
-    GConvexHullBuilder::AddBoxPoints( Poss, VMin, VMax );
+   GConvexHullBuilder::AddBoxPoints( PossB, VMin, VMax );
+    pBuilder->BuildConvex( PossB, *pConvexHullB );
 
-	pBuilder->BuildConvex( Poss, *pConvexHull );
 }
 
 // Called every frame
@@ -115,16 +120,30 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
     {
         if( pBuilder != nullptr )
         {
-            pBuilder->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
-
+           // pBuilder->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
 
         }
         
-
-
-        if( pConvexHull != nullptr )
+        if( pConvexHullA != nullptr )
         {
-           // pConvexHull->Draw( &Tdraw, GTransform_QT(GUtility::Unit_U_to_G(CovexHullCenter)), GColor::Yellow() );
+            pConvexHullA->Draw( &Tdraw, GTransform_QT(GUtility::U_to_G( ConvexRotA.Quaternion()),GUtility::Unit_U_to_G(CovexHullCenterA)), GColor::Yellow() );
+        }
+
+        if (pConvexHullB != nullptr)
+        {
+            pConvexHullB->Draw(&Tdraw, GTransform_QT(GUtility::U_to_G( ConvexRotB.Quaternion()), GUtility::Unit_U_to_G(CovexHullCenterB)), GColor::Yellow());
+        }
+
+        if( pConvexHullA != nullptr && pConvexHullB != nullptr)
+        {
+            GConvexHull TResult;
+
+            pBuilder->BuildMinkowskiSum(
+                *pConvexHullA, GTransform_QT(GUtility::U_to_G( ConvexRotA.Quaternion()), GUtility::Unit_U_to_G(CovexHullCenterA)),
+                *pConvexHullB, GTransform_QT(GUtility::U_to_G( ConvexRotB.Quaternion()), GUtility::Unit_U_to_G(CovexHullCenterB)),
+                TResult, false);
+
+            TResult.Draw(&Tdraw, GTransform_QT::Identity(), GColor::Yellow());
         }
     }
 

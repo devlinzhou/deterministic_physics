@@ -102,9 +102,9 @@ void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GC
                 VLast = VCurrent;
             }
 
-            GVector3 VCenter = Trans.TransformPosition(TPolygon.m_CenterPos);
+           // GVector3 VCenter = Trans.TransformPosition(TPolygon.m_CenterPos);
 
-            pDraw->DrawArrow( VCenter, Trans.TransformNormal(TPolygon.m_Plane.m_Normal), GMath::Makef32(0,8,100), TColor);
+           // pDraw->DrawArrow( VCenter, Trans.TransformNormal(TPolygon.m_Plane.m_Normal), GMath::Makef32(0,8,100), TColor);
         }
     }
 }
@@ -119,6 +119,10 @@ void GConvexHullBuilder::AddBoxPoints(std::vector<GVector3>& Points, const GVect
     Points.push_back(GVector3(VMax.x, VMin.y, VMax.z));
     Points.push_back(GVector3(VMax.x, VMax.y, VMin.z));
     Points.push_back(GVector3(VMax.x, VMax.y, VMax.z));
+
+    Points.push_back( (GVector3(VMax.x, VMax.y, VMax.z) + GVector3(VMax.x, VMax.y, VMin.z) ) * GMath::Half() );
+
+    Points.push_back( (GVector3(VMin.x, VMin.y, VMax.z) + GVector3(VMax.x, VMax.y, VMax.z) ) * GMath::Half() );
 }
 
 
@@ -126,7 +130,7 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
 {
     m_VPoints.clear();
     m_Polygons.clear();
-
+    m_PolygonPoints.clear();
 
     AddInputPoints( InputPoints );
 
@@ -231,10 +235,9 @@ void GConvexHullBuilder::BuildMinkowskiSum(
     GTransform_QT       TA,
     const GConvexHull& CB,
     GTransform_QT       TB,
-    GConvexHull&        CResult)
+    GConvexHull&        CResult,
+    bool                bAdd)
 {
-    f32 fRel = GMath::Makef32(0, 1, 100);
-
     std::vector<GVector3> VPoints;
 
     int32_t nAPointCount = (int32_t)CA.m_VPoints.size();
@@ -245,23 +248,10 @@ void GConvexHullBuilder::BuildMinkowskiSum(
         GVector3 Vi = TA.TransformPosition(CA.m_VPoints[i]);
         for (int j = 0; j < nBPointCount; ++j)
         {
-            GVector3 Vj = TB.TransformPosition(CB.m_VPoints[i]);
+            GVector3 Vj = TB.TransformPosition(CB.m_VPoints[j]);
+            GVector3 VNew = bAdd ? Vi + Vj : Vi - Vj;
 
-            GVector3 VNew = Vi + Vj;
-
-            bool bFind = false;
-            for (int32_t n = 0; n < (int32_t)VPoints.size(); n++)
-            {
-                f32 TVMax = (VPoints[n] - VNew).AbsMax();
-
-                if (TVMax < fRel)
-                {
-                    bFind = true;
-                    break;
-                }
-            }
-            if (!bFind)
-                VPoints.push_back(VNew);
+            VPoints.push_back(VNew);
         }
     }
 
@@ -311,7 +301,11 @@ void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoint
         bool bFindnearly = false;
         for (int j = 0; j < m_VPoints.size(); ++j)
         {
-            if ((TV - m_VPoints[j]).AbsMax() < GMath::Inv_1000())
+            GVector3 VDelta = TV - m_VPoints[j];
+            f32 Fdelta = VDelta.AbsMax();
+            f32 FEpsilon = GMath::Inv_1000();
+
+            if ( Fdelta < FEpsilon)
             {
                 bFindnearly = true;
                 break;
@@ -323,7 +317,7 @@ void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoint
 
         bool bisInline = false;
 
-        for (int m = 0; m < m_VPoints.size(); ++m ) // remove three point collinear
+        for (int m = 0; m < nInputCount; ++m ) // remove three point collinear
         {
             if( m == i )
                 continue;
@@ -333,22 +327,28 @@ void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoint
                  if( n == i ) 
                      continue;
 
-                 GVector3 P1 = m_VPoints[m];
-                 GVector3 P2 = m_VPoints[n];
+                 GVector3 P1 = InputPoints[m];
+                 GVector3 P2 = InputPoints[n];
 
                  if( GVector3::DistanceSquare(P1, P2) > GMath::Inv_100000() )
                  {
-                     if (GVector3::DistanceSquare(GDistance::ClosestPtPointSegment(TV, P1, P2), TV) < GMath::Inv_100000())
+                     GVector3 VNear = GDistance::ClosestPtPointSegment(TV, P1, P2);
+
+                     GVector3 VDelta = VNear - TV;
+
+                     f32 fSizeSqure = VDelta.SizeSquare();
+
+                     if (fSizeSqure < GMath::Inv_100000())
                      {
                          bisInline = true;
                          break;
                      }
                  }
+            }
 
-                 if( bisInline )
-                 {
-                    break;
-                 }
+            if (bisInline)
+            {
+                break;
             }
         }
 

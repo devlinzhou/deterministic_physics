@@ -221,6 +221,8 @@ public:
         }
         else
         {
+            
+
             f32 finv = GMath::InvSqrt(f);
             x *= finv;
             y *= finv;

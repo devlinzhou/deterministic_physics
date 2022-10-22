@@ -69,13 +69,21 @@ public:
     UPROPERTY(EditAnywhere, Category = "ConvexHull")
         bool            CovexHullShow = false;
     UPROPERTY(EditAnywhere, Category = "ConvexHull")
-        FVector         CovexHullCenter = FVector(0, 0, 190);
+        FVector         CovexHullCenterA = FVector(0, 0, 190);
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        FRotator        ConvexRotA = FRotator(0,0,0);
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        FVector         CovexHullCenterB = FVector(100, 0, 190);
+    UPROPERTY(EditAnywhere, Category = "ConvexHull")
+        FRotator        ConvexRotB = FRotator(0,0,0);;
     UPROPERTY(EditAnywhere, Category = "ConvexHull")
         float           CovexRandomSize = 100.f;
     UPROPERTY(EditAnywhere, Category = "ConvexHull")
         int           CovexRandomCount = 10;
 
-    class GConvexHull*  pConvexHull = nullptr;
+    class GConvexHull*  pConvexHullA = nullptr;
+    class GConvexHull*  pConvexHullB = nullptr;
+
     class GConvexHullBuilder* pBuilder = nullptr;
 
 

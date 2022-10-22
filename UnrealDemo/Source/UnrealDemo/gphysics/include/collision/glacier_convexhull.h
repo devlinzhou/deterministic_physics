@@ -110,7 +110,7 @@ public:
     inline bool operator == (const GSortPlane& b) const
     {
         return  
-            GVector3::DotProduct( m_Plane.m_Normal, b.m_Plane.m_Normal ) < GMath::Inv_100000() &&
+            GVector3::DistanceSquare( m_Plane.m_Normal, b.m_Plane.m_Normal ) < GMath::Inv_100000() &&
             GMath::Abs( m_Plane.m_fDis - b.m_Plane.m_fDis ) < GMath::Inv_10000();
     }
 
@@ -171,7 +171,8 @@ public:
         GTransform_QT       TA,
         const GConvexHull&  CB,
         GTransform_QT       TB,
-        GConvexHull&        CResult);
+        GConvexHull&        CResult,
+        bool                bAdd = true);
 
 
     void Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GColor TColor) const;

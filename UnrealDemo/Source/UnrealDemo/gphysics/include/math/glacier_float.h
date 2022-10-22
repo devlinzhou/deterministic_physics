@@ -291,10 +291,10 @@ public:
     GFORCE_INLINE GFloat operator +( const GFloat b) const
     {
         int32_t a_Frac = getfraction_NoShift();
-        if( a_Frac==0) return b;
+        if( a_Frac==0) return Normalize32(b.getfraction(), b.getexponent());
 
         int32_t b_Frac = b.getfraction_NoShift();
-        if (b_Frac == 0) return *this;
+        if (b_Frac == 0) return Normalize32(getfraction(), getexponent());
 
         int32_t a_e = getexponent();// -127;
         int32_t b_e = b.getexponent();//-127;
@@ -328,11 +328,12 @@ public:
         return rawint32 != b.rawint32;
     }
 
-    GFORCE_INLINE constexpr GFloat operator -() const
+    GFORCE_INLINE const GFloat operator -() const
     {
         int32_t nFraction = getfraction();
 
-        return GFloat::FromFractionAndExp(-nFraction, getexponent());
+        //return GFloat::FromFractionAndExp(-nFraction, getexponent());
+        return GFloat::Normalize32(-nFraction, getexponent());
     }
 
     GFORCE_INLINE const GFloat operator -( const GFloat b) const
@@ -352,10 +353,10 @@ public:
     GFORCE_INLINE const GFloat operator *(const GFloat b) const
     {
         // I assume a and b is normalized, if a or b is zero,it will get a correct result
-        int64_t Trawvalue = (int64_t)getfraction_NoShift() * b.getfraction_NoShift();
+        int64_t Trawvalue = (int64_t)getfraction() * b.getfraction_NoShift();
         int32_t Texponent = getexponent() + b.getexponent() - 104;
 
-        return GFloat::FromFractionAndExp((int32_t)(Trawvalue >> 39), Texponent);
+        return GFloat::FromFractionAndExp((int32_t)(Trawvalue >> 31), Texponent);
     }
 #else 
 
@@ -363,7 +364,7 @@ public:
     {
         int64_t Trawvalue = (int64_t)getfraction() * b.getfraction();
         int32_t Texponent = getexponent() + b.getexponent() - 127;
-        return  GFloat::Normalize(Trawvalue, Texponent);
+        return  GFloat::Normalize64(Trawvalue, Texponent);
     }
 #endif
     GFORCE_INLINE const GFloat operator *=(GFloat b)
@@ -574,7 +575,7 @@ public:
         }
     }
 
-    static GFORCE_INLINE GFloat Abs(const GFloat value)
+    static inline GFloat Abs(const GFloat value)
     {
         return value.rawint32 >= 0 ? value : -value;
     }
