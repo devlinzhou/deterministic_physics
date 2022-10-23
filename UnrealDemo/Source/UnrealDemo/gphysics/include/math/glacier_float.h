@@ -17,7 +17,7 @@
 
 //#define GLACIER_OVERFLOW_TEST
 
-#define GLACIER_MULTIPLY_NORAMLIZE_FAST
+//#define GLACIER_MULTIPLY_NORAMLIZE_FAST
 
 #ifndef GLACIER_MULTIPLY_NORAMLIZE_FAST
 //#define GLACIER_NORMALIZE_TEST
@@ -40,7 +40,7 @@
 class GFloat // Get Glacier first char "G" for Name
 {
 public:
-    static inline constexpr GFloat Zero()       { return GFloat(0,          0x00); };
+    static inline constexpr GFloat Zero()       { return GFloat(0x000000,   0x00); };
     static inline constexpr GFloat Half()       { return GFloat(0x400000,   0x68); };
     static inline constexpr GFloat One()        { return GFloat(0x400000,   0x69); };
     static inline constexpr GFloat Two()        { return GFloat(0x400000,   0x6A); };
@@ -94,7 +94,7 @@ public:
         _BitScanReverse(&Index, num);
         return Index;
 #elif __GNUC__
-        auto nCount = __builtin_clzll(num);
+        auto nCount = __builtin_clz(num);
         return  nCount == 32 ? 0 : 31 - nCount;
 #else
         for (int32_t nIndex = 31; nIndex >= 0; nIndex--)
@@ -353,10 +353,10 @@ public:
     GFORCE_INLINE const GFloat operator *(const GFloat b) const
     {
         // I assume a and b is normalized, if a or b is zero,it will get a correct result
-        int64_t Trawvalue = (int64_t)getfraction() * b.getfraction_NoShift();
-        int32_t Texponent = getexponent() + b.getexponent() - 104;
+        int64_t Trawvalue = (int64_t)getfraction() * (int64_t)b.getfraction_NoShift();
+        int32_t Texponent = getexponent() + b.getexponent() - 103;
 
-        return GFloat::FromFractionAndExp((int32_t)(Trawvalue >> 31), Texponent);
+        return GFloat::FromFractionAndExp((int32_t)(Trawvalue >> 32), Texponent);
     }
 #else 
 
@@ -398,8 +398,8 @@ public:
         int32_t a_fra = getfraction_NoShift();
         int32_t b_fra = b.getfraction_NoShift();
 
-     //   if( a_fra == 0 || b_fra == 0)
-      //      return a_fra > b_fra;
+        if( a_fra == 0 || b_fra == 0)
+            return a_fra > b_fra;
 
         int32_t a_e = getexponent();// -127;
         int32_t b_e = b.getexponent();//-127;
@@ -575,7 +575,7 @@ public:
         }
     }
 
-    static inline GFloat Abs(const GFloat value)
+    static GFORCE_INLINE GFloat Abs(const GFloat value)
     {
         return value.rawint32 >= 0 ? value : -value;
     }

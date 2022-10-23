@@ -150,7 +150,7 @@ void GConvexHullBuilder::BuildConvex(const std::vector<GVector3>& InputPoints, G
                 const GVector3& Vk = m_VPoints[k];
                 GVector3 Vki = Vk - Vi;
 
-                GVector3 Dir = GVector3::CrossProduct(Vji, Vki);
+                GVector3 Dir = GVector3::CrossProduct(Vji, Vki).GetNormalize();
 
                 f32 Distance = GVector3::DotProduct(Dir, Vi);
 
@@ -294,6 +294,8 @@ void GConvexHullBuilder::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Tr
 void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoints)
 {
     int nInputCount = InputPoints.size();
+    std::vector<GVector3> TempPint;
+
     for (int i = 0; i < nInputCount; i++) // remove nearly points
     {
         const GVector3& TV = InputPoints[i];
@@ -312,12 +314,20 @@ void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoint
             }
         }
 
-        if( bFindnearly )
+        if (bFindnearly)
             continue;
+
+        TempPint.push_back(TV);
+    }
+
+
+    for (int i = 0; i < TempPint.size(); i++) //  remove three point collinear
+    {
+        const GVector3& TV = TempPint[i];
 
         bool bisInline = false;
 
-        for (int m = 0; m < nInputCount; ++m ) // remove three point collinear
+        for (int m = 0; m < nInputCount; ++m ) //
         {
             if( m == i )
                 continue;
@@ -327,8 +337,8 @@ void GConvexHullBuilder::AddInputPoints( const std::vector<GVector3>& InputPoint
                  if( n == i ) 
                      continue;
 
-                 GVector3 P1 = InputPoints[m];
-                 GVector3 P2 = InputPoints[n];
+                 GVector3 P1 = TempPint[m];
+                 GVector3 P2 = TempPint[n];
 
                  if( GVector3::DistanceSquare(P1, P2) > GMath::Inv_100000() )
                  {

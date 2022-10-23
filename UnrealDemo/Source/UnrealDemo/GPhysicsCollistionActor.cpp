@@ -44,15 +44,18 @@ void AGPhysicsCollistionActor::BeginPlay()
     for( int i = 0; i < CovexRandomCount; ++i )
     {
         FVector TPos = UKismetMathLibrary::RandomPointInBoundingBox( FVector(0,0,0), FVector(CovexRandomSize,CovexRandomSize,CovexRandomSize));     
-        PossA.push_back( GUtility::Unit_U_to_G(TPos) );
+       // PossA.push_back( GUtility::Unit_U_to_G(TPos) );
     }
-
-
+    
+    GConvexHullBuilder::AddBoxPoints(PossA, VMin, VMax);
 
     pBuilder = new GConvexHullBuilder();
     pBuilder->BuildConvex( PossA, *pConvexHullA );
 
-   GConvexHullBuilder::AddBoxPoints( PossB, VMin, VMax );
+
+
+
+    GConvexHullBuilder::AddBoxPoints( PossB, VMin, VMax );
     pBuilder->BuildConvex( PossB, *pConvexHullB );
 
 }

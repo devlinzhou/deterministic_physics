@@ -110,8 +110,8 @@ public:
     inline bool operator == (const GSortPlane& b) const
     {
         return  
-            GVector3::DistanceSquare( m_Plane.m_Normal, b.m_Plane.m_Normal ) < GMath::Inv_100000() &&
-            GMath::Abs( m_Plane.m_fDis - b.m_Plane.m_fDis ) < GMath::Inv_10000();
+            GVector3::DistanceSquare( m_Plane.m_Normal, b.m_Plane.m_Normal ) < GMath::Inv_1000000() &&
+            GMath::Abs( m_Plane.m_fDis - b.m_Plane.m_fDis ) < GMath::Inv_1000();
     }
 
     inline bool operator != (const GSortPlane& b) const
