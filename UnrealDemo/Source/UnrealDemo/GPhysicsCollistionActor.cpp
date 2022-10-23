@@ -52,11 +52,15 @@ void AGPhysicsCollistionActor::BeginPlay()
     pBuilder = new GConvexHullBuilder();
     pBuilder->BuildConvex( PossA, *pConvexHullA );
 
-
+    pConvexHullA->BuildEdges();
 
 
     GConvexHullBuilder::AddBoxPoints( PossB, VMin, VMax );
+
+
     pBuilder->BuildConvex( PossB, *pConvexHullB );
+
+     pConvexHullB->BuildEdges();
 
 }
 

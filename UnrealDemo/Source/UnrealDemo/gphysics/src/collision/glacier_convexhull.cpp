@@ -59,7 +59,7 @@ void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GC
 {
     if (m_Edges.size() != 0)
     {
-        f32 bias = GMath::Makef32(0,8,10);
+        f32 bias = GMath::Makef32(0,8,100);
 
         for (int i = 0; i < m_Edges.size(); i++)
         {
@@ -80,8 +80,8 @@ void GConvexHull::Draw(class IGlacierDraw* pDraw, const GTransform_QT& Trans, GC
             GVector3 VB1_Draw = VB1 + (TPolygonB.m_CenterPos - VB1).GetNormalize() * bias;
             GVector3 VB2_Draw = VB2 + (TPolygonB.m_CenterPos - VB2).GetNormalize() * bias;
 
-            pDraw->DrawLine(VA1_Draw, VA2_Draw, TColor);
-            pDraw->DrawLine(VB1_Draw, VB2_Draw, TColor);
+            pDraw->DrawLine(Trans.TransformPosition(VA1_Draw), Trans.TransformPosition(VA2_Draw), TColor);
+            pDraw->DrawLine(Trans.TransformPosition(VB1_Draw), Trans.TransformPosition(VB2_Draw), TColor);
 
         }
     }
