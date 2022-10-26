@@ -77,27 +77,24 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
     if( BoxShow )
     {
-        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, FColor::Yellow, BoxRotA);
-
         GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
         GShapeBox ShapeBoxB(GUtility::Unit_U_to_G(BoxHalfSizeB));
-
 
         GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
         GTransform_QT TBoxShapeB(GUtility::U_to_G(BoxRotB.Quaternion()), GUtility::Unit_U_to_G(BoxCenterB));
 
-
-        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBoxA, TBoxShapeA, &Tdraw))
-        {
-        
-        }
+//         if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBoxA, TBoxShapeA, &Tdraw))
+//         {
+//         
+//         }
 
         FColor TColor = FColor::Yellow;
-        if( GCollision_Box::Box_Box(ShapeBoxA, TBoxShapeA,ShapeBoxB, TBoxShapeB, nullptr, nullptr ) )
+        if( GCollision_Box::Box_Box(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, nullptr, nullptr ) )
         {
             TColor = FColor::Red;
         }
 
+        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, FColor::Yellow, BoxRotA);
         UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterB, BoxHalfSizeB, TColor, BoxRotB);
     }
     if( CapsuleShow )

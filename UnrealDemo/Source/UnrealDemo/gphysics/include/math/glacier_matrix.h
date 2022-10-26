@@ -186,6 +186,11 @@ public:
             GMath::Zero(),  GMath::Zero(),  GMath::One());
     }
 
+    inline GVector3 GetRow(uint32_t nRow) const
+    {
+        return  *(GVector3*)(m[nRow]);
+    }
+
     inline GVector3 GetColumn( uint32_t nCol ) const
     {
         return GVector3( m[0][nCol], m[1][nCol], m[2][nCol] );
