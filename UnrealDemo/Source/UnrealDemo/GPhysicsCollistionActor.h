@@ -48,11 +48,7 @@ public:
     UPROPERTY(EditAnywhere, Category = "Box")
         bool            BoxShow = false;
     UPROPERTY(EditAnywhere, Category = "Box")
-        FVector         BoxCenterA = FVector(0, 0, 200);
-    UPROPERTY(EditAnywhere, Category = "Box")
         FVector         BoxHalfSizeA = FVector(100, 200, 90);
-    UPROPERTY(EditAnywhere, Category = "Box")
-        FRotator        BoxRotA       = FRotator(0, 0, 0);
     UPROPERTY(EditAnywhere, Category = "Box")
         FVector         BoxCenterB = FVector(0, 0, 200);
     UPROPERTY(EditAnywhere, Category = "Box")

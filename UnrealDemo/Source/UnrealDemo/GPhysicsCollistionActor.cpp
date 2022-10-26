@@ -80,6 +80,9 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
         GShapeBox ShapeBoxB(GUtility::Unit_U_to_G(BoxHalfSizeB));
 
+        FVector BoxCenterA = GetActorLocation();
+        FRotator BoxRotA = GetActorRotation();
+
         GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
         GTransform_QT TBoxShapeB(GUtility::U_to_G(BoxRotB.Quaternion()), GUtility::Unit_U_to_G(BoxCenterB));
 

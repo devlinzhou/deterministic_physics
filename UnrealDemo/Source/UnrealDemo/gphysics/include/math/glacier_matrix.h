@@ -186,7 +186,12 @@ public:
             GMath::Zero(),  GMath::Zero(),  GMath::One());
     }
 
-    inline GVector3 GetRow(uint32_t nRow) const
+    inline GVector3 GetRow(uint32_t nRow)
+    {
+        return  *(GVector3*)(m[nRow]);
+    }
+
+    inline const GVector3& GetRow(uint32_t nRow) const
     {
         return  *(GVector3*)(m[nRow]);
     }
