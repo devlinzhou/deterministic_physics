@@ -14,6 +14,16 @@
 
 #include "glacier_math.h"
 
+class GVector2
+{
+public:
+    f32 x;
+    f32 y;
+
+    inline explicit constexpr GVector2( const f32 fX, const f32 fY) :x( fX ),y( fY )  { }
+
+};
+
 class GVector3
 {
 public:
