@@ -48,11 +48,17 @@ public:
     UPROPERTY(EditAnywhere, Category = "Box")
         bool            BoxShow = false;
     UPROPERTY(EditAnywhere, Category = "Box")
-        FVector         BoxCenter = FVector(0, 0, 200);
+        FVector         BoxCenterA = FVector(0, 0, 200);
     UPROPERTY(EditAnywhere, Category = "Box")
-        FVector         BoxHalfSize = FVector(100, 200, 90);
+        FVector         BoxHalfSizeA = FVector(100, 200, 90);
     UPROPERTY(EditAnywhere, Category = "Box")
-        FRotator        BoxRot       = FRotator(0, 0, 0);
+        FRotator        BoxRotA       = FRotator(0, 0, 0);
+    UPROPERTY(EditAnywhere, Category = "Box")
+        FVector         BoxCenterB = FVector(0, 0, 200);
+    UPROPERTY(EditAnywhere, Category = "Box")
+        FVector         BoxHalfSizeB = FVector(100, 200, 90);
+    UPROPERTY(EditAnywhere, Category = "Box")
+        FRotator        BoxRotB      = FRotator(0, 0, 0);
 
     UPROPERTY(EditAnywhere, Category = "Capsule")
         bool            CapsuleShow = false;

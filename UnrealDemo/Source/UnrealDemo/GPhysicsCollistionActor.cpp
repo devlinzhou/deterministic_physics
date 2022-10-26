@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "glacier_collision_gjk.h"
+#include "glacier_collision_box.h"
 #include "glacier_debug_draw.h"
 #include "glacier_convexhull.h"
 #include "GUnrealUtility.h"
@@ -76,16 +77,28 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
     if( BoxShow )
     {
-        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenter, BoxHalfSize, FColor::Yellow, BoxRot);
+        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, FColor::Yellow, BoxRotA);
 
-        GShapeBox ShapeBox(GUtility::Unit_U_to_G(BoxHalfSize));
+        GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
+        GShapeBox ShapeBoxB(GUtility::Unit_U_to_G(BoxHalfSizeB));
 
-        GTransform_QT TransShapeB(GUtility::U_to_G(BoxRot.Quaternion()), GUtility::Unit_U_to_G(BoxCenter));
 
-        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBox, TransShapeB, &Tdraw))
+        GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
+        GTransform_QT TBoxShapeB(GUtility::U_to_G(BoxRotB.Quaternion()), GUtility::Unit_U_to_G(BoxCenterB));
+
+
+        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBoxA, TBoxShapeA, &Tdraw))
         {
         
         }
+
+        FColor TColor = FColor::Yellow;
+        if( GCollision_Box::Box_Box(ShapeBoxA, TBoxShapeA,ShapeBoxB, TBoxShapeB, nullptr, nullptr ) )
+        {
+            TColor = FColor::Red;
+        }
+
+        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterB, BoxHalfSizeB, TColor, BoxRotB);
     }
     if( CapsuleShow )
     {
