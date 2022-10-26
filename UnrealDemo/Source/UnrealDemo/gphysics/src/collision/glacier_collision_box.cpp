@@ -59,18 +59,12 @@ static inline f32 DotProduct_XY(const GVector3& V1, const GVector3& V2)
 
 inline bool ProjectAxisTest_X_Axis(const GVector3& VAxis,
     const GVector3& V1,
-    const GVector3& V2X, const GVector3& V2Y, const GVector3& V2Z,
+    const GVector3& V2A, const GVector3& V2B,
     const GVector3& VDis)
 {
     f32 absDot1 =   V1.y * GMath::Abs( VAxis.y ) + V1.z * GMath::Abs(VAxis.z );
 
-   f32 t1 = GMath::Abs(DotProduct_YZ(VAxis, V2X));
-   f32 t2 = GMath::Abs(DotProduct_YZ(VAxis, V2Y));
-
-   f32 t3 = GMath::Abs(DotProduct_YZ(VAxis, V2Z));
-
-    
-    f32 absDot2 = GMath::Abs(DotProduct_YZ(VAxis, V2X)) + GMath::Abs(DotProduct_YZ(VAxis, V2Y)) + GMath::Abs(DotProduct_YZ(VAxis, V2Z));
+    f32 absDot2 =  GMath::Abs(DotProduct_YZ(VAxis, V2A + V2B));
     
     f32 absDot3 = GMath::Abs(DotProduct_YZ(VAxis, VDis));
 
@@ -79,12 +73,12 @@ inline bool ProjectAxisTest_X_Axis(const GVector3& VAxis,
 
 inline bool ProjectAxisTest_Y_Axis(const GVector3& VAxis,
     const GVector3& V1,
-    const GVector3& V2X, const GVector3& V2Y, const GVector3& V2Z,
+    const GVector3& V2A, const GVector3& V2B,
     const GVector3& VDis)
 {
     f32 absDot1 = GMath::Abs(V1.x * VAxis.x) + GMath::Abs(V1.z * VAxis.z);
 
-    f32 absDot2 = GMath::Abs(DotProduct_ZX(VAxis, V2X)) + GMath::Abs(DotProduct_ZX(VAxis, V2Y)) + GMath::Abs(DotProduct_ZX(VAxis, V2Z));
+    f32 absDot2 =  GMath::Abs(DotProduct_YZ(VAxis, V2A + V2B));
 
     f32 absDot3 = GMath::Abs(DotProduct_ZX(VAxis, VDis));
 
@@ -93,12 +87,12 @@ inline bool ProjectAxisTest_Y_Axis(const GVector3& VAxis,
 
 inline bool ProjectAxisTest_Z_Axis(const GVector3& VAxis,
     const GVector3& V1,
-    const GVector3& V2X, const GVector3& V2Y, const GVector3& V2Z,
+    const GVector3& V2A, const GVector3& V2B,
     const GVector3& VDis)
 {
     f32 absDot1 = GMath::Abs(V1.x * VAxis.x) + GMath::Abs(V1.y * VAxis.y);
 
-    f32 absDot2 = GMath::Abs(DotProduct_XY(VAxis, V2X)) + GMath::Abs(DotProduct_XY(VAxis, V2Y)) + GMath::Abs(DotProduct_XY(VAxis, V2Z));
+    f32 absDot2 =  GMath::Abs(DotProduct_YZ(VAxis, V2A + V2B));
 
     f32 absDot3 = GMath::Abs(DotProduct_XY(VAxis, VDis));
 
@@ -153,15 +147,15 @@ bool GCollision_Box::Box_Box(
     VBLAY = VBLAY * ShapB.HalfExtern.y;
     VBLAZ = VBLAZ * ShapB.HalfExtern.z;
 
-    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAX), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAY), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAZ), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAX), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAY), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAZ), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAX), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAY), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
-    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAZ), VA_LocalA, VBLAX, VBLAY, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_X_Axis(CrossProduct_AxisX(VA_LocalA.x, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
+    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_Y_Axis(CrossProduct_AxisY(VA_LocalA.y, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
+    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
+    if (ProjectAxisTest_Z_Axis(CrossProduct_AxisZ(VA_LocalA.z, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
 
 
     return true;
