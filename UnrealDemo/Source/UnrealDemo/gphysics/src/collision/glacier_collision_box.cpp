@@ -62,7 +62,13 @@ inline bool ProjectAxisTest_X_Axis(const GVector3& VAxis,
     const GVector3& V2X, const GVector3& V2Y, const GVector3& V2Z,
     const GVector3& VDis)
 {
-    f32 absDot1 =  GMath::Abs( V1.y * VAxis.y ) + GMath::Abs( V1.z * VAxis.z );
+    f32 absDot1 =   V1.y * GMath::Abs( VAxis.y ) + V1.z * GMath::Abs(VAxis.z );
+
+   f32 t1 = GMath::Abs(DotProduct_YZ(VAxis, V2X));
+   f32 t2 = GMath::Abs(DotProduct_YZ(VAxis, V2Y));
+
+   f32 t3 = GMath::Abs(DotProduct_YZ(VAxis, V2Z));
+
     
     f32 absDot2 = GMath::Abs(DotProduct_YZ(VAxis, V2X)) + GMath::Abs(DotProduct_YZ(VAxis, V2Y)) + GMath::Abs(DotProduct_YZ(VAxis, V2Z));
     
@@ -129,7 +135,7 @@ bool GCollision_Box::Box_Box(
     if ((VA_LocalA.z + GVector3::DotProduct( VAxis_Abs2, ShapB.HalfExtern) ) < f32::Abs(VDisBA.z))
         return false;
 
-    const GVector3& VDisAB = B_to_A.m_Rotate.GetUnitInverse().RotateVector( -B_to_A.m_Translation );
+    const GVector3& VDisAB = B_to_A.m_Rotate.UnRotateVector( -B_to_A.m_Translation );
 
     const GVector3 VA_LocalB_X = GVector3(VAxis_Abs0.x, VAxis_Abs1.x, VAxis_Abs2.x );
     if ((ShapB.HalfExtern.x + GVector3::DotProduct( VA_LocalB_X, ShapA.HalfExtern)) < f32::Abs(VDisAB.x))

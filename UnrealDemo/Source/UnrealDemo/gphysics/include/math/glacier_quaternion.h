@@ -298,6 +298,19 @@ public:
         return V + uv + uuv;
     }
 
+
+    inline GVector3 UnRotateVector(const GVector3& V) const
+    {
+        GVector3 Vqvec(-x, -y, -z);
+        GVector3 uv = GVector3::CrossProduct(Vqvec, V);
+        GVector3 uuv = GVector3::CrossProduct(Vqvec, uv);
+
+        uv *= GMath::Two() * w;
+        uuv *= GMath::Two();
+
+        return V + uv + uuv;
+    }
+
     static inline GQuaternion Identity() { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::One());}
     static inline GQuaternion Zero()     { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::Zero()); }
 
