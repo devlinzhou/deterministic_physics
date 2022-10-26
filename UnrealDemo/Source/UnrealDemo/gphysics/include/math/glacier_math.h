@@ -14,7 +14,7 @@
 
 #include "glacier_float.h"
 
-#define  Deterministic_Float
+//#define  Deterministic_Float
 
 #ifdef Deterministic_Float
 typedef GFloat f32;
