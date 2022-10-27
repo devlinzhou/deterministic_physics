@@ -14,19 +14,6 @@
 #include "glacier_collision_box.h"
 #include "glacier_matrix.h"
 
-
-inline bool ProjectAxistest( const GVector3& VAxis,
-    const GVector3& V1X, const GVector3& V1Y, const GVector3& V1Z,
-    const GVector3& V2X, const GVector3& V2Y, const GVector3& V2Z,
-    const GVector3& VDis )
-{
-    f32 absDot1 = GMath::Abs(GVector3::DotProduct(VAxis, V1X)) + GMath::Abs(GVector3::DotProduct(VAxis, V1Y)) + GMath::Abs((GVector3::DotProduct(VAxis, V1Z)));
-    f32 absDot2 = GMath::Abs(GVector3::DotProduct(VAxis, V2X)) + GMath::Abs(GVector3::DotProduct(VAxis, V2Y)) + GMath::Abs((GVector3::DotProduct(VAxis, V2Z)));
-    f32 absDot3 = GMath::Abs(GVector3::DotProduct(VAxis, VDis));
-
-    return (absDot1 + absDot2 ) < absDot3;
-}
-
 static inline GVector3 Cross_X(f32 a, const GVector3& V)
 {
     return GVector3(GMath::Zero(), -a * V.z, a * V.y);
@@ -34,204 +21,114 @@ static inline GVector3 Cross_X(f32 a, const GVector3& V)
 
 static inline GVector3 Cross_Y(f32 a, const GVector3& V)
 {
-    return  GVector3(a * V.z , GMath::Zero(), - a * V.x);
+    return  GVector3(a * V.z, GMath::Zero(), -a * V.x);
 }
 
 static inline GVector3 Cross_Z(f32 a, const GVector3& V)
 {
-    return GVector3(- a * V.y, a * V.x, GMath::Zero());
+    return GVector3(-a * V.y, a * V.x, GMath::Zero());
 }
 
-static inline f32 DotProduct_YZ(const GVector3& V1, const GVector3& V2)
+static inline GVector3 Cross_AbsX(f32 a, const GVector3& V)
 {
-    return V1.y * V2.y + V1.z * V2.z;
+    return GVector3(GMath::Zero(), a * V.z, a * V.y);
 }
 
-static inline f32 DotProduct_ZX(const GVector3& V1, const GVector3& V2)
+static inline GVector3 Cross_AbsY(f32 a, const GVector3& V)
 {
-    return V1.x * V2.x + V1.z * V2.z;
+    return  GVector3(a * V.z, GMath::Zero(), a * V.x);
 }
 
-static inline f32 DotProduct_XY(const GVector3& V1, const GVector3& V2)
+static inline GVector3 Cross_AbsZ(f32 a, const GVector3& V)
 {
-    return V1.x * V2.x + V1.y * V2.y;
+    return GVector3(a * V.y, a * V.x, GMath::Zero());
 }
 
-inline bool ProjectAxisTest_X_Axis(
-    const GVector3& VAxis,
-    const GVector3& V1,
-    const GVector3& V2A, 
-    const GVector3& V2B,
-    const GVector3& VDis)
+static inline f32 Dot_No_X( const GVector3& SatAxisLocal, const GVector3& HalfExten )
 {
-    f32 absDot1 = V1.y * GMath::Abs( VAxis.y ) + V1.z * GMath::Abs(VAxis.z );
-
-    f32 absDot2 = GMath::Abs(DotProduct_YZ(VAxis, V2A )) + GMath::Abs(DotProduct_YZ(VAxis, V2B));
-    
-    f32 absDot3 = GMath::Abs(DotProduct_YZ(VAxis, VDis));
-
-    return (absDot1 + absDot2) < absDot3;
+    return HalfExten.y * (SatAxisLocal.y) + HalfExten.z * (SatAxisLocal.z);
 }
 
-inline f32 Dot_No_X( const GVector3& SatAxisLocal, const GVector3& HalfExten )
+static inline f32 Dot_No_Y(const GVector3& SatAxisLocal, const GVector3& HalfExten)
 {
-    return HalfExten.y * GMath::Abs(SatAxisLocal.y) + HalfExten.z * GMath::Abs(SatAxisLocal.z);
+    return HalfExten.x * (SatAxisLocal.x) + HalfExten.z * (SatAxisLocal.z);
 }
 
-inline f32 Dot_No_Y(const GVector3& SatAxisLocal, const GVector3& HalfExten)
+static inline f32 Dot_No_Z(const GVector3& SatAxisLocal, const GVector3& HalfExten)
 {
-    return HalfExten.x * GMath::Abs(SatAxisLocal.x) + HalfExten.z * GMath::Abs(SatAxisLocal.z);
-}
-
-inline f32 Dot_No_Z(const GVector3& SatAxisLocal, const GVector3& HalfExten)
-{
-    return HalfExten.x * GMath::Abs(SatAxisLocal.x) + HalfExten.y * GMath::Abs(SatAxisLocal.y);
-}
-
-
-inline bool ProjectTest_X(
-    const GVector3& SatAxisLocalA,
-    const GVector3& HalfExtenA,
-    f32             absDot2,
-    const GVector3& LocalADis)
-{
-    f32 absDot1 = Dot_No_X(SatAxisLocalA, HalfExtenA);
-    f32 absDot3 = GMath::Abs(DotProduct_YZ(SatAxisLocalA, LocalADis));
-    return (absDot1 + absDot2) < absDot3;
-}
-
-inline bool ProjectTest_Y(
-    const GVector3& SatAxisLocalA,
-    const GVector3& HalfExtenA,
-    f32             absDot2,
-    const GVector3& LocalADis)
-{
-    f32 absDot1 = Dot_No_Y(SatAxisLocalA, HalfExtenA);
-    f32 absDot3 = GMath::Abs(DotProduct_ZX(SatAxisLocalA, LocalADis));
-    return (absDot1 + absDot2) < absDot3;
-}
-
-inline bool ProjectTest_Z(
-    const GVector3& SatAxisLocalA,
-    const GVector3& HalfExtenA,
-    f32             absDot2,
-    const GVector3& LocalADis)
-{
-    f32 absDot1 = Dot_No_Z(SatAxisLocalA, HalfExtenA);
-    f32 absDot3 = GMath::Abs(DotProduct_XY(SatAxisLocalA, LocalADis));
-    return (absDot1 + absDot2) < absDot3;
-}
-
-
-inline bool ProjectAxisTest_Y_Axis(const GVector3& VAxis,
-    const GVector3& V1,
-    const GVector3& V2A, const GVector3& V2B,
-    const GVector3& VDis)
-{
-    f32 absDot1 = V1.x * GMath::Abs( VAxis.x) + V1.z * GMath::Abs( VAxis.z);
-
-    f32 absDot2 =  GMath::Abs(DotProduct_ZX(VAxis, V2A  ))  + GMath::Abs(DotProduct_ZX(VAxis, V2B));
-
-    f32 absDot3 = GMath::Abs(DotProduct_ZX(VAxis, VDis));
-
-    return (absDot1 + absDot2) < absDot3;
-}
-
-inline bool ProjectAxisTest_Z_Axis(const GVector3& VAxis,
-    const GVector3& V1,
-    const GVector3& V2A, const GVector3& V2B,
-    const GVector3& VDis)
-{
-    f32 absDot1 = V1.x * GMath::Abs( VAxis.x) + V1.y * GMath::Abs( VAxis.y);
-
-    f32 absDot2 =  GMath::Abs(DotProduct_XY(VAxis, V2A ))  + GMath::Abs(DotProduct_XY(VAxis, V2B));
-
-    f32 absDot3 = GMath::Abs(DotProduct_XY(VAxis, VDis));
-
-    return (absDot1 + absDot2) < absDot3;
+    return HalfExten.x * (SatAxisLocal.x) + HalfExten.y * (SatAxisLocal.y);
 }
 
 bool GCollision_Box::Box_Box(
-    const GShapeBox& ShapA, const GTransform_QT& TransformA,
-    const GShapeBox& ShapB, const GTransform_QT& TransformB,
-    GVector3* pOutPosition, GVector3* pOutNormal)
+    const GShapeBox&        ShapA,
+    const GTransform_QT&    TransformA,
+    const GShapeBox&        ShapB,
+    const GTransform_QT&    TransformB,
+    GVector3*               pOutPosition,
+    GVector3*               pOutNormal)
 {
+    const GVector3& HalfA = ShapA.HalfExtern;
+    const GVector3& HalfB = ShapB.HalfExtern;
     GTransform_QT   B_to_A      = TransformB * TransformA.GetInverse_fast();
-
     GMatrix3        M_B_To_A( B_to_A.m_Rotate );
 
-    GVector3 VBLAX      = M_B_To_A.GetRow(0);
-    GVector3 VBLAY      = M_B_To_A.GetRow(1);
-    GVector3 VBLAZ      = M_B_To_A.GetRow(2);
-    GVector3& VDisBA    = B_to_A.m_Translation;
+    GVector3    BLAX      = M_B_To_A.GetRow(0);
+    GVector3    BLAY      = M_B_To_A.GetRow(1);
+    GVector3    BLAZ      = M_B_To_A.GetRow(2);
+    GVector3&   VDisBA    = B_to_A.m_Translation;
 
-    const GVector3& ExternA   = ShapA.HalfExtern;
-    const GVector3& ExternB   = ShapB.HalfExtern;
+    GVector3 VAxis_Abs0 = GVector3(GMath::Abs(BLAX.x), GMath::Abs(BLAY.x), GMath::Abs(BLAZ.x));
 
-    GVector3 VAxis_Abs0 = GVector3(GMath::Abs(VBLAX.x), GMath::Abs(VBLAY.x), GMath::Abs(VBLAZ.x));
-
-    if ((ExternA.x + GVector3::DotProduct( VAxis_Abs0, ExternB) ) < GMath::Abs(VDisBA.x))
+    if ((HalfA.x + GVector3::DotProduct( VAxis_Abs0, HalfB) ) < GMath::Abs(VDisBA.x))
         return false;
 
-    GVector3 VAxis_Abs1 = GVector3(GMath::Abs(VBLAX.y), GMath::Abs(VBLAY.y), GMath::Abs(VBLAZ.y));
+    GVector3 VAxis_Abs1 = GVector3(GMath::Abs(BLAX.y), GMath::Abs(BLAY.y), GMath::Abs(BLAZ.y));
 
-    if ((ExternA.y + GVector3::DotProduct( VAxis_Abs1, ExternB) ) < GMath::Abs(VDisBA.y))
+    if ((HalfA.y + GVector3::DotProduct( VAxis_Abs1, HalfB) ) < GMath::Abs(VDisBA.y))
         return false;
 
-    GVector3 VAxis_Abs2 = GVector3(GMath::Abs(VBLAX.z), GMath::Abs(VBLAY.z), GMath::Abs(VBLAZ.z));
+    GVector3 VAxis_Abs2 = GVector3(GMath::Abs(BLAX.z), GMath::Abs(BLAY.z), GMath::Abs(BLAZ.z));
 
-    if ((ExternA.z + GVector3::DotProduct( VAxis_Abs2, ExternB) ) < GMath::Abs(VDisBA.z))
+    if ((HalfA.z + GVector3::DotProduct( VAxis_Abs2, HalfB) ) < GMath::Abs(VDisBA.z))
         return false;
 
     const GVector3& VDisAB = B_to_A.m_Rotate.UnRotateVector( -B_to_A.m_Translation );
 
     const GVector3 VA_LocalB_X = GVector3(VAxis_Abs0.x, VAxis_Abs1.x, VAxis_Abs2.x );
-    if ((ExternB.x + GVector3::DotProduct( VA_LocalB_X, ExternA)) < GMath::Abs(VDisAB.x))
+    if ((HalfB.x + GVector3::DotProduct( VA_LocalB_X, HalfA)) < GMath::Abs(VDisAB.x))
         return false;
 
     const GVector3 VA_LocalB_Y = GVector3(VAxis_Abs0.y, VAxis_Abs1.y, VAxis_Abs2.y);
-    if ((ExternB.y + GVector3::DotProduct( VA_LocalB_Y, ExternA)) < GMath::Abs(VDisAB.y))
+    if ((HalfB.y + GVector3::DotProduct( VA_LocalB_Y, HalfA)) < GMath::Abs(VDisAB.y))
         return false;
 
     const GVector3 VA_LocalB_Z = GVector3(VAxis_Abs0.z, VAxis_Abs1.z, VAxis_Abs2.z);
-    if ((ExternB.z + GVector3::DotProduct( VA_LocalB_Z, ExternA)) < GMath::Abs(VDisAB.z))
+    if ((HalfB.z + GVector3::DotProduct( VA_LocalB_Z, HalfA)) < GMath::Abs(VDisAB.z))
         return false;
 
-     VBLAX = VBLAX * ShapB.HalfExtern.x;
-     VBLAY = VBLAY * ShapB.HalfExtern.y;
-     VBLAZ = VBLAZ * ShapB.HalfExtern.z;
+    BLAX *= ShapB.HalfExtern.x;
+    BLAY *= ShapB.HalfExtern.y;
+    BLAZ *= ShapB.HalfExtern.z;
 
-     GVector3 VALBX = M_B_To_A.GetColumn(0);
-     GVector3 VALBY = M_B_To_A.GetColumn(1);
-     GVector3 VALBZ = M_B_To_A.GetColumn(2);
+    GVector3 absBLAX = VA_LocalB_X * ShapB.HalfExtern.x;
+    GVector3 absBLAY = VA_LocalB_Y * ShapB.HalfExtern.y;
+    GVector3 absBLAZ = VA_LocalB_Z * ShapB.HalfExtern.z;
 
+    GVector3 absALBX = VAxis_Abs0 * ShapA.HalfExtern.x;
+    GVector3 absALBY = VAxis_Abs1 * ShapA.HalfExtern.y;
+    GVector3 absALBZ = VAxis_Abs2 * ShapA.HalfExtern.z;
 
-    VALBX = VALBX * ShapA.HalfExtern.x;
-    VALBY = VALBY * ShapA.HalfExtern.y;
-    VALBZ = VALBZ * ShapA.HalfExtern.z;
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAX), VDisBA)))  return false;
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAY), VDisBA)))  return false;
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAZ), VDisBA)))  return false;
 
-    if (ProjectTest_X(Cross_X(ExternA.x, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBX), ExternB), VDisBA)) return false;
-    if (ProjectTest_X(Cross_X(ExternA.x, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBX), ExternB), VDisBA)) return false;
-    if (ProjectTest_X(Cross_X(ExternA.x, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBX), ExternB), VDisBA)) return false;
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAX), VDisBA)))  return false;
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAY), VDisBA)))  return false;
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAZ), VDisBA)))  return false;
 
-    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBY), ExternB), VDisBA)) return false;
-    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBY), ExternB), VDisBA)) return false;
-    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBY), ExternB), VDisBA)) return false;
-
-    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBZ), ExternB), VDisBA)) return false;
-    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBZ), ExternB), VDisBA)) return false;
-    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBZ), ExternB), VDisBA)) return false;
-
-//     if (ProjectAxisTest_X_Axis(Cross_AxisX(VA_LocalA.x, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_X_Axis(Cross_AxisX(VA_LocalA.x, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_X_Axis(Cross_AxisX(VA_LocalA.x, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
-//     if (ProjectAxisTest_Y_Axis(Cross_AxisY(VA_LocalA.y, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_Y_Axis(Cross_AxisY(VA_LocalA.y, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_Y_Axis(Cross_AxisY(VA_LocalA.y, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
-//     if (ProjectAxisTest_Z_Axis(Cross_AxisZ(VA_LocalA.z, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_Z_Axis(Cross_AxisZ(VA_LocalA.z, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
-//     if (ProjectAxisTest_Z_Axis(Cross_AxisZ(VA_LocalA.z, VBLAZ), VA_LocalA, VBLAX, VBLAY, VDisBA)) return false;
-
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAX), VDisBA)))  return false;
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAY), VDisBA)))  return false;
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAZ), VDisBA)))  return false;
 
     return true;
 }
