@@ -165,37 +165,36 @@ bool GCollision_Box::Box_Box(
     GVector3 VBLAZ      = M_B_To_A.GetRow(2);
     GVector3& VDisBA    = B_to_A.m_Translation;
 
-    const GVector3& HalfExternA   = ShapA.HalfExtern;
-    const GVector3& HalfExternB   = ShapB.HalfExtern;
-
+    const GVector3& ExternA   = ShapA.HalfExtern;
+    const GVector3& ExternB   = ShapB.HalfExtern;
 
     GVector3 VAxis_Abs0 = GVector3(GMath::Abs(VBLAX.x), GMath::Abs(VBLAY.x), GMath::Abs(VBLAZ.x));
 
-    if ((HalfExternA.x + GVector3::DotProduct( VAxis_Abs0, HalfExternB) ) < GMath::Abs(VDisBA.x))
+    if ((ExternA.x + GVector3::DotProduct( VAxis_Abs0, ExternB) ) < GMath::Abs(VDisBA.x))
         return false;
 
     GVector3 VAxis_Abs1 = GVector3(GMath::Abs(VBLAX.y), GMath::Abs(VBLAY.y), GMath::Abs(VBLAZ.y));
 
-    if ((HalfExternA.y + GVector3::DotProduct( VAxis_Abs1, HalfExternB) ) < GMath::Abs(VDisBA.y))
+    if ((ExternA.y + GVector3::DotProduct( VAxis_Abs1, ExternB) ) < GMath::Abs(VDisBA.y))
         return false;
 
     GVector3 VAxis_Abs2 = GVector3(GMath::Abs(VBLAX.z), GMath::Abs(VBLAY.z), GMath::Abs(VBLAZ.z));
 
-    if ((HalfExternA.z + GVector3::DotProduct( VAxis_Abs2, HalfExternB) ) < GMath::Abs(VDisBA.z))
+    if ((ExternA.z + GVector3::DotProduct( VAxis_Abs2, ExternB) ) < GMath::Abs(VDisBA.z))
         return false;
 
     const GVector3& VDisAB = B_to_A.m_Rotate.UnRotateVector( -B_to_A.m_Translation );
 
     const GVector3 VA_LocalB_X = GVector3(VAxis_Abs0.x, VAxis_Abs1.x, VAxis_Abs2.x );
-    if ((HalfExternB.x + GVector3::DotProduct( VA_LocalB_X, HalfExternA)) < GMath::Abs(VDisAB.x))
+    if ((ExternB.x + GVector3::DotProduct( VA_LocalB_X, ExternA)) < GMath::Abs(VDisAB.x))
         return false;
 
     const GVector3 VA_LocalB_Y = GVector3(VAxis_Abs0.y, VAxis_Abs1.y, VAxis_Abs2.y);
-    if ((HalfExternB.y + GVector3::DotProduct( VA_LocalB_Y, HalfExternA)) < GMath::Abs(VDisAB.y))
+    if ((ExternB.y + GVector3::DotProduct( VA_LocalB_Y, ExternA)) < GMath::Abs(VDisAB.y))
         return false;
 
     const GVector3 VA_LocalB_Z = GVector3(VAxis_Abs0.z, VAxis_Abs1.z, VAxis_Abs2.z);
-    if ((HalfExternB.z + GVector3::DotProduct( VA_LocalB_Z, HalfExternA)) < GMath::Abs(VDisAB.z))
+    if ((ExternB.z + GVector3::DotProduct( VA_LocalB_Z, ExternA)) < GMath::Abs(VDisAB.z))
         return false;
 
      VBLAX = VBLAX * ShapB.HalfExtern.x;
@@ -211,17 +210,17 @@ bool GCollision_Box::Box_Box(
     VALBY = VALBY * ShapA.HalfExtern.y;
     VALBZ = VALBZ * ShapA.HalfExtern.z;
 
-    if (ProjectTest_X(Cross_X(HalfExternA.x, VBLAX), HalfExternA, Dot_No_X(Cross_X(HalfExternB.x, VALBX), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_X(Cross_X(HalfExternA.x, VBLAY), HalfExternA, Dot_No_Y(Cross_Y(HalfExternB.y, VALBX), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_X(Cross_X(HalfExternA.x, VBLAZ), HalfExternA, Dot_No_Z(Cross_Z(HalfExternB.z, VALBX), HalfExternB), VDisBA)) return false;
+    if (ProjectTest_X(Cross_X(ExternA.x, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBX), ExternB), VDisBA)) return false;
+    if (ProjectTest_X(Cross_X(ExternA.x, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBX), ExternB), VDisBA)) return false;
+    if (ProjectTest_X(Cross_X(ExternA.x, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBX), ExternB), VDisBA)) return false;
 
-    if (ProjectTest_Y(Cross_Y(HalfExternA.y, VBLAX), HalfExternA, Dot_No_X(Cross_X(HalfExternB.x, VALBY), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_Y(Cross_Y(HalfExternA.y, VBLAY), HalfExternA, Dot_No_Y(Cross_Y(HalfExternB.y, VALBY), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_Y(Cross_Y(HalfExternA.y, VBLAZ), HalfExternA, Dot_No_Z(Cross_Z(HalfExternB.z, VALBY), HalfExternB), VDisBA)) return false;
+    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBY), ExternB), VDisBA)) return false;
+    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBY), ExternB), VDisBA)) return false;
+    if (ProjectTest_Y(Cross_Y(ExternA.y, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBY), ExternB), VDisBA)) return false;
 
-    if (ProjectTest_Z(Cross_Z(HalfExternA.y, VBLAX), HalfExternA, Dot_No_X(Cross_X(HalfExternB.x, VALBZ), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_Z(Cross_Z(HalfExternA.y, VBLAY), HalfExternA, Dot_No_Y(Cross_Y(HalfExternB.y, VALBZ), HalfExternB), VDisBA)) return false;
-    if (ProjectTest_Z(Cross_Z(HalfExternA.y, VBLAZ), HalfExternA, Dot_No_Z(Cross_Z(HalfExternB.z, VALBZ), HalfExternB), VDisBA)) return false;
+    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAX), ExternA, Dot_No_X(Cross_X(ExternB.x, VALBZ), ExternB), VDisBA)) return false;
+    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAY), ExternA, Dot_No_Y(Cross_Y(ExternB.y, VALBZ), ExternB), VDisBA)) return false;
+    if (ProjectTest_Z(Cross_Z(ExternA.y, VBLAZ), ExternA, Dot_No_Z(Cross_Z(ExternB.z, VALBZ), ExternB), VDisBA)) return false;
 
 //     if (ProjectAxisTest_X_Axis(Cross_AxisX(VA_LocalA.x, VBLAX), VA_LocalA, VBLAY, VBLAZ, VDisBA)) return false;
 //     if (ProjectAxisTest_X_Axis(Cross_AxisX(VA_LocalA.x, VBLAY), VA_LocalA, VBLAX, VBLAZ, VDisBA)) return false;
