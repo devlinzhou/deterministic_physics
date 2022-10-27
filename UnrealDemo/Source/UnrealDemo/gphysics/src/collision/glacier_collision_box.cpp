@@ -106,17 +106,17 @@ bool GCollision_Box::Box_Box(
     if ((HalfB.z + GVector3::DotProduct( VA_LocalB_Z, HalfA)) < GMath::Abs(VDisAB.z))
         return false;
 
-    BLAX *= ShapB.HalfExtern.x;
-    BLAY *= ShapB.HalfExtern.y;
-    BLAZ *= ShapB.HalfExtern.z;
+    BLAX *= HalfB.x;
+    BLAY *= HalfB.y;
+    BLAZ *= HalfB.z;
 
-    GVector3 absBLAX = VA_LocalB_X * ShapB.HalfExtern.x;
-    GVector3 absBLAY = VA_LocalB_Y * ShapB.HalfExtern.y;
-    GVector3 absBLAZ = VA_LocalB_Z * ShapB.HalfExtern.z;
+    GVector3 absBLAX = VA_LocalB_X * HalfB.x;
+    GVector3 absBLAY = VA_LocalB_Y * HalfB.y;
+    GVector3 absBLAZ = VA_LocalB_Z * HalfB.z;
 
-    GVector3 absALBX = VAxis_Abs0 * ShapA.HalfExtern.x;
-    GVector3 absALBY = VAxis_Abs1 * ShapA.HalfExtern.y;
-    GVector3 absALBZ = VAxis_Abs2 * ShapA.HalfExtern.z;
+    GVector3 absALBX = VAxis_Abs0 * HalfA.x;
+    GVector3 absALBY = VAxis_Abs1 * HalfA.y;
+    GVector3 absALBZ = VAxis_Abs2 * HalfA.z;
 
     if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAX), VDisBA)))  return false;
     if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAY), VDisBA)))  return false;
