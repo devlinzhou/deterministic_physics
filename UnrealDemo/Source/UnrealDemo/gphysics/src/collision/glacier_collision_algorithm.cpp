@@ -14,6 +14,7 @@
 #include "glacier_collision_algorithm.h"
 #include "glacier_collision_sphere.h"
 #include "glacier_collision_gjk.h"
+#include "glacier_collision_box.h"
 
 
 bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
@@ -74,16 +75,11 @@ bool GCG_Box_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisio
     GShapeBox BoxB(ObjB->m_Shape.GetHalfExtern());
 
 
-    if (GCollision_GJK::GJKTest(
+    if (GCollision_Box::Box_Box_Contact(
         BoxA, ObjA->m_Transform,
-        BoxB ,ObjB->m_Transform))
+        BoxB ,ObjB->m_Transform,
+        pContact))
     {
-        if (pContact != nullptr)
-        {
-
-            //pContact->AddContactPoint()
-
-        }
 
         return true;
     }

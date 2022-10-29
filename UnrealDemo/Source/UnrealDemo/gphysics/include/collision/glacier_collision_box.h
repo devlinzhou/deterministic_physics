@@ -21,12 +21,20 @@ public:
 
 
     static bool Box_Box(
-        const GShapeBox& ShapA, const GTransform_QT& TransformA,
-        const GShapeBox& ShapB, const GTransform_QT& TransformB,
-        GVector3* pOutPosition, GVector3* pOutNormal);
+        const GShapeBox&        ShapA,
+        const GTransform_QT&    TransformA,
+        const GShapeBox&        ShapB,
+        const GTransform_QT&    TransformB,
+        GVector3*               pOutPosition,
+        GVector3*               pOutNormal);
    
 
-
+    static int32_t Box_Box_Contact(
+        const GShapeBox&            ShapA,
+        const GTransform_QT&        TransformA,
+        const GShapeBox&            ShapB,
+        const GTransform_QT&        TransformB,
+        class GCollisionContact*    pContact);
 };
 
 

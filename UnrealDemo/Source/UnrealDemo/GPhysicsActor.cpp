@@ -60,14 +60,15 @@ void AGPhysicsActor::Tick(float DeltaTime)
 
 GDynamicRigid* AGPhysicsActor::CreateRigidBox(  GVector3 VPos, GVector3 Halfsize )
 {
-    GDynamicRigid* pFloor = new GDynamicRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
-    pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
-    pFloor->UpdateLocalBox();
-    m_PhysicsWorld.AddCollisionObject(pFloor);
-    pFloor->m_Transform.m_Translation = VPos;
+    GDynamicRigid* pBox = new GDynamicRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
+    pBox->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
+    pBox->UpdateLocalBox();
+    m_PhysicsWorld.AddCollisionObject(pBox);
+    pBox->m_Transform.m_Translation = VPos;
+    pBox->m_VelocityMax = GMath::Makef32(1,0,1);
 
    // pFloor->m_Gravity = 
 
-    return pFloor;
+    return pBox;
 
 }

@@ -14,7 +14,7 @@
 
 #include "glacier_float.h"
 
-//#define  Deterministic_Float
+#define  Deterministic_Float
 
 #ifdef Deterministic_Float
 typedef GFloat f32;
@@ -39,9 +39,9 @@ public:
     static constexpr f32 Zero()     { return GFloat::Zero(); }
     static constexpr f32 One()      { return GFloat::One(); }
     static constexpr f32 Two()      { return GFloat::Two(); }
-    static const f32 Three()    { return GFloat(3,0,2); }
+    static constexpr f32 Three()    { return GFloat::Three(); }
     static constexpr f32 Half()     { return GFloat::Half(); }
-    static const f32 Epsilon()  { return GFloat(0,1,1000000); }
+    static constexpr f32 Epsilon()  { return GFloat::Epsilon(); }
     static constexpr f32 Pi()       { return GFloat::Pi(); }
     static constexpr f32 Pi_Half()  { return GFloat::Pi_Half(); }
     static constexpr f32 Pi_Two()   { return GFloat::Pi_Two(); }

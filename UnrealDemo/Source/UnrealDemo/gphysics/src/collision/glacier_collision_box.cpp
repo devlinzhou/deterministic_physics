@@ -132,3 +132,80 @@ bool GCollision_Box::Box_Box(
 
     return true;
 }
+
+int32_t GCollision_Box::Box_Box_Contact(
+    const GShapeBox& ShapA,
+    const GTransform_QT& TransformA,
+    const GShapeBox& ShapB,
+    const GTransform_QT& TransformB,
+    class GCollisionContact* pContact)
+{
+    const GVector3& HalfA = ShapA.HalfExtern;
+    const GVector3& HalfB = ShapB.HalfExtern;
+    GTransform_QT   B_to_A = TransformB * TransformA.GetInverse_fast();
+    GMatrix3        M_B_To_A(B_to_A.m_Rotate);
+
+    GVector3    BLAX = M_B_To_A.GetRow(0);
+    GVector3    BLAY = M_B_To_A.GetRow(1);
+    GVector3    BLAZ = M_B_To_A.GetRow(2);
+    GVector3& VDisBA = B_to_A.m_Translation;
+
+    GVector3 VAxis_Abs0 = GVector3(GMath::Abs(BLAX.x), GMath::Abs(BLAY.x), GMath::Abs(BLAZ.x));
+
+    if ((HalfA.x + GVector3::DotProduct(VAxis_Abs0, HalfB)) < GMath::Abs(VDisBA.x))
+        return 0;
+
+    GVector3 VAxis_Abs1 = GVector3(GMath::Abs(BLAX.y), GMath::Abs(BLAY.y), GMath::Abs(BLAZ.y));
+
+    if ((HalfA.y + GVector3::DotProduct(VAxis_Abs1, HalfB)) < GMath::Abs(VDisBA.y))
+        return 0;
+
+    GVector3 VAxis_Abs2 = GVector3(GMath::Abs(BLAX.z), GMath::Abs(BLAY.z), GMath::Abs(BLAZ.z));
+
+    if ((HalfA.z + GVector3::DotProduct(VAxis_Abs2, HalfB)) < GMath::Abs(VDisBA.z))
+        return 0;
+
+    const GVector3& VDisAB = B_to_A.m_Rotate.UnRotateVector(-B_to_A.m_Translation);
+
+    const GVector3 VA_LocalB_X = GVector3(VAxis_Abs0.x, VAxis_Abs1.x, VAxis_Abs2.x);
+    if ((HalfB.x + GVector3::DotProduct(VA_LocalB_X, HalfA)) < GMath::Abs(VDisAB.x))
+        return 0;
+
+    const GVector3 VA_LocalB_Y = GVector3(VAxis_Abs0.y, VAxis_Abs1.y, VAxis_Abs2.y);
+    if ((HalfB.y + GVector3::DotProduct(VA_LocalB_Y, HalfA)) < GMath::Abs(VDisAB.y))
+        return 0;
+
+    const GVector3 VA_LocalB_Z = GVector3(VAxis_Abs0.z, VAxis_Abs1.z, VAxis_Abs2.z);
+    if ((HalfB.z + GVector3::DotProduct(VA_LocalB_Z, HalfA)) < GMath::Abs(VDisAB.z))
+        return 0;
+
+    BLAX *= HalfB.x;
+    BLAY *= HalfB.y;
+    BLAZ *= HalfB.z;
+
+    GVector3 absBLAX = VA_LocalB_X * HalfB.x;
+    GVector3 absBLAY = VA_LocalB_Y * HalfB.y;
+    GVector3 absBLAZ = VA_LocalB_Z * HalfB.z;
+
+    GVector3 absALBX = VAxis_Abs0 * HalfA.x;
+    GVector3 absALBY = VAxis_Abs1 * HalfA.y;
+    GVector3 absALBZ = VAxis_Abs2 * HalfA.z;
+
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAX), VDisBA)))  return 0;
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAY), VDisBA)))  return 0;
+    if ((Dot_No_X(Cross_AbsX(HalfA.x, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBX), HalfB)) < GMath::Abs(Dot_No_X(Cross_X(HalfA.x, BLAZ), VDisBA)))  return 0;
+
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAX), VDisBA)))  return 0;
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAY), VDisBA)))  return 0;
+    if ((Dot_No_Y(Cross_AbsY(HalfA.y, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBY), HalfB)) < GMath::Abs(Dot_No_Y(Cross_Y(HalfA.y, BLAZ), VDisBA)))  return 0;
+
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAX), HalfA) + Dot_No_X(Cross_AbsX(HalfB.x, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAX), VDisBA)))  return 0;
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAY), HalfA) + Dot_No_Y(Cross_AbsY(HalfB.y, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAY), VDisBA)))  return 0;
+    if ((Dot_No_Z(Cross_AbsZ(HalfA.z, absBLAZ), HalfA) + Dot_No_Z(Cross_AbsZ(HalfB.z, absALBZ), HalfB)) < GMath::Abs(Dot_No_Z(Cross_Z(HalfA.z, BLAZ), VDisBA)))  return 0;
+
+
+
+
+
+    return 0;
+}
