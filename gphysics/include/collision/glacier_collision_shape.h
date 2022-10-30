@@ -13,19 +13,52 @@
 #pragma once
 
 #include "glacier_vector.h"
+#include "glacier_aabb.h"
 
 enum EShape
 {
-    Null = 0,
-    ConvexBase,
-    Sphere,
-    Box,
-    Capsule,
-    Cylinder,
-    ConvexHull,
-    ConcaveBase,
-    HightField,
-    TriangleMesh
+    EShape_ConvexBase   = 0,
+    EShape_Sphere       = 1,
+    EShape_Box          = 2,
+    EShape_Capsule      = 3,
+    EShape_Cylinder     = 4,
+    EShape_ConvexHull   = 5,
+    EShape_ConcaveBase  = 6,
+    EShape_Plane        = 7,
+    EShape_HightField   = 8,
+    EShape_TriangleMesh = 9,
+    EShape_Max          = 10
+};
+
+class GShapeBase;
+class GCollisionShape
+{
+public:
+    GCollisionShape( EShape TShape ) : 
+        ShapType(TShape), HalfSize(GVector3::Identity()), pComplexShape(nullptr)
+    {
+    
+    }
+
+public:
+    EShape      ShapType; // simple shape
+    GVector3    HalfSize;
+    GShapeBase* pComplexShape;  
+
+    f32 GetRaiuds() const { return HalfSize.x;} 
+    void SetRadius( const f32 value ){ HalfSize.x = value;}
+
+    f32 GetHalfHeight() const { return HalfSize.y; }
+    void SetHalfHeight(const f32 value) { HalfSize.y = value; }
+
+    GVector3 GetHalfExtern() const { return HalfSize; }
+    void SetHalfExtern(const GVector3& value) { HalfSize = value; }
+
+    GVector3 GetPlaneNormal() const { return HalfSize; }
+    void SetPlaneNormal(const GVector3& value) { HalfSize = value; }
+
+    GAABB GetLocalBox() const;
+
 };
 
 class GShapeBase
@@ -33,7 +66,7 @@ class GShapeBase
 public:
     EShape  ShapType;
 
-    GShapeBase() : ShapType(EShape::Null)
+    GShapeBase() : ShapType(EShape::EShape_Max)
     {
     
     }
@@ -45,7 +78,7 @@ public:
 
     GShapeConvexBase() 
     {
-        ShapType = EShape::ConvexBase;
+        ShapType = EShape::EShape_ConvexBase;
     }
 
     // Dir is normalize
@@ -61,7 +94,7 @@ class GShapeSphere : public GShapeConvexBase
 public:
     GShapeSphere( f32 tRaduis ) : Radius(tRaduis)
     {
-        ShapType = EShape::Sphere;
+        ShapType = EShape::EShape_Sphere;
     }
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
@@ -76,7 +109,7 @@ class GShapeBox : public GShapeConvexBase
 public:
     GShapeBox(GVector3 tvalue) : HalfExtern(tvalue)
     {
-        ShapType = EShape::Box;
+        ShapType = EShape::EShape_Box;
     }
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
@@ -97,7 +130,7 @@ public:
 
     GShapeCapsule( f32 THalfHeight, f32 tRaduis) : HalfHeight(THalfHeight), Raius(tRaduis)
     {
-        ShapType = EShape::Capsule;
+        ShapType = EShape::EShape_Capsule;
     }
 
     virtual GVector3 GetSupportLocalPos(const GVector3& Dir) const
@@ -142,7 +175,7 @@ public:
 
     GShapeCylinder(f32 THalfHeight, f32 tRaduis) : HalfHeight(THalfHeight), Raius(tRaduis)
     {
-        ShapType = EShape::Capsule;
+        ShapType = EShape::EShape_Capsule;
     }
 
     GVector3 GetSupportLocalPos(const GVector3& Dir) const
@@ -161,7 +194,7 @@ public:
 
     GShapeConcaveBase()
     {
-        ShapType = EShape::ConcaveBase;
+        ShapType = EShape::EShape_ConcaveBase;
     }
 
 
@@ -173,7 +206,7 @@ public:
 
     GShapeHightField( )
     {
-        ShapType = EShape::HightField;
+        ShapType = EShape::EShape_HightField;
     }
 
 
@@ -185,7 +218,7 @@ public:
 
     GShapeTriangleMesh()
     {
-        ShapType = EShape::TriangleMesh;
+        ShapType = EShape::EShape_TriangleMesh;
     }
 
 

@@ -14,12 +14,15 @@
 
 #include "glacier_vector.h"
 #include "glacier_quaternion.h"
+#include "glacier_aabb.h"
 
 class GTransform_QT
 {
 public:
 
     GTransform_QT() = default;
+
+    GTransform_QT(const GTransform_QT&) = default;
 
     inline GTransform_QT( const GQuaternion& Quat, const GVector3& Trans ) :
         m_Rotate(Quat ), m_Translation(Trans)
@@ -62,6 +65,16 @@ public:
     GVector3 TransformPosition(const GVector3& V) const
     {
         return m_Rotate.RotateVector(V) + m_Translation;
+    }
+
+    GAABB TransformAABB( const GAABB& InBox ) const
+    {
+        GAABB TBox( TransformPosition( InBox.GetCorner(0)) );
+        for (uint32_t uLoop = 1; uLoop < 8; ++uLoop)
+        {
+            TBox.Merge( TransformPosition( InBox.GetCorner(uLoop)));
+        }
+        return TBox;
     }
 
 public:

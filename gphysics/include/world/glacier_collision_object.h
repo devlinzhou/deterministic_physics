@@ -13,16 +13,66 @@
 #pragma once
 
 #include "glacier_vector.h"
+#include "glacier_aabb.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+
+enum ECollisionObjectType
+{
+    Static= 0,
+    Dynamic,
+
+};
 
 class GCollisionObject
 {
 public:
 
-    GTransform_QT   m_Transform;
-    GShapeBase*     m_pShape;  
+    GCollisionObject(  uint32_t uId, EShape TShape, ECollisionObjectType CType )
+        : m_Id(uId), m_CollisionType(CType), m_Shape(TShape), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
+    {
+        m_Transform         = GTransform_QT::Identity();
+        m_Transform_Last    = GTransform_QT::Identity();
+        m_UserId            = -1;
+        m_pGridCell         = nullptr;
+        m_bNeedUpdate           = true;
+    }
+
+    ECollisionObjectType GetCollisionObjectType() const
+    {
+        return m_CollisionType;
+    }
+
+    inline uint32_t GetId()const {return m_Id;}
+
+    void UpdateAABB()
+    {
+        m_WorldAABB = m_Transform.TransformAABB( m_LoaclAABB );
+    }
+
+    const GAABB& GetAABB() const { return m_WorldAABB; }
 
 
-    uint32_t        m_Id;
+    void UpdateLocalBox()
+    {
+        m_LoaclAABB = m_Shape.GetLocalBox();
+    }
+    const GAABB& GetLocalAABB() const { return m_LoaclAABB; }
+
+
+public:
+    uint32_t                m_Id;
+    ECollisionObjectType    m_CollisionType;
+    GCollisionShape         m_Shape;  
+    GTransform_QT           m_Transform;
+    GTransform_QT           m_Transform_Last;
+
+    GAABB                   m_LoaclAABB;
+    GAABB                   m_WorldAABB;
+
+    uint32_t                m_UserId;
+
+    class GGridCell*        m_pGridCell;
+    bool                    m_bNeedUpdate;
+
 };

@@ -186,6 +186,16 @@ public:
             GMath::Zero(),  GMath::Zero(),  GMath::One());
     }
 
+    inline GVector3 GetRow(uint32_t nRow)
+    {
+        return  *(GVector3*)(m[nRow]);
+    }
+
+    inline const GVector3& GetRow(uint32_t nRow) const
+    {
+        return  *(GVector3*)(m[nRow]);
+    }
+
     inline GVector3 GetColumn( uint32_t nCol ) const
     {
         return GVector3( m[0][nCol], m[1][nCol], m[2][nCol] );
@@ -264,7 +274,7 @@ class GMatrix4
 {
 public:
     
-    inline GMatrix4( ){ }
+    inline GMatrix4( ) = default;
 
     inline GMatrix4( const GMatrix4& M4 ) = default;
 
@@ -486,18 +496,8 @@ public:
 
 public:
 
-    union
-    {
-        f32 m[4][4];
-        f32 _m[16];
-        struct  
-        {
-            f32 _11, _12, _13, _14;
-            f32 _21, _22, _23, _24;
-            f32 _31, _32, _33, _34;
-            f32 _41, _42, _43, _44;
-        };
-    };
+
+    f32 m[4][4];
 };
 
 

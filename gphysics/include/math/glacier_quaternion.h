@@ -24,7 +24,7 @@ public:
     f32    w;
 
 public:
-
+    GQuaternion() = default;
     GQuaternion( const GQuaternion& ) = default;
     inline GQuaternion( f32 fX, f32 fY, f32 fZ,f32 fW ): x(fX), y(fY),z(fZ),w(fW) { }
     inline GQuaternion( const f32* pf ): x(pf[0]), y(pf[1]),z(pf[2]),w(pf[3]) { }
@@ -105,9 +105,9 @@ public:
 
 public:
 
-    inline f32* Ptr( void ) {  return &x; }
+    inline f32* Ptr( ) {  return &x; }
 
-    inline const f32* Ptr( void ) const
+    inline const f32* Ptr( ) const
     {
         return &x;
     }
@@ -162,17 +162,17 @@ public:
         return z * Q.z + x * Q.x + y * Q.y;
     }
 
-    f32 Size( void ) const
+    f32 Size( ) const
     {
         return GMath::Sqrt( w * w + x * x + y * y + z * z );
     }
 
-    f32 SizeSquare( void ) const
+    f32 SizeSquare( ) const
     {
         return w * w + x * x + y * y + z * z;
     }
 
-    void Normalize( void )
+    void Normalize( )
     {
         f32 fLength = SizeSquare();
         if (fLength < GMath::Epsilon() )
@@ -189,14 +189,14 @@ public:
         }
     }
 
-    inline GQuaternion GetNormalize( void ) const
+    inline GQuaternion GetNormalize( ) const
     {
         GQuaternion Qtemp( *this );
         Qtemp.Normalize( );
         return Qtemp;
     }
 
-    inline void Inverse( void )
+    inline void Inverse( )
     {
         f32 fNorm = SizeSquare( );
         if( fNorm > GMath::Epsilon() )
@@ -213,7 +213,7 @@ public:
         }
     }
 
-    inline GQuaternion GetInverse( void ) const
+    inline GQuaternion GetInverse( ) const
     {
         GQuaternion TQ = *this;
         TQ.Inverse( );
@@ -225,15 +225,15 @@ public:
         x    =    -x;
         y    =    -y;
         z    =    -z;
-        w    =    w;
+        //w    =    w;
     }
 
-    inline GQuaternion GetUnitInverse( void ) const
+    inline GQuaternion GetUnitInverse( ) const
     {
         return GQuaternion( -x, -y, -z, w );
     }
 
-    GQuaternion Exp( void ) const
+    GQuaternion Exp( ) const
     {
         f32 RAngle = GMath::Sqrt( x * x + y * y + z * z );
 
@@ -258,7 +258,7 @@ public:
         return QuatTemp;
     }
 
-    GQuaternion Log( void ) const
+    GQuaternion Log( ) const
     {
         GQuaternion QuatTemp = Identity();
         QuatTemp.w = GMath::Zero();
@@ -298,11 +298,24 @@ public:
         return V + uv + uuv;
     }
 
+
+    inline GVector3 UnRotateVector(const GVector3& V) const
+    {
+        GVector3 Vqvec(-x, -y, -z);
+        GVector3 uv = GVector3::CrossProduct(Vqvec, V);
+        GVector3 uuv = GVector3::CrossProduct(Vqvec, uv);
+
+        uv *= GMath::Two() * w;
+        uuv *= GMath::Two();
+
+        return V + uv + uuv;
+    }
+
     static inline GQuaternion Identity() { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::One());}
     static inline GQuaternion Zero()     { return GQuaternion(GMath::Zero(), GMath::Zero(), GMath::Zero(), GMath::Zero()); }
 
-    inline bool IsIdentity( void )  const{return *this == Identity();}
-    inline bool IsZero( void )      const{return *this == Zero();}
+    inline bool IsIdentity( )  const{return *this == Identity();}
+    inline bool IsZero( )      const{return *this == Zero();}
 
 
      void Test();

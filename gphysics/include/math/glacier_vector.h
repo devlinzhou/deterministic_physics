@@ -14,6 +14,16 @@
 
 #include "glacier_math.h"
 
+class GVector2
+{
+public:
+    f32 x;
+    f32 y;
+
+    inline explicit constexpr GVector2( const f32 fX, const f32 fY) :x( fX ),y( fY )  { }
+
+};
+
 class GVector3
 {
 public:
@@ -25,6 +35,7 @@ public:
     GVector3(){}
     inline          constexpr GVector3( const GVector3&) = default;
     inline explicit constexpr GVector3( const f32 fX, const f32 fY, const f32 fZ) :x( fX ),y( fY ), z( fZ )  { }
+    inline explicit           GVector3( const int32_t fX, const int32_t fY, const int32_t fZ) :x( f32(fX) ),y( f32(fY) ), z( f32(fZ) )  { }
     inline explicit constexpr GVector3( const f32* pf)     : x( pf[0] ),   y( pf[1] ),     z( pf[2] )   { }
     inline explicit constexpr GVector3( const f32 fScaler)  : x( fScaler ), y( fScaler ),   z( fScaler ) { }
  
@@ -220,6 +231,8 @@ public:
         }
         else
         {
+            
+
             f32 finv = GMath::InvSqrt(f);
             x *= finv;
             y *= finv;
@@ -284,6 +297,22 @@ public:
         return  *this - VNormal * ( GMath::Two() * DotProduct( *this, VNormal ) );
     }
 
+    static inline GVector3 GetNoParallel( const GVector3& V )
+    {
+        if( V.x >= V.y && V.x >= V.z)
+        {
+            return GVector3::UnitY();
+        }
+        else if(V.y >= V.z )
+        {
+            return GVector3::UnitZ();
+        }
+        else
+        {
+            return GVector3::UnitX();
+        }
+    }
+
     inline GVector3 Lerp( const GVector3& V2, f32 fLerp ) const
     {
         return GVector3(
@@ -322,6 +351,12 @@ public:
     { 
         return x == GMath::Zero() && y == GMath::Zero() && z == GMath::Zero();
     }
+
+    inline bool IsNearlyZero( f32 Epsilon = GMath::Epsilon() ) const
+    {
+        return AbsMax() < Epsilon;
+    }
+
 
     static inline GVector3 Identity( )  { return GVector3( GMath::One(),  GMath::One(),  GMath::One()); }
     static inline GVector3 Zero( )      { return GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero()); }

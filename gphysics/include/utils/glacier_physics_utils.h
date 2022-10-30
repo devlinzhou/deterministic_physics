@@ -15,12 +15,12 @@
 #include "glacier_vector.h"
 #include "glacier_transform_qt.h"
 
-class GShapeBase;
+class GCollisionShape;
 class IGlacierDraw;
 class GPhyscsUtils
 {
 public:
 
-     static void DrawShape( const GTransform_QT& Trans, const GShapeBase* pShape, IGlacierDraw* pDebugDraw );
+     static void DrawShape( const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw );
 
 };

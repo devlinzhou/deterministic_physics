@@ -12,17 +12,29 @@
  */
 #pragma once
 
-#include "glacier_collision_object.h"
+#include "glacier_transform_qt.h"
+#include "glacier_collision_shape.h"
 
-class GRigidBody : public GCollisionObject
+class GCollision_Box
 {
 public:
-    GRigidBody(uint32_t id, EShape TShape, ECollisionObjectType TType) : GCollisionObject(id, TShape, TType)
-    {
-
-    }
-
-public:
 
 
+    static bool Box_Box(
+        const GShapeBox&        ShapA,
+        const GTransform_QT&    TransformA,
+        const GShapeBox&        ShapB,
+        const GTransform_QT&    TransformB,
+        GVector3*               pOutPosition,
+        GVector3*               pOutNormal);
+   
+
+    static int32_t Box_Box_Contact(
+        const GShapeBox&            ShapA,
+        const GTransform_QT&        TransformA,
+        const GShapeBox&            ShapB,
+        const GTransform_QT&        TransformB,
+        class GCollisionContact*    pContact);
 };
+
+

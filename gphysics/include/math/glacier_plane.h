@@ -20,7 +20,7 @@ public:
 
     enum GPlaneSide
     {
-        NO_SIDE,
+        NO_SIDE = 0,
         POSITIVE,
         NEGATIVE,
         BOTH
@@ -59,6 +59,31 @@ public:
         return ( P.m_fDis != m_fDis || P.m_Normal != m_Normal );
     }
 
+    GPlane operator + (const GPlane& P) const
+    {
+        return GPlane( m_Normal + P.m_Normal, m_fDis + P.m_fDis);
+    }
+
+    GPlane operator - (const GPlane& P) const
+    {
+        return GPlane(m_Normal - P.m_Normal, m_fDis - P.m_fDis);
+    }
+
+    void Normalize()
+    {
+        f32 fLength = GVector3::DotProduct(m_Normal, m_Normal) + m_fDis * m_fDis;
+        if (fLength < GMath::Epsilon())
+        {
+            GPlane( GVector3::UnitX(), GMath::Zero());
+        }
+        else
+        {
+            f32 fInvLength = GMath::InvSqrt(fLength);
+            m_Normal *= fInvLength;
+            m_fDis *= fInvLength;
+        }
+    }
+
 public:
 
     inline GPlane Flip( void ) const
@@ -66,15 +91,20 @@ public:
         return GPlane( -m_Normal, -m_fDis );
     }
 
-    inline GPlaneSide GetSide( const GVector3& V3Point, f32 delta = GMath::Epsilon() ) const
+    inline f32 GetDistance(const GVector3& V3Point) const
+    {
+        return GVector3::DotProduct(m_Normal, V3Point) + m_fDis;
+    }
+
+    inline GPlaneSide GetSide( const GVector3& V3Point, f32 Radius = GMath::Epsilon() ) const
     {
         f32 fDistance = GetDistance( V3Point );
 
-        if( fDistance < -delta )
+        if( fDistance < -Radius )
         {
             return GPlane::NEGATIVE;
         }
-        else if( fDistance > delta )
+        else if( fDistance > Radius )
         {
             return GPlane::POSITIVE;
         }
@@ -103,28 +133,6 @@ public:
         return GPlane::BOTH;
     }
    
-    inline GPlaneSide GetSide( const GVector3& VCenter, f32 Radius ) const
-    {
-        f32 fDist = GetDistance( VCenter );
-        if( fDist  > Radius )
-        {
-            return GPlane::POSITIVE;
-        }
-        else if( fDist  < -Radius )
-        {
-            return GPlane::NEGATIVE;
-        }
-        else
-        {
-            return GPlane::BOTH;
-        }
-    }
-
-    inline f32 GetDistance( const GVector3& V3Point ) const
-    {
-        return GVector3::DotProduct( V3Point ) + m_fDis;
-    }
-
     inline void Redefine( const GVector3& V0, const GVector3& V1, const GVector3& V2 )
     {
         GVector3 VEdge1 = V1 - V0;

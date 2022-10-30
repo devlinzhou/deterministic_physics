@@ -13,6 +13,7 @@
 
 #include "glacier_time.h"
 #include <thread>
+#include <map>
 
 #if UseProfiler_RDTSCP
 
@@ -35,3 +36,66 @@ static double CountCpuGhz() {
 
 double GTimer::InvCPUGHZ = 0.000001f / CountCpuGhz();
 #endif
+
+static std::map<std::string, float> ms_TotalTime;
+
+GTimeProfiler::GTimeProfiler(const char* Str )
+{
+    m_Str = Str;
+    m_Time.Start();
+}
+GTimeProfiler::~GTimeProfiler()
+{
+    
+}
+
+void GTimeProfiler::EndCuptrue()
+{
+    char name[128];
+    float fTime = (float)m_Time.GetDeltaTimeMS() * 1000.f;
+    sprintf(name, "Time:% 8.3fms %s\n", fTime, m_Str.c_str());
+
+    std::map<std::string, float>::iterator iterm = ms_TotalTime.find(m_Str);
+    if (iterm != ms_TotalTime.end())
+    {
+        iterm->second += fTime;
+    }
+    else
+    {
+        ms_TotalTime[m_Str] = fTime;
+    }
+
+
+    if (m_bOutToScreen)
+    {
+        //g_GlobalSystem.FontToScreen( name );
+    }
+    else
+    {
+        // OutputDebugStringA( name );
+    }
+
+    m_bCapture = true;
+}
+
+void GTimeProfiler::ClearTime()
+{
+    std::map<std::string, float>::iterator iterm = ms_TotalTime.begin();
+    for (; iterm != ms_TotalTime.end(); ++iterm)
+    {
+        iterm->second = 0;
+    }
+}
+
+void GTimeProfiler::DebugOut()
+{
+    char name[128];
+    std::map<std::string, float>::iterator iterm = ms_TotalTime.begin();
+    for (; iterm != ms_TotalTime.end(); ++iterm)
+    {
+        sprintf(name, "Time:% 8.3fms %s\n", iterm->second, iterm->first.c_str());
+       // OutputDebugStringA(name);
+    }
+
+    //OutputDebugStringA("=========================================\n");
+}

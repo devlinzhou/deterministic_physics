@@ -13,8 +13,9 @@
 #pragma once
 
 #include "glacier_transform_qt.h"
-
-
+#include "glacier_collision_object.h"
+#include "glacier_contact.h"
+#include "glacier_collision_algorithm.h"
 #include <vector>
 #include <map>
 
@@ -34,6 +35,19 @@ struct GGridPosition
         x(_x), y(_y), z(_z)
     {
     
+    }
+
+    inline GGridPosition operator + (const GGridPosition& b) const
+    {
+        return GGridPosition(x+b.x, y+b.y, z+b.z);
+    }
+
+    inline GGridPosition& operator += (const GGridPosition& b)
+    {
+         x += b.x;
+         y += b.y;
+         z += b.z;
+         return *this;
     }
 
     inline bool operator == (const GGridPosition& b) const
@@ -65,6 +79,7 @@ struct GGridPosition
         }
     }
 };
+
 class IGlacierDraw;
 class GCollisionObject;
 class GGridCell
@@ -72,15 +87,24 @@ class GGridCell
 public:
     GGridPosition                   m_pos;
     std::vector<GCollisionObject*>  m_Objects;
-    GVector3                        m_min = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
-    GVector3                        m_max = GVector3( GMath::Zero(), GMath::Zero(), GMath::Zero());
+    GAABB                           m_AABB;
 
 public:
-    GGridCell( const GGridPosition& TPos ) : m_pos(TPos)
-    {}
+    GGridCell( const GGridPosition& TPos, f32 CeilWide, f32 CeilHeight ) : m_pos(TPos)
+    {
+        GVector3 VMin = GVector3( 
+            f32(TPos.x) * CeilWide,
+            f32(TPos.y) * CeilWide,
+            f32(TPos.z) * CeilHeight );
 
-    GGridCell(int32_t _x, int32_t _y, int32_t _z) : m_pos( GGridPosition(_x,_y,_z))
-    {}
+        GVector3 VMax = GVector3(
+            f32(TPos.x + 1) * CeilWide,
+            f32(TPos.y + 1) * CeilWide,
+            f32(TPos.z + 1) * CeilHeight);
+       
+        m_AABB = GAABB(VMin, VMax );
+ 
+    }
 
     ~GGridCell() {}
 
@@ -95,15 +119,17 @@ public:
 
     inline GVector3 GetCenter() const
     {
-        return (m_min + m_max) * GMath::Half();
+        return m_AABB.GetCenter();
     }
 
     inline GVector3 GetHalfSize() const
     {
-        return (m_max - m_min) * GMath::Half();
+        return m_AABB.GetHalfSize();
     }
 
     bool AddCollisionObject(GCollisionObject* pObject);
+
+    bool RemoveObject(GCollisionObject* pObject);
 
 
     void DebugDraw(IGlacierDraw* pDraw ) const;
@@ -113,6 +139,41 @@ private:
   
 };
 
+class GBroadPhasePair
+{
+public:
+
+    GBroadPhasePair() = default;
+    GBroadPhasePair(const GBroadPhasePair&) = default;
+    GBroadPhasePair(GCollisionObject* p1, GCollisionObject* p2)
+    {
+        if (p1->GetId() == p2->GetId())
+        {
+            pObjectA = nullptr;
+            pObjectB = nullptr;
+            PairId   = 0;
+        }
+        else if (p1->GetId() < p2->GetId())
+        {
+            pObjectA = p1;
+            pObjectB = p2;
+
+            PairId = ((uint64_t)p1->GetId() << 32 ) & (uint64_t)p2->GetId();
+        }
+        else
+        {
+            pObjectA = p2;
+            pObjectB = p1;
+
+            PairId = ((uint64_t)p2->GetId() << 32 ) & (uint64_t)p1->GetId();
+        }
+    }
+
+    uint64_t          PairId;
+
+    GCollisionObject* pObjectA;
+    GCollisionObject* pObjectB;
+};
 
 class GPhysicsWorld
 {
@@ -122,18 +183,53 @@ public:
     {
         m_nCellWide     = f32(nCellWide);
         m_nCellHeight   = f32(nCellHeight);
+        CollisionId = 0;
+
+        m_CollisionManager.Init();
     }
 
-    void AddCollisionObject( GCollisionObject* pObject );
+    void UnInit(){}
+
+    inline GGridPosition GetGridPos( const GVector3& VPos )
+    {
+        return GGridPosition (
+            GMath::FloorToInt(VPos.x / m_nCellWide),
+            GMath::FloorToInt(VPos.y / m_nCellWide),
+            GMath::FloorToInt(VPos.z / m_nCellHeight));
+    }
+
+    bool AddCollisionObject( GCollisionObject* pObject );
+
+    bool UpdateCollisionObject( GCollisionObject* pObject );
 
 
     void PreTick(  );
 
-    void SimulateTick( f32 DetltaTime );
+    void Tick( f32 DetltaTime );
 
     void PostTick();
 
     void DebugDraw(IGlacierDraw* pDraw ) const;
+
+
+protected:
+
+    void Simulate( f32 DetltaTime );
+
+    void CollisionBroadPhase( );
+
+    void CollisionNarrowPhase( );
+
+    void SolveContactConstraint( );
+
+    void UpdateSceneGrid( );
+
+public:
+
+    uint32_t CollisionId;
+
+
+
 
 private:
 
@@ -142,6 +238,10 @@ private:
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*> m_Grids;
+    std::vector<GCollisionObject*>      m_Objects;
+    std::vector<GBroadPhasePair>        m_BroadPhasePairs;
 
 
+    GCollisionManerger                  m_CollisionManager;
+    GContactManerger                    m_ContactManager;
 };

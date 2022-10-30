@@ -18,16 +18,43 @@ class GDynamicRigid : public GRigidBody
 {
 public:
 
+    GDynamicRigid(uint32_t id, EShape TShape) : GRigidBody(id, TShape, ECollisionObjectType::Dynamic)
+    {
+        m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
+        m_VelocityMax = GMath::Makef32(100,0,1);
+    }
+
+    void Tick_PreTransform( const f32 DetalTime )
+    {
+      
+        GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
+
+        if( VNew.SizeSquare() > (m_VelocityMax*m_VelocityMax))
+        {
+            VNew = VNew.GetNormalize() * m_VelocityMax;
+        
+        }
+
+
+        m_Transform.m_Translation += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
+
+        m_Velocity = VNew;
+
+        m_bNeedUpdate = true;
+    }
+
+public:
+
+    GTransform_QT   m_Transform_Pre;
+
     f32             m_Mass;
     f32             m_InvMass;
     GVector3        m_Velocity;
+    f32             m_VelocityMax;
 
     GVector3        m_MoumentInertia;
     GVector3        m_InvMoumentInertia;
     GVector3        m_AngleVelocity;
 
-
-
-
-
+    GVector3        m_Gravity;
 };

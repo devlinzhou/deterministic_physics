@@ -11,5 +11,20 @@
  * limitations under the License. 
  */
 
+#include "glacier_contact.h"
 
-#include "glacier_rigid_static.h"
+
+
+void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth)
+{
+    if(0<= m_nPointCount && m_nPointCount < (MaxPoint-1) )
+    {
+        GManifoldPoint& TPoint = m_Point[m_nPointCount];
+
+        TPoint.m_PosOnSurfaceB_World    = PosOnSurfaceB_World;
+        TPoint.m_NormalOnB              = NormalOnB;
+        TPoint.m_depth                  = depth;
+    }
+
+}
+

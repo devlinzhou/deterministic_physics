@@ -39,13 +39,20 @@ public:
     static constexpr f32 Zero()     { return GFloat::Zero(); }
     static constexpr f32 One()      { return GFloat::One(); }
     static constexpr f32 Two()      { return GFloat::Two(); }
-    static const f32 Three()    { return GFloat(3,0,2); }
+    static constexpr f32 Three()    { return GFloat::Three(); }
     static constexpr f32 Half()     { return GFloat::Half(); }
-    static const f32 Epsilon()  { return GFloat(0,1,1000000); }
+    static constexpr f32 Epsilon()  { return GFloat::Epsilon(); }
     static constexpr f32 Pi()       { return GFloat::Pi(); }
     static constexpr f32 Pi_Half()  { return GFloat::Pi_Half(); }
     static constexpr f32 Pi_Two()   { return GFloat::Pi_Two(); }
     static constexpr f32 Pi_Quarter(){return GFloat::Pi_Quarter(); }
+
+    static inline const GFloat Inv_10() { return GFloat(0, 1, 10); };
+    static inline const GFloat Inv_100() { return GFloat(0, 1, 100); };
+    static inline const GFloat Inv_1000() { return GFloat(0, 1, 1000); };
+    static inline const GFloat Inv_10000() { return GFloat(0, 1, 10000); };
+    static inline const GFloat Inv_100000() { return GFloat(0, 1, 100000); };
+    static inline const GFloat Inv_1000000() { return GFloat(0, 1, 1000000); };
 
     static inline f32 Abs( const f32 value )    { return GFloat::Abs(value); }
     static inline f32 Sin( const f32 value )    { return GFloat::Sin(value); }
@@ -75,6 +82,8 @@ public:
 
     static inline f32 FromFloat( float value ){  return GFloat::FromFloat(value); }
     static inline float ToFloat( f32 value ){  return value.toFloat(); }
+
+    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return GFloat(a,b,c); }
     
 #else
 
@@ -88,6 +97,13 @@ public:
     static constexpr f32 Pi_Half()      { return Pi() * 0.5f; }
     static constexpr f32 Pi_Two()       { return Pi() * 2.f; }
     static constexpr f32 Pi_Quarter()   { return Pi() * 0.25f; }
+
+    static inline const f32 Inv_10()        { return 0.1f; };
+    static inline const f32 Inv_100()       { return 0.01f; };
+    static inline const f32 Inv_1000()      { return 0.001f; };
+    static inline const f32 Inv_10000()     { return 0.0001f; };
+    static inline const f32 Inv_100000()    { return 0.00001f; };
+    static inline const f32 Inv_1000000()   { return 0.000001f; };
 
 
     static inline f32   Abs(const f32 value)                    { return abs(value); }
@@ -115,6 +131,8 @@ public:
 
     static inline f32 FromFloat(float value) { return value; }
     static inline float ToFloat(f32 value) { return value; }
+
+    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return a + b/c; }
 #endif 
 
      static inline f32 Clamp(const f32 Value, const f32 fMin, const f32 fMax)
