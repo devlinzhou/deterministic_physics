@@ -20,7 +20,7 @@ public:
 
     enum GPlaneSide
     {
-        NO_SIDE,
+        NO_SIDE = 0,
         POSITIVE,
         NEGATIVE,
         BOTH

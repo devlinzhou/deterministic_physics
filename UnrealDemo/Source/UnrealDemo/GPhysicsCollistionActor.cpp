@@ -10,6 +10,7 @@
 #include "glacier_collision_box.h"
 #include "glacier_debug_draw.h"
 #include "glacier_convexhull.h"
+#include "glacier_contact.h"
 #include "GUnrealUtility.h"
 
 
@@ -91,11 +92,29 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 //         
 //         }
 
+        GCollisionContact TContact;
+        TContact.Clear();
+
         FColor TColor = FColor::Yellow;
-        if( GCollision_Box::Box_Box(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, nullptr, nullptr ) )
+        if( GCollision_Box::Box_Box_Contact(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != -1 )
         {
+            const GManifoldPoint& TMn = TContact.m_Point[0];
+
+            FVector VPos = GUtility::Unit_G_to_U( TMn.m_PosOnSurfaceB_World);
+            FVector VNor = GUtility::Unit_G_to_U( TMn.m_NormalOnB );
+
+            FVector Vdes = VPos + VNor * GUtility::G_to_U( TMn.m_depth);
+
+            UKismetSystemLibrary::DrawDebugSphere( GetWorld(), VPos, 3.f, 12, FColor::White );
+            UKismetSystemLibrary::DrawDebugLine( GetWorld(),VPos, Vdes, FColor::White);
+
+
+            UKismetSystemLibrary::DrawDebugSphere( GetWorld(),  GUtility::Unit_G_to_U(TContact.VTest), 3.f, 12, FColor::White );
+
             TColor = FColor::Red;
         }
+
+        UKismetSystemLibrary::DrawDebugCoordinateSystem( GetWorld(), BoxCenterB, BoxRotB, 50. );
 
         UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, FColor::Yellow, BoxRotA);
         UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterB, BoxHalfSizeB, TColor, BoxRotB);

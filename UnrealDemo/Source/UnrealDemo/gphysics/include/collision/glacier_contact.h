@@ -43,6 +43,7 @@ public:
     void Clear()
     {
         PairId = 0;
+        m_nPointCount = 0;
     }
 
     void ClearPoint()
@@ -57,6 +58,9 @@ public:
 
     int32_t         m_nPointCount;
     GManifoldPoint  m_Point[MaxPoint];
+
+
+    GVector3 VTest;
 };
 
 

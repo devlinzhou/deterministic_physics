@@ -78,7 +78,7 @@ bool GCG_Box_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisio
     if (GCollision_Box::Box_Box_Contact(
         BoxA, ObjA->m_Transform,
         BoxB ,ObjB->m_Transform,
-        pContact))
+        pContact) != 0)
     {
 
         return true;
