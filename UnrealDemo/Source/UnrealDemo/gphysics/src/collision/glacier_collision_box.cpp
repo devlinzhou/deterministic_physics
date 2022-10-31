@@ -387,22 +387,36 @@ int32_t GCollision_Box::Box_Box_Contact(
 
     for(int i = 1; i < 15; ++i )
     {
-        if( Depth[i] < fDot )
+        if(Depth[i] > GMath::Zero() && Depth[i] < fDot )
         {
             nDepth = i;
             fDot = Depth[i];
         }
     }
 
-    if( nDepth >= 6 && pContact != nullptr )
+    if(pContact != nullptr)
     {
-        pContact->AddContactPoint( 
-            TransformA.TransformPosition(Pos[nDepth]), 
-            TransformA.TransformNormal( -Normals[nDepth]).GetNormalize(),
-            -fDot);
+        if( nDepth < 6)
+        {
+            pContact->AddContactPoint(
+                TransformA.TransformPosition(GVector3::Zero()),
+                TransformA.TransformNormal(-Normals[nDepth]).GetNormalize(),
+                -fDot);
 
-        pContact->VTest = TransformB.TransformPosition( VTest[nDepth] );
+            pContact->VTest = TransformB.TransformPosition(VTest[nDepth]);
+        }
+        else if (nDepth >= 6)
+        {
+            pContact->AddContactPoint(
+                TransformA.TransformPosition(Pos[nDepth]),
+                TransformA.TransformNormal(-Normals[nDepth]).GetNormalize(),
+                -fDot);
+
+            pContact->VTest = TransformB.TransformPosition(GVector3::Zero());
+        }
+
     }
+
 
 
     return nDepth;
