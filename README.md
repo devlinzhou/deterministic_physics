@@ -2,7 +2,7 @@
 deterministic physics engine for lock-step game development
 
 ## Technologies
-* [](https://github.com/devlinzhou/deterministic_float)
+* [deterministic_float](https://github.com/devlinzhou/deterministic_float)
 
 ## Features
 - [ ] shape
