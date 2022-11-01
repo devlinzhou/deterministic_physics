@@ -18,8 +18,8 @@ public:
     static inline GVector3      U_to_G(const FVector& value)        {return GVector3( GMath::FromFloat(value.X ),GMath::FromFloat(value.Y ),GMath::FromFloat(value.Z )); }
     static inline GQuaternion   U_to_G(const FQuat& value)          {return GQuaternion(GMath::FromFloat(value.X), GMath::FromFloat(value.Y), GMath::FromFloat(value.Z),GMath::FromFloat(value.W)); }
     static inline float         G_to_U(f32 value)                   {return GMath::ToFloat(value); }
-    static inline FVector       G_to_U(const GVector3& value)       {return FVector(float(value.x) , float(value.y), float(value.z)); }
-    static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(float(value.x), float(value.y), float(value.z), float(value.w)); }
+    static inline FVector       G_to_U(const GVector3& value)       {return FVector(float(value.x.toFloat()) , float(value.y.toFloat()), float(value.z.toFloat())); }
+    static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(float(value.x.toFloat()), float(value.y.toFloat()), float(value.z.toFloat()), float(value.w.toFloat())); }
     static inline f32           Unit_U_to_G(float value)            {return U_to_G(value * fUTG);}
     static inline GVector3      Unit_U_to_G(const FVector& value)   {return U_to_G(value * fUTG);}
     static inline float         Unit_G_to_U(f32 value)              {return G_to_U(value) * fGTU;}

@@ -84,7 +84,7 @@ public:
     static inline float ToFloat( f32 value ){  return value.toFloat(); }
 
     static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return GFloat(a,b,c); }
-    
+    static inline f32 Makef32( int32_t a ){  return GFloat(a,0,1); }
 #else
 
     static constexpr f32 Zero()         { return 0; }
@@ -133,6 +133,8 @@ public:
     static inline float ToFloat(f32 value) { return value; }
 
     static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return a + b/c; }
+    static inline f32 Makef32(int32_t a) { return (f32)a; }
+
 #endif 
 
      static inline f32 Clamp(const f32 Value, const f32 fMin, const f32 fMax)

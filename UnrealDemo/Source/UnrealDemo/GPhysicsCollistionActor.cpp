@@ -8,9 +8,12 @@
 #include "DrawDebugHelpers.h"
 #include "glacier_collision_gjk.h"
 #include "glacier_collision_box.h"
+#include "glacier_collision_sphere.h"
 #include "glacier_debug_draw.h"
 #include "glacier_convexhull.h"
 #include "glacier_contact.h"
+#include "glacier_matrix.h"
+
 #include "GUnrealUtility.h"
 
 
@@ -71,6 +74,13 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    GQuaternion TRot( GVector3( GMath::One(), -GMath::Two(), -GMath::Three()).GetNormalize(), GMath::Two() );
+
+
+    GMatrix3 M3(TRot);
+
+    GQuaternion Rot3 = M3.ToQuat();
+
     GPhysicsDraw       Tdraw(GetWorld());
 
     GShapeSphere    ShapeSphere(GUtility::Unit_U_to_G(TestSphereRadius));
@@ -98,18 +108,25 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         FColor TColor = FColor::Yellow;
         if( GCollision_Box::Box_Box_Contact_PhysX(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != 0 )
         {
-            const GManifoldPoint& TMn = TContact.m_Point[0];
 
-            FVector VPos = GUtility::Unit_G_to_U( TMn.m_PosOnSurfaceB_World);
-            FVector VNor = GUtility::Unit_G_to_U( TMn.m_NormalOnB );
+            for( int i = 0; i < TContact.GetPointCount(); ++i )
+            {
+                const GManifoldPoint& TMn = TContact.m_Point[i];
 
-            FVector Vdes = VPos + VNor * GUtility::G_to_U( TMn.m_depth);
+                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosOnSurfaceB_World);
+                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
 
-            UKismetSystemLibrary::DrawDebugSphere( GetWorld(), VPos, 3.f, 12, FColor::White );
-            UKismetSystemLibrary::DrawDebugLine( GetWorld(),VPos, Vdes, FColor::White);
+                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
+
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
+       
+            }
 
 
-            UKismetSystemLibrary::DrawDebugSphere( GetWorld(),  GUtility::Unit_G_to_U(TContact.VTest), 3.f, 12, FColor::White );
+
+            //UKismetSystemLibrary::DrawDebugSphere( GetWorld(),  GUtility::Unit_G_to_U(TContact.VTest), 3.f, 12, FColor::White );
 
             TColor = FColor::Red;
         }
@@ -145,7 +162,46 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
 
     if( SphereShow )
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 28, FColor::Yellow);
+    {
+        GShapeSphere ShapeSA(GUtility::Unit_U_to_G(SphereRadiusA));
+        GShapeSphere ShapeSB(GUtility::Unit_U_to_G(SphereRadiusB));
+
+        FVector SCenterA = GetActorLocation();
+
+        GTransform_QT TBoxShapeA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SCenterA));
+        GTransform_QT TBoxShapeB(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
+
+        GCollisionContact TContact;
+        TContact.Clear();
+
+        FColor TColor = FColor::Yellow;
+        if (GCollision_Sphere::Sphere_Sphere_Contact(ShapeSA, TBoxShapeA, ShapeSB, TBoxShapeB, &TContact) != 0)
+        {
+
+            for (int i = 0; i < TContact.GetPointCount(); ++i)
+            {
+                const GManifoldPoint& TMn = TContact.m_Point[i];
+
+                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosOnSurfaceB_World);
+                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
+
+                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
+
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
+            }
+
+            TColor = FColor::Red;
+        }
+
+
+
+        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SCenterA, SphereRadiusA, 16, FColor::Yellow);
+        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenterB, SphereRadiusB, 16, TColor);
+
+    }
+
 
     if( TriangleShow )
     {

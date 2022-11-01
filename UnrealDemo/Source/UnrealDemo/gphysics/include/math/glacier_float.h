@@ -230,10 +230,10 @@ public:
        return (float)toDouble();
     }
 
-    inline operator float() const
-    {
-        return toFloat();
-    }
+//     inline operator float() const
+//     {
+//         return toFloat();
+//     }
 
 
     static GFORCE_INLINE GFloat Normalize32(int32_t Trawvalue, int32_t Texponent)

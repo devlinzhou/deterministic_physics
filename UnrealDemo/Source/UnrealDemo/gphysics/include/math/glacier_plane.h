@@ -125,7 +125,7 @@ public:
             return GPlane::NEGATIVE;
         }
 
-        if( fDist > +fMaxAbsDist )
+        if( fDist > fMaxAbsDist )
         {
             return GPlane::POSITIVE;
         }

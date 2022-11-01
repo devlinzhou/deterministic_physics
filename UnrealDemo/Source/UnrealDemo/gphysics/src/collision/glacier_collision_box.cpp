@@ -426,7 +426,7 @@ int32_t GCollision_Box::Box_Box_Contact(
 #define MAX_NB_CTCS	8 + 12*5 + 6*4
 #define ABS_GREATER(x, y)			(GMath::Abs(x) > (y))
 #define ABS_SMALLER_EQUAL(x, y)		(GMath::Abs(x) <= (y))
-#define PXC_IS_NEGATIVE(x) ((x) < GMath::Zero())
+#define PXC_IS_NEGATIVE(x)          ((x) < GMath::Zero())
 
 
 typedef uint32_t    PxU32;
@@ -473,7 +473,8 @@ static inline f32 IsInYZ(const f32 y, const f32 z, const VertexInfo** face)
         // |CurrentZ - PreviousZ      z - PreviousZ|
         // => similar to backface culling, check each one of the 4 triangles are consistent, in which case
         // the point is within the parallelogram.
-        if ((CurrentY - PreviousY) * (z - PreviousZ) - (CurrentZ - PreviousZ) * (y - PreviousY) >= GMath::Zero())	return -GMath::One();
+        if ((CurrentY - PreviousY) * (z - PreviousZ) - (CurrentZ - PreviousZ) * (y - PreviousY) >= GMath::Zero())
+            return -GMath::One();
 
         PreviousY = CurrentY;
         PreviousZ = CurrentZ;
@@ -595,14 +596,15 @@ static PxI32 generateContacts(
 
 		// We only take the edges that at least penetrated the quad's plane into account.
 		if(p1->penetrate || p2->penetrate)
-			//		if(p1->penetrate + p2->penetrate)	// One branch only
 		{
 			// If at least one of the two vertices is not in the quad...
 			if(!p1->area || !p2->area)
-				//			if(!p1->area + !p2->area)	// One branch only
 			{
 				// Test y
-				if(p1->pos.y > p2->pos.y)		{ const VertexInfo* tmp=p1; p1=p2; p2=tmp; }
+				if(p1->pos.y > p2->pos.y)	
+                { 
+                    const VertexInfo* tmp=p1; p1=p2; p2=tmp;
+                }
 				// Impact on the +Y1 edge of the quad
 				if(p1->pos.y < y1 && p2->pos.y >= y1)	
 					// => a point under Y1, the other above
@@ -628,7 +630,7 @@ static PxI32 generateContacts(
 					if(GMath::Abs(z) <= z1)
 					{
 						f32 x = p1->pos.x + (p2->pos.x - p1->pos.x)*a;
-						if(x+contactDistance>=0.0f)
+						if(x+contactDistance >= GMath::Zero())
 						{
 							contactBuffer.AddContactPoint(GVector3(x, -y1, z), contactNormal, -x);
 						}
@@ -646,7 +648,7 @@ static PxI32 generateContacts(
 					if(GMath::Abs(y) <= y1)
 					{
 						f32 x = p1->pos.x + (p2->pos.x - p1->pos.x)*a;
-						if(x+contactDistance>=0.0f)
+						if(x+contactDistance >= GMath::Zero())
 						{
 							contactBuffer.AddContactPoint(GVector3(x, y, z1), contactNormal, -x);
 						}
@@ -661,7 +663,7 @@ static PxI32 generateContacts(
 					if(GMath::Abs(y) <= y1)
 					{
 						f32 x = p1->pos.x + (p2->pos.x - p1->pos.x)*a;
-						if(x+contactDistance>=0.0f)
+						if(x+contactDistance >= GMath::Zero())
 						{
 							contactBuffer.AddContactPoint(GVector3(x, y, -z1), contactNormal, -x);
 						}
@@ -680,7 +682,7 @@ static PxI32 generateContacts(
 					f32 z = p1->pos.z + (p2->pos.z - p1->pos.z)*a;
 					if(GMath::Abs(z) <= z1)
 					{
-						contactBuffer.AddContactPoint(GVector3(0, y, z), contactNormal, GMath::Zero());
+						contactBuffer.AddContactPoint(GVector3(GMath::Zero(), y, z), contactNormal, GMath::Zero());
 					}
 				}
 			}
@@ -700,10 +702,10 @@ static PxI32 generateContacts(
 			{
 				if(!q[0]->area || !q[1]->area || !q[2]->area || !q[3]->area)
 				{
-					if(!(addflg&1))	{ f32 x = IsInYZ(-y1, -z1, q); if(x>=0.0f)	{ addflg|=1; contactBuffer.AddContactPoint(GVector3(x, -y1, -z1), contactNormal, -x); /*depths[NbContacts]=x; ctcPts[NbContacts++] = PxVec3(x, -y1, -z1);*/ } }
-					if(!(addflg&2))	{ f32 x = IsInYZ( y1, -z1, q); if(x>=0.0f)	{ addflg|=2; contactBuffer.AddContactPoint(GVector3(x, +y1, -z1), contactNormal, -x); /*depths[NbContacts]=x; ctcPts[NbContacts++] = PxVec3(x, +y1, -z1);*/ } }
-					if(!(addflg&4))	{ f32 x = IsInYZ(-y1,  z1, q); if(x>=0.0f)	{ addflg|=4; contactBuffer.AddContactPoint(GVector3(x, -y1, +z1), contactNormal, -x); /*depths[NbContacts]=x; ctcPts[NbContacts++] = PxVec3(x, -y1, +z1);*/ } }
-					if(!(addflg&8))	{ f32 x = IsInYZ( y1,  z1, q); if(x>=0.0f)	{ addflg|=8; contactBuffer.AddContactPoint(GVector3(x, +y1, +z1), contactNormal, -x); /*depths[NbContacts]=x; ctcPts[NbContacts++] = PxVec3(x, +y1, +z1);*/ } }
+					if(!(addflg&1))	{ f32 x = IsInYZ(-y1, -z1, q); if(x>=GMath::Zero())	{ addflg|=1; contactBuffer.AddContactPoint(GVector3(x, -y1, -z1), contactNormal, -x);  } }
+					if(!(addflg&2))	{ f32 x = IsInYZ( y1, -z1, q); if(x>=GMath::Zero())	{ addflg|=2; contactBuffer.AddContactPoint(GVector3(x,  y1, -z1), contactNormal, -x);  } }
+					if(!(addflg&4))	{ f32 x = IsInYZ(-y1,  z1, q); if(x>=GMath::Zero())	{ addflg|=4; contactBuffer.AddContactPoint(GVector3(x, -y1,  z1), contactNormal, -x);  } }
+					if(!(addflg&8))	{ f32 x = IsInYZ( y1,  z1, q); if(x>=GMath::Zero())	{ addflg|=8; contactBuffer.AddContactPoint(GVector3(x,  y1,  z1), contactNormal, -x);  } }
 				}
 			}
 		}
@@ -858,7 +860,11 @@ int32_t GCollision_Box::Box_Box_Contact_PhysX(
 	{
 		f32 d = overlap[i];
 
-		if(d>=0.0f && d<minimum)	{ minimum=d; minIndex=PxI32(i); }		// >=0 !!  otherwise bug at sep = 0
+		if(d>=GMath::Zero() && d<minimum)
+        {
+            minimum=d;
+            minIndex=PxI32(i);
+        }		// >=0 !!  otherwise bug at sep = 0
 	}
 
 	//collisionData = PxU32(minIndex + 1);	// Leave "0" for separation

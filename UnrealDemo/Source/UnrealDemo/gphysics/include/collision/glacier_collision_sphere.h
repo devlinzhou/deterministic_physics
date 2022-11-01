@@ -14,6 +14,8 @@
 
 #include "glacier_vector.h"
 
+class GShapeSphere;
+class GTransform_QT;
 class GCollision_Sphere
 {
 public:
@@ -112,6 +114,14 @@ public:
     static bool Sphere_Capsule( const GVector3& sphereCenter, const f32 sphereRadius, const GVector3& capsuleP0, const GVector3& capsuleP1, const f32 Radius0, const f32 Radius1, GVector3& result, GVector3* pOutNormal);
 
 
+
+
+    static int32_t Sphere_Sphere_Contact(
+        const GShapeSphere& ShapA,
+        const GTransform_QT& TransformA,
+        const GShapeSphere& ShapB,
+        const GTransform_QT& TransformB,
+        class GCollisionContact* pContact);
 
 };
 

@@ -12,7 +12,8 @@
  */
 
 #include "glacier_collision_sphere.h"
-
+#include "glacier_transform_qt.h"
+#include "glacier_collision_shape.h"
 
 bool GCollision_Sphere::Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal)
 { 
@@ -152,5 +153,38 @@ bool GCollision_Sphere::Sphere_Capsule(
     return false;
 }
 
+int32_t GCollision_Sphere::Sphere_Sphere_Contact(
+    const GShapeSphere& ShapA,
+    const GTransform_QT& transform0,
+    const GShapeSphere& ShapB,
+    const GTransform_QT& transform1,
+    class GCollisionContact* pContact)
+{
 
+
+    const GShapeSphere& sphereGeom0 = ShapA;
+    const GShapeSphere& sphereGeom1 = ShapB;
+
+    GVector3 delta = transform0.m_Pos - transform1.m_Pos;
+
+    const f32 distanceSq = delta.SizeSquare();
+    const f32 radiusSum = ShapA.Radius + ShapB.Radius;
+    const f32 inflatedSum = radiusSum;// + params.mContactDistance;
+    if (distanceSq >= inflatedSum * inflatedSum)
+        return 0;
+
+    // We do a *manual* normalization to check for singularity condition
+    const f32 magn = GMath::Sqrt(distanceSq);
+    if (magn <= GMath::Inv_100000())
+        delta = GVector3(1.0f, 0.0f, 0.0f);	// PT: spheres are exactly overlapping => can't create normal => pick up random one
+    else
+        delta *= GMath::One() / magn;
+
+    // PT: TODO: why is this formula different from the original code?
+ 
+    const GVector3 contact = delta * ((sphereGeom0.Radius + magn - sphereGeom1.Radius) * -GMath::Half()) + transform0.m_Pos;
+
+    pContact->AddContactPoint(contact, delta, magn - radiusSum);
+    return 1;
+}
 

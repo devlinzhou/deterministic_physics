@@ -19,7 +19,7 @@ void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, con
 {
     if(0<= m_nPointCount && m_nPointCount < (MaxPoint-1) )
     {
-        GManifoldPoint& TPoint = m_Point[m_nPointCount];
+        GManifoldPoint& TPoint = m_Point[m_nPointCount++];
 
         TPoint.m_PosOnSurfaceB_World    = PosOnSurfaceB_World;
         TPoint.m_NormalOnB              = NormalOnB;

@@ -72,7 +72,7 @@ GQuaternion GMatrix3::ToQuat(void) const
     f32 fRoot;
 
     GQuaternion Reuslt = GQuaternion::Identity();
-    if (fTrace > 0.f)
+    if (fTrace > GMath::Zero())
     {
         fRoot = GMath::Sqrt(fTrace + GMath::One());
         Reuslt.w = GMath::Half() * fRoot;
@@ -132,7 +132,7 @@ GQuaternion GMatrix4::ToQuat( void ) const
     f32 fRoot;
 
     GQuaternion Reuslt = GQuaternion::Identity();
-    if (fTrace > 0.f)
+    if (fTrace > GMath::Zero())
     {
         fRoot = GMath::Sqrt(fTrace + GMath::One());
         Reuslt.w    = GMath::Half() * fRoot;
@@ -223,7 +223,7 @@ f32 GMatrix4::Inverse( )
 
     f32 fDet = ( t00 * m00 + t10 * m01 + t20 * m02 + t30 * m03 );
 
-    if( fDet == 0.f )
+    if( fDet == GMath::Zero() )
     {
         *this = Identity( );
         return GMath::Zero();

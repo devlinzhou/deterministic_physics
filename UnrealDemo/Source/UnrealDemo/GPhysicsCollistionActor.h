@@ -30,9 +30,11 @@ public:
     UPROPERTY(EditAnywhere, Category = "Sphere")
         bool            SphereShow = false;
     UPROPERTY(EditAnywhere, Category = "Sphere")
-        FVector         SphereCenter = FVector(400, 200, 90);
+        FVector         SphereCenterB = FVector(400, 200, 90);
     UPROPERTY(EditAnywhere, Category = "Sphere")
-        float           SphereRadius = 100.f;
+        float           SphereRadiusA = 100.f;
+    UPROPERTY(EditAnywhere, Category = "Sphere")
+        float           SphereRadiusB = 100.f;
 
     UPROPERTY(EditAnywhere, Category = "Triangle")
         bool           TriangleShow = false;

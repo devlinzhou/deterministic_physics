@@ -65,7 +65,7 @@ public:
     uint64_t PairId;
 
 
-    static constexpr int32_t MaxPoint = 4;
+    static constexpr int32_t MaxPoint = 16;
 
     int32_t         m_nPointCount;
     GManifoldPoint  m_Point[MaxPoint];

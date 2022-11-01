@@ -120,7 +120,7 @@ void IGlacierDraw::DrawCapsule(const GTransform_QT& TTrans, f32 Radius, f32 Half
     GVector3 Center1 = GVector3(GMath::Zero(), GMath::Zero(), -HalfHeight);
 
 
-    for (f32 Angle = AngleIncrement; Angle <= 360.0f; Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
+    for (f32 Angle = AngleIncrement; Angle <= GMath::Makef32(360); Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
     {
         f32 TSin, TCos;
         GMath::SinCos(GMath::DegreesToRadians(Angle), TSin, TCos);
@@ -185,7 +185,7 @@ void IGlacierDraw::DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 Hal
     GVector3 Center1 = GVector3(GMath::Zero(), GMath::Zero(), -HalfHeight);
 
 
-    for (f32 Angle = AngleIncrement; Angle <= 360.0f; Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
+    for (f32 Angle = AngleIncrement; Angle <= GMath::Makef32(360); Angle += AngleIncrement)  // iterate over unit circle about capsule's major axis (which is orientation.AxisZ)
     {
         f32 TSin, TCos;
         GMath::SinCos(GMath::DegreesToRadians(Angle), TSin, TCos);
@@ -265,7 +265,7 @@ void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, f32
     GVector3 VEnd = V0 + VDirection * Size;
     GVector3 VCurrentUp = GVector3::UnitZ();
 
-    if (GVector3::CrossProduct(VDirection, VCurrentUp).SizeSquare() < 0.00001f)
+    if (GVector3::CrossProduct(VDirection, VCurrentUp).SizeSquare() < GMath::Inv_100000())
     {
         VCurrentUp = GVector3::UnitX();
     }
