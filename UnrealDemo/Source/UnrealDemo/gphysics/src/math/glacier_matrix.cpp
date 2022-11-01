@@ -66,6 +66,49 @@ bool GMatrix3::Inverse( GMatrix3& M3Out, f32 fTolerance ) const
     return true;
 }
 
+GQuaternion GMatrix3::ToQuat(void) const
+{
+    f32 fTrace = m[0][0] + m[1][1] + m[2][2];
+    f32 fRoot;
+
+    GQuaternion Reuslt = GQuaternion::Identity();
+    if (fTrace > 0.f)
+    {
+        fRoot = GMath::Sqrt(fTrace + GMath::One());
+        Reuslt.w = GMath::Half() * fRoot;
+        fRoot = GMath::Half() / fRoot;
+        Reuslt.x = (m[1][2] - m[2][1]) * fRoot;
+        Reuslt.y = (m[2][0] - m[0][2]) * fRoot;
+        Reuslt.z = (m[0][1] - m[1][0]) * fRoot;
+    }
+    else
+    {
+        static uint32_t s_iNext[3] = { 1, 2, 0 };
+        uint32_t i = 0;
+        if (m[1][1] > m[0][0])
+        {
+            i = 1;
+        }
+        if (m[2][2] > m[i][i])
+        {
+            i = 2;
+        }
+
+        uint32_t j = s_iNext[i];
+        uint32_t k = s_iNext[j];
+
+        fRoot = GMath::Sqrt(m[i][i] - m[j][j] - m[k][k] + GMath::One());
+        f32* apkQuat[3] = { &Reuslt.x, &Reuslt.y, &Reuslt.z };
+        *apkQuat[i] = GMath::Half() * fRoot;
+        fRoot = GMath::Half() / fRoot;
+        Reuslt.w = (m[j][k] - m[k][j]) * fRoot;
+        *apkQuat[j] = (m[i][j] + m[j][i]) * fRoot;
+        *apkQuat[k] = (m[i][k] + m[k][i]) * fRoot;
+    }
+
+    return Reuslt;
+}
+
 inline static f32 SMINOR
 (
     const GMatrix4&    M,

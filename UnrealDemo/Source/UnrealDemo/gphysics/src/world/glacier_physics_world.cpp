@@ -91,7 +91,7 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 
     m_Objects.push_back(pObject);
 
-    GVector3 VPos = pObject->m_Transform.m_Translation;
+    GVector3 VPos = pObject->m_Transform.m_Pos;
 
     GGridPosition CellPos;
 
@@ -123,7 +123,7 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 
 bool GPhysicsWorld::UpdateCollisionObject(GCollisionObject* pObject)
 {
-    GVector3 VPos = pObject->m_Transform.m_Translation;
+    GVector3 VPos = pObject->m_Transform.m_Pos;
 
     GGridPosition newCellPos = GetGridPos(VPos);
 

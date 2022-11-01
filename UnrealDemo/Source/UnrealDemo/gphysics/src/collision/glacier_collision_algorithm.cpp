@@ -24,7 +24,7 @@ bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ObjA, const G
 
 bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
-    GVector3 d = ObjA->m_Transform.m_Translation - ObjB->m_Transform.m_Translation;
+    GVector3 d = ObjA->m_Transform.m_Pos - ObjB->m_Transform.m_Pos;
     f32 len2 = d.SizeSquare();
     f32 TRadius = ObjA->m_Shape.GetRaiuds() + ObjB->m_Shape.GetRaiuds();
 
@@ -35,7 +35,7 @@ bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCo
             f32 InvLen = GMath::InvSqrt(len2);
 
             GVector3 VNormalOnB = len2 < GMath::Epsilon() ? GVector3::UnitX() : d * InvLen;
-            GVector3 VPosOnB = ObjB->m_Transform.m_Translation + VNormalOnB * ObjB->m_Shape.GetRaiuds();
+            GVector3 VPosOnB = ObjB->m_Transform.m_Pos + VNormalOnB * ObjB->m_Shape.GetRaiuds();
 
             pContact->ClearPoint();
 

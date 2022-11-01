@@ -25,46 +25,46 @@ public:
     GTransform_QT(const GTransform_QT&) = default;
 
     inline GTransform_QT( const GQuaternion& Quat, const GVector3& Trans ) :
-        m_Rotate(Quat ), m_Translation(Trans)
+        m_Rot(Quat ), m_Pos(Trans)
     {
 
     }
 
     inline GTransform_QT( const GQuaternion& Quat ) :
-        m_Rotate(Quat ), m_Translation( GVector3::Identity() )
+        m_Rot(Quat ), m_Pos( GVector3::Identity() )
     {
 
     }
 
     inline GTransform_QT( const GVector3& Trans ) :
-        m_Rotate( GQuaternion::Identity() ), m_Translation(Trans)
+        m_Rot( GQuaternion::Identity() ), m_Pos(Trans)
     {
 
     }
 
     inline GTransform_QT operator*( const GTransform_QT& Q ) const
     {
-        return GTransform_QT( m_Rotate * Q.m_Rotate, Q.m_Rotate.RotateVector(m_Translation) + Q.m_Translation );
+        return GTransform_QT( m_Rot * Q.m_Rot, Q.m_Rot.RotateVector(m_Pos) + Q.m_Pos );
     }
 
     inline GTransform_QT operator*( const GQuaternion& Q ) const
     {
-        return GTransform_QT( m_Rotate * Q,  Q.RotateVector(m_Translation) );
+        return GTransform_QT( m_Rot * Q,  Q.RotateVector(m_Pos) );
     }
 
     friend inline GTransform_QT operator*( const GQuaternion& Q, const GTransform_QT& QT )
     {
-        return GTransform_QT( Q * QT.m_Rotate, QT.m_Translation );
+        return GTransform_QT( Q * QT.m_Rot, QT.m_Pos );
     }
 
     GVector3 TransformNormal( const GVector3& V ) const
     {
-        return m_Rotate.RotateVector( V );
+        return m_Rot.RotateVector( V );
     }
 
     GVector3 TransformPosition(const GVector3& V) const
     {
-        return m_Rotate.RotateVector(V) + m_Translation;
+        return m_Rot.RotateVector(V) + m_Pos;
     }
 
     GAABB TransformAABB( const GAABB& InBox ) const
@@ -81,25 +81,25 @@ public:
 
     inline void Inverse( )
     {
-        m_Rotate.Inverse( );
-        m_Translation = m_Rotate.RotateVector( -m_Translation);
+        m_Rot.Inverse( );
+        m_Pos = m_Rot.RotateVector( -m_Pos);
     }
 
     inline GTransform_QT GetInverse( ) const
     {
-        GQuaternion TQ = m_Rotate.GetInverse( );
-        return GTransform_QT( TQ, TQ.RotateVector( -m_Translation) );
+        GQuaternion TQ = m_Rot.GetInverse( );
+        return GTransform_QT( TQ, TQ.RotateVector( -m_Pos) );
     }
 
     inline GTransform_QT GetInverse_fast() const
     {
-        GQuaternion TQ = m_Rotate.GetUnitInverse();
-        return GTransform_QT(TQ, TQ.RotateVector(-m_Translation));
+        GQuaternion TQ = m_Rot.GetUnitInverse();
+        return GTransform_QT(TQ, TQ.RotateVector(-m_Pos));
     }
 
     bool IsIdentity( ) const
     {
-        return m_Rotate == GQuaternion::Identity( ) && m_Translation == GVector3::Zero( );
+        return m_Rot == GQuaternion::Identity( ) && m_Pos == GVector3::Zero( );
     }
 
     static inline GTransform_QT Identity( )
@@ -109,7 +109,7 @@ public:
 
 public:
 
-    GQuaternion     m_Rotate;
-    GVector3		m_Translation;
+    GQuaternion     m_Rot;
+    GVector3		m_Pos;
 };
 

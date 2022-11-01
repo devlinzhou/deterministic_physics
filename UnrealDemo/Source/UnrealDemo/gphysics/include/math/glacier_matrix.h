@@ -186,7 +186,7 @@ public:
             GMath::Zero(),  GMath::Zero(),  GMath::One());
     }
 
-    inline GVector3 GetRow(uint32_t nRow)
+    inline GVector3& Row(uint32_t nRow)
     {
         return  *(GVector3*)(m[nRow]);
     }
@@ -263,6 +263,8 @@ public:
         GQuaternion TRot( VAxis, fRadians );
         *this = GMatrix3( TRot ); 
     }
+
+    GQuaternion ToQuat( void ) const;
 
 public:
 

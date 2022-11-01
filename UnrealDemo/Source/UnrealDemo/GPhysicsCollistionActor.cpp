@@ -96,7 +96,7 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         TContact.Clear();
 
         FColor TColor = FColor::Yellow;
-        if( GCollision_Box::Box_Box_Contact(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != -1 )
+        if( GCollision_Box::Box_Box_Contact_PhysX(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != 0 )
         {
             const GManifoldPoint& TMn = TContact.m_Point[0];
 

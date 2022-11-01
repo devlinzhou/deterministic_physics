@@ -393,7 +393,7 @@ public:
         return *this;
     }
 
-    GFORCE_INLINE bool operator > (const GFloat b) const
+     GFORCE_INLINE bool operator > ( const GFloat b) const
     {
         int32_t a_fra = getfraction_NoShift();
         int32_t b_fra = b.getfraction_NoShift();

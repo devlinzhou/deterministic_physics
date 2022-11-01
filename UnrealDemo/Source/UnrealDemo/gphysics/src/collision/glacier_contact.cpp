@@ -15,7 +15,7 @@
 
 
 
-void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth)
+void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth, uint32_t faceid)
 {
     if(0<= m_nPointCount && m_nPointCount < (MaxPoint-1) )
     {
@@ -24,6 +24,7 @@ void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, con
         TPoint.m_PosOnSurfaceB_World    = PosOnSurfaceB_World;
         TPoint.m_NormalOnB              = NormalOnB;
         TPoint.m_depth                  = depth;
+        TPoint.m_FaceIndex              = faceid;
     }
 
 }

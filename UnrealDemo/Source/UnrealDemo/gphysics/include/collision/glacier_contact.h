@@ -26,6 +26,7 @@ public:
     GVector3    m_PosOnSurfaceB_World;
     GVector3    m_NormalOnB;
     f32         m_depth;
+    uint32_t    m_FaceIndex;
 };
 
 
@@ -38,18 +39,28 @@ public:
     GCollisionContact(const GCollisionContact&) = default;
 
 
-    void AddContactPoint( const GVector3& PosOnSurfaceB_World, const GVector3& NormalOnB, f32 depth );
+    void AddContactPoint( 
+        const GVector3& PosOnSurfaceB_World,
+        const GVector3& NormalOnB,
+        f32 depth,
+        uint32_t faceid = -1);
 
-    void Clear()
-    {
-        PairId = 0;
-        m_nPointCount = 0;
-    }
+     void Clear()
+     {
+         PairId = 0;
+         m_nPointCount = 0;
+     }
 
     void ClearPoint()
     {
         m_nPointCount = 0;
     }
+
+    int32_t GetPointCount()
+    {
+        return m_nPointCount;
+    }
+
 
     uint64_t PairId;
 

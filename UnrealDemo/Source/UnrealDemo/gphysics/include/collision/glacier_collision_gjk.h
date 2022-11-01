@@ -65,8 +65,8 @@ public:
 
             pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapA.TransformPosition(PosA)), ff, uColor, 12);
             pDebugDraw->DrawSphere(GTransform_QT(GQuaternion::Identity(), TransformShapB.TransformPosition(PosB)), ff, uColor, 12);
-            pDebugDraw->DrawLine(TransformShapA.m_Translation, TransformShapA.m_Translation + TransformShapA.TransformNormal(DirectionA) * f2, uColor);
-            pDebugDraw->DrawLine(TransformShapB.m_Translation, TransformShapB.m_Translation + TransformShapB.TransformNormal(DirectionB) * f2, uColor);
+            pDebugDraw->DrawLine(TransformShapA.m_Pos, TransformShapA.m_Pos + TransformShapA.TransformNormal(DirectionA) * f2, uColor);
+            pDebugDraw->DrawLine(TransformShapB.m_Pos, TransformShapB.m_Pos + TransformShapB.TransformNormal(DirectionB) * f2, uColor);
         }
 
         return PosA - LocalBToLocalA.TransformPosition(PosB);

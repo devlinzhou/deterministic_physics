@@ -36,7 +36,7 @@ public:
         }
 
 
-        m_Transform.m_Translation += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
+        m_Transform.m_Pos += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
 
         m_Velocity = VNew;
 
