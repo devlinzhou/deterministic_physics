@@ -23,7 +23,7 @@ class GManifoldPoint
 {
 public:
 
-    GVector3    m_PosOnSurfaceB_World;
+    GVector3    m_PosWorld;
     GVector3    m_NormalOnB;
     f32         m_depth;
     uint32_t    m_FaceIndex;

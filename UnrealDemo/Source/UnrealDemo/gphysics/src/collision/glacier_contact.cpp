@@ -21,7 +21,7 @@ void GCollisionContact::AddContactPoint(const GVector3& PosOnSurfaceB_World, con
     {
         GManifoldPoint& TPoint = m_Point[m_nPointCount++];
 
-        TPoint.m_PosOnSurfaceB_World    = PosOnSurfaceB_World;
+        TPoint.m_PosWorld    = PosOnSurfaceB_World;
         TPoint.m_NormalOnB              = NormalOnB;
         TPoint.m_depth                  = depth;
         TPoint.m_FaceIndex              = faceid;

@@ -113,7 +113,7 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
             {
                 const GManifoldPoint& TMn = TContact.m_Point[i];
 
-                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosOnSurfaceB_World);
+                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
                 FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
 
                 FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
@@ -168,21 +168,20 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         FVector SCenterA = GetActorLocation();
 
-        GTransform_QT TBoxShapeA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SCenterA));
-        GTransform_QT TBoxShapeB(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
+        GTransform_QT TransA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SCenterA));
+        GTransform_QT TransB(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
 
         GCollisionContact TContact;
         TContact.Clear();
 
         FColor TColor = FColor::Yellow;
-        if (GCollision_Sphere::Sphere_Sphere_Contact(ShapeSA, TBoxShapeA, ShapeSB, TBoxShapeB, &TContact) != 0)
+        if (GCollision_Sphere::Sphere_Sphere_Contact(ShapeSA, TransA, ShapeSB, TransB, &TContact) != 0)
         {
-
             for (int i = 0; i < TContact.GetPointCount(); ++i)
             {
                 const GManifoldPoint& TMn = TContact.m_Point[i];
 
-                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosOnSurfaceB_World);
+                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
                 FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
 
                 FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
@@ -240,6 +239,49 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
             TResult.Draw(&Tdraw, GTransform_QT::Identity(), GColor::Yellow());
         }
+    }
+
+    if(TestSphere_Box)
+    {
+        GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
+        FVector BoxCenterA = GetActorLocation();
+        FRotator BoxRotA = GetActorRotation();
+        GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
+
+        GShapeSphere ShapeSA(GUtility::Unit_U_to_G(SphereRadiusB));
+        GTransform_QT TransA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
+
+
+        GCollisionContact TContact;
+        TContact.Clear();
+
+        FColor TColor = FColor::Yellow;
+        if (GCollision_Sphere::Sphere_Box_Contact(ShapeSA, TransA, ShapeBoxA, TBoxShapeA, &TContact) != 0)
+        {
+
+            for (int i = 0; i < TContact.GetPointCount(); ++i)
+            {
+                const GManifoldPoint& TMn = TContact.m_Point[i];
+
+                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
+                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
+
+                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
+
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
+                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
+
+            }
+            TColor = FColor::Red;
+        }
+
+        UKismetSystemLibrary::DrawDebugCoordinateSystem(GetWorld(), BoxCenterB, BoxRotB, 50.);
+
+        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, TColor, BoxRotA);
+        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenterB, SphereRadiusB, 16, TColor);
+
+
     }
 
 

@@ -160,8 +160,6 @@ int32_t GCollision_Sphere::Sphere_Sphere_Contact(
     const GTransform_QT& transform1,
     class GCollisionContact* pContact)
 {
-
-
     const GShapeSphere& sphereGeom0 = ShapA;
     const GShapeSphere& sphereGeom1 = ShapB;
 
@@ -186,5 +184,56 @@ int32_t GCollision_Sphere::Sphere_Sphere_Contact(
 
     pContact->AddContactPoint(contact, delta, magn - radiusSum);
     return 1;
+}
+
+
+int32_t GCollision_Sphere::Sphere_Plane_Contact(
+    const GShapeSphere& ShapA,
+    const GTransform_QT& TransformA,
+    const GShapePlane& ShapB,
+    const GTransform_QT& TransformB,
+    class GCollisionContact* pContact)
+{
+
+    GVector3 sphere = TransformB.m_Rot.UnRotateVector( TransformA.m_Pos - TransformB.m_Pos);
+
+    const f32 fDepth = sphere.x - ShapA.Radius;
+
+    if (fDepth <= GMath::Zero() )
+    {
+        const GVector3 normal = TransformB.TransformNormal( GVector3::UnitX());
+        const GVector3 point = TransformB.m_Pos - normal * ShapA.Radius;
+
+        pContact->AddContactPoint(point, normal, fDepth);
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int32_t GCollision_Sphere::Sphere_Box_Contact(
+    const GShapeSphere& ShapA,
+    const GTransform_QT& TransformA, 
+    const GShapeBox& ShapB, 
+    const GTransform_QT& TransformB, 
+    GCollisionContact* pContact)
+{
+    GVector3 VALocalB = TransformB.m_Rot.UnRotateVector( TransformA.m_Pos - TransformB.m_Pos);
+
+    GVector3 VT = GVector3::Zero();
+    GVector3 VNormal;
+    if( Sphere_Box( VALocalB, ShapA.Radius, GVector3::Zero(), ShapB.HalfExtern, VT, &VNormal ) )
+    {
+        pContact->AddContactPoint(
+            TransformB.TransformPosition(VALocalB - VNormal * ShapA.Radius) ,
+            TransformB.TransformNormal( -VNormal), -GVector3::Distance( VALocalB, VT) );
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 

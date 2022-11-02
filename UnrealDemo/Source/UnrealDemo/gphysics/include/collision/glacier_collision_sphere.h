@@ -15,7 +15,9 @@
 #include "glacier_vector.h"
 
 class GShapeSphere;
+class GShapePlane;
 class GTransform_QT;
+class GCollisionContact;
 class GCollision_Sphere
 {
 public:
@@ -116,13 +118,10 @@ public:
 
 
 
-    static int32_t Sphere_Sphere_Contact(
-        const GShapeSphere& ShapA,
-        const GTransform_QT& TransformA,
-        const GShapeSphere& ShapB,
-        const GTransform_QT& TransformB,
-        class GCollisionContact* pContact);
-
+    static int32_t Sphere_Sphere_Contact( const GShapeSphere& ShapA, const GTransform_QT& TransformA, const GShapeSphere& ShapB, const GTransform_QT& TransformB, GCollisionContact* pContact);
+    static int32_t Sphere_Plane_Contact( const GShapeSphere& ShapA, const GTransform_QT& TransformA, const GShapePlane& ShapB, const GTransform_QT& TransformB, GCollisionContact* pContact);
+    static int32_t Sphere_Box_Contact( const GShapeSphere& ShapA, const GTransform_QT& TransformA, const GShapeBox& ShapB, const GTransform_QT& TransformB, GCollisionContact* pContact);
+    
 };
 
 

@@ -713,8 +713,8 @@ static PxI32 generateContacts(
 
 
 	for(int32_t i=0; i<contactBuffer.m_nPointCount; i++)
-		contactBuffer.m_Point[i].m_PosOnSurfaceB_World = transform0.TransformPosition(
-            contactBuffer.m_Point[i].m_PosOnSurfaceB_World);	
+		contactBuffer.m_Point[i].m_PosWorld = transform0.TransformPosition(
+            contactBuffer.m_Point[i].m_PosWorld);	
 
 	return PxI32(contactBuffer.GetPointCount());
 }
@@ -1007,4 +1007,58 @@ int32_t GCollision_Box::Box_Box_Contact_PhysX(
         trs.m_Rot = trsm.ToQuat();
 		return generateContacts(*pContact, ctcNrm, extents1.x, extents1.y, extents0, trs, transform0, contactDistance);
 	}
+}
+
+int32_t GCollision_Box::Plane_Box_Contact(
+    const GShapePlane&      ShapA,
+    const GTransform_QT&    TransformA,
+    const GShapeBox&        ShapB,
+    const GTransform_QT&    TransformB,
+    class GCollisionContact* pContact)
+{
+    GVector3 VBLocalA = TransformA.m_Rot.UnRotateVector(TransformB.m_Pos - TransformA.m_Pos);
+
+    GMatrix3 boxMatrix(TransformB.m_Rot);
+    GMatrix3 boxToPlane(TransformB.m_Rot * TransformA.m_Rot.GetUnitInverse());
+
+    const GVector3 negPlaneNormal = TransformA.TransformNormal( GVector3::NegtiveX());
+
+    const f32 limit = -VBLocalA.x;
+    const f32 dx = ShapB.HalfExtern.x;
+    const f32 dy = ShapB.HalfExtern.y;
+    const f32 dz = ShapB.HalfExtern.z;
+    const f32 bxdx = boxToPlane.GetRow(0).x * dx;
+    const f32 bxdy = boxToPlane.GetRow(1).x * dy;
+    const f32 bxdz = boxToPlane.GetRow(2).x * dz;
+
+    f32 depths[8];
+    depths[0] = bxdx + bxdy + bxdz - limit;
+    depths[1] = bxdx + bxdy - bxdz - limit;
+    depths[2] = bxdx - bxdy + bxdz - limit;
+    depths[3] = bxdx - bxdy - bxdz - limit;
+    depths[4] = -bxdx + bxdy + bxdz - limit;
+    depths[5] = -bxdx + bxdy - bxdz - limit;
+    depths[6] = -bxdx - bxdy + bxdz - limit;
+    depths[7] = -bxdx - bxdy - bxdz - limit;
+
+    const f32* binary = (depths);
+
+    if (binary[0] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(dx, dy, dz)), negPlaneNormal, depths[0] );
+    if (binary[1] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(dx, dy, -dz)), negPlaneNormal, depths[1] );
+    if (binary[2] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(dx, -dy, dz)), negPlaneNormal, depths[2] );
+    if (binary[3] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(dx, -dy, -dz)), negPlaneNormal, depths[3] );
+    if (binary[4] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(-dx, dy, dz)), negPlaneNormal, depths[4] );
+    if (binary[5] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(-dx, dy, -dz)), negPlaneNormal, depths[5]);
+    if (binary[6] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(-dx, -dy, dz)), negPlaneNormal, depths[6] );
+    if (binary[7] < GMath::Zero())
+        pContact->AddContactPoint(TransformB.TransformPosition(GVector3(-dx, -dy, -dz)), negPlaneNormal, depths[7]);
+
+    return pContact->GetPointCount();
 }

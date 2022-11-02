@@ -85,6 +85,9 @@ public:
     UPROPERTY(EditAnywhere, Category = "ConvexHull")
         int           CovexRandomCount = 10;
 
+    UPROPERTY(EditAnywhere, Category = "TestSphere_Box")
+        bool           TestSphere_Box = false;
+
     class GConvexHull*  pConvexHullA = nullptr;
     class GConvexHull*  pConvexHullB = nullptr;
 

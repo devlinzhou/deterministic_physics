@@ -42,6 +42,14 @@ public:
         const GShapeBox& ShapB,
         const GTransform_QT& TransformB,
         class GCollisionContact* pContact);
+
+
+    static int32_t Plane_Box_Contact(
+        const GShapePlane&          ShapA,
+        const GTransform_QT&        TransformA,
+        const GShapeBox&            ShapB,
+        const GTransform_QT&        TransformB,
+        class GCollisionContact*    pContact);
 };
 
 

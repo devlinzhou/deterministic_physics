@@ -200,6 +200,17 @@ public:
 
 };
 
+class GShapePlane : public GShapeBase
+{
+public:
+
+    GShapePlane()
+    {
+        ShapType = EShape::EShape_Plane;
+    }
+
+};
+
 class GShapeHightField : public GShapeConcaveBase
 {
 public:
