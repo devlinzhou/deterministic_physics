@@ -6,6 +6,10 @@ deterministic physics engine for lock-step game development
 
 ## Features
 - [ ] shape
+    - [x] Plane
+    - [x] Sphere
+    - [x] Box
+    - [x] Convex
 - [ ] Collision Test Algorithm
     - [x] BoxBox
     - [x] SphereSphere
