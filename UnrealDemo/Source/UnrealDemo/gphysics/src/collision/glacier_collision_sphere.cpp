@@ -174,11 +174,9 @@ int32_t GCollision_Sphere::Sphere_Sphere_Contact(
     // We do a *manual* normalization to check for singularity condition
     const f32 magn = GMath::Sqrt(distanceSq);
     if (magn <= GMath::Inv_100000())
-        delta = GVector3(1.0f, 0.0f, 0.0f);	// PT: spheres are exactly overlapping => can't create normal => pick up random one
+        delta = GVector3(GMath::One(), GMath::Zero(), GMath::Zero());
     else
         delta *= GMath::One() / magn;
-
-    // PT: TODO: why is this formula different from the original code?
  
     const GVector3 contact = delta * ((sphereGeom0.Radius + magn - sphereGeom1.Radius) * -GMath::Half()) + transform0.m_Pos;
 

@@ -31,11 +31,8 @@ void AGPhysicsActor::BeginPlay()
     }
 
     {
-    
-        CreateRigidBox( GVector3(0,0,10), GVector3(1,1,1) );
-    
+        CreateRigidBox( GVector3(GMath::Zero(),GMath::Zero(),GMath::Three()), GVector3(GMath::One(),GMath::One(),GMath::One()) );
     }
-	
 }
 
 
