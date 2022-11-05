@@ -37,5 +37,5 @@ public:
     UPROPERTY(EditAnywhere)
         FVector VHalfSize;
 
-	class GDynamicRigid* m_pRigid = nullptr;
+	class GStaticRigid* m_pRigid = nullptr;
 };

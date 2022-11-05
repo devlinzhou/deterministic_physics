@@ -27,9 +27,12 @@ public:
 
     UPROPERTY(EditAnywhere)
         UGShape RigidShape;
-
     UPROPERTY(EditAnywhere)
         FVector VHalfSize;
+    UPROPERTY(EditAnywhere)
+        FVector    Gravity;
+    UPROPERTY(EditAnywhere)
+        float  MaxVelocity;
 
     class GDynamicRigid* m_pRigid = nullptr;
 

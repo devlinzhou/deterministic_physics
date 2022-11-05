@@ -9,7 +9,9 @@
 #include "GPhysicsActor.generated.h"
 
 
+class GStaticRigid;
 class GDynamicRigid;
+
 
 UCLASS()
 class UNREALDEMO_API AGPhysicsActor : public AActor
@@ -32,7 +34,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-    GDynamicRigid* CreateRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
+    GStaticRigid* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
+    GDynamicRigid* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;
 

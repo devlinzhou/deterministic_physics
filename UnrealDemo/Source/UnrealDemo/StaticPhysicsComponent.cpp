@@ -35,7 +35,7 @@ void UStaticPhysicsComponent::BeginPlay()
 
         if(TShape != EShape_ConvexBase) 
         {
-            m_pRigid = PPhysics->CreateRigidBody(
+            m_pRigid = PPhysics->CreateStaticRigidBody(
                 GUtility::U_to_G(GetOwner()->GetTransform()),
                 GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
         }

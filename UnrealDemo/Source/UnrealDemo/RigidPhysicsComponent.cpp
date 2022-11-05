@@ -37,9 +37,9 @@ void URigidPhysicsComponent::BeginPlay()
 
         if (TShape != EShape_ConvexBase)
         {
-            m_pRigid = PPhysics->CreateRigidBody(
-                GUtility::U_to_G(GetOwner()->GetTransform()),
-                GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
+            m_pRigid = PPhysics->CreateDynamicRigidBody( GUtility::U_to_G(GetOwner()->GetTransform()), GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
+            m_pRigid->m_Gravity =  GUtility::U_to_G(Gravity);
+            m_pRigid->m_VelocityMax = GUtility::U_to_G(MaxVelocity);
         }
 
     }

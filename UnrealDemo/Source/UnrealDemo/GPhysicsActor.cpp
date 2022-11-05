@@ -32,17 +32,6 @@ void AGPhysicsActor::BeginPlay()
 	Super::BeginPlay();
 
     m_PhysicsWorld.Init();
-
-    {
-        GStaticRigid* pFloor = new GStaticRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
-        pFloor->m_Shape.SetHalfExtern(GVector3(GMath::Three(), GMath::Three(), GMath::Half()));
-        pFloor->UpdateLocalBox();
-        m_PhysicsWorld.AddCollisionObject(pFloor);
-    }
-
-    {
-       // CreateRigidBox( GVector3(GMath::Zero(),GMath::Zero(),GMath::Three()), GVector3(GMath::One(),GMath::One(),GMath::One()) );
-    }
 }
 
 
@@ -65,7 +54,19 @@ void AGPhysicsActor::Tick(float DeltaTime)
     m_PhysicsWorld.DebugDraw( &TDraw );
 }
 
-GDynamicRigid* AGPhysicsActor::CreateRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
+GStaticRigid* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
+{
+    GStaticRigid* pBody = new GStaticRigid(m_PhysicsWorld.CollisionId++, TShape);
+
+    pBody->m_Shape.SetHalfExtern(Halfsize);
+    pBody->UpdateLocalBox();
+    m_PhysicsWorld.AddCollisionObject(pBody);
+    pBody->m_Transform = Trans;
+
+    return pBody;
+}
+
+GDynamicRigid* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
 {
     GDynamicRigid* pBody = new GDynamicRigid(m_PhysicsWorld.CollisionId++, TShape);
 
