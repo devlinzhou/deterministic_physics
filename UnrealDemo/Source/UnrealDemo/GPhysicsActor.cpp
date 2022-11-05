@@ -6,14 +6,24 @@
 #include "glacier_rigid_dynamic.h"
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
-
+#include "EngineUtils.h"
 
 // Sets default values
 AGPhysicsActor::AGPhysicsActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
 
+AGPhysicsActor* AGPhysicsActor::FindScenePhysics( UWorld* pWorld)
+{
+    AGPhysicsActor* pActor = nullptr;
+    for (TActorIterator<AGPhysicsActor> Iter(pWorld); Iter; ++Iter)
+    {
+        pActor = *Iter;
+        break;
+    }
+    return pActor;
 }
 
 // Called when the game starts or when spawned
@@ -31,7 +41,7 @@ void AGPhysicsActor::BeginPlay()
     }
 
     {
-        CreateRigidBox( GVector3(GMath::Zero(),GMath::Zero(),GMath::Three()), GVector3(GMath::One(),GMath::One(),GMath::One()) );
+       // CreateRigidBox( GVector3(GMath::Zero(),GMath::Zero(),GMath::Three()), GVector3(GMath::One(),GMath::One(),GMath::One()) );
     }
 }
 
@@ -55,17 +65,18 @@ void AGPhysicsActor::Tick(float DeltaTime)
     m_PhysicsWorld.DebugDraw( &TDraw );
 }
 
-GDynamicRigid* AGPhysicsActor::CreateRigidBox(  GVector3 VPos, GVector3 Halfsize )
+GDynamicRigid* AGPhysicsActor::CreateRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
 {
-    GDynamicRigid* pBox = new GDynamicRigid(m_PhysicsWorld.CollisionId++, EShape_Box);
-    pBox->m_Shape.SetHalfExtern(GVector3(GMath::Half(), GMath::Half(), GMath::Half()));
-    pBox->UpdateLocalBox();
-    m_PhysicsWorld.AddCollisionObject(pBox);
-    pBox->m_Transform.m_Pos = VPos;
-    pBox->m_VelocityMax = GMath::Makef32(1,0,1);
+    GDynamicRigid* pBody = new GDynamicRigid(m_PhysicsWorld.CollisionId++, TShape);
 
-   // pFloor->m_Gravity = 
+    pBody->m_Shape.SetHalfExtern(Halfsize);
 
-    return pBox;
+    pBody->UpdateLocalBox();
+    m_PhysicsWorld.AddCollisionObject(pBody);
+    pBody->m_Transform = Trans;
+    pBody->m_VelocityMax = GMath::Makef32(10, 0, 1);
 
+    // pFloor->m_Gravity = 
+
+    return pBody;
 }

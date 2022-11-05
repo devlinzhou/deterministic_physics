@@ -122,7 +122,7 @@ void GCollisionManerger::Init( )
     m_Algorithm[EShape_Sphere][EShape_Sphere]    = new GCG_Sphere_Sphere();
     m_Algorithm[EShape_Box][EShape_Box]          = new GCG_Box_Box();
 
-
-
+    m_Algorithm[EShape_Sphere][EShape_Box]       = new GCG_Sphere_Box();
+    m_Algorithm[EShape_Box][EShape_Sphere]       = new GCG_Sphere_Box(true);
 
 }

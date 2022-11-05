@@ -23,7 +23,7 @@ class GCollisionAlgorithm
 {
 public:
 
-    GCollisionAlgorithm( bool value = false) : m_bSwap( value ), CallTimes(0)
+    GCollisionAlgorithm( bool bSwap = false) : m_bSwap( bSwap ), CallTimes(0)
     {
     
     }
@@ -37,36 +37,54 @@ public:
 class GCG_Sphere_Sphere : public GCollisionAlgorithm
 {
 public:
+    GCG_Sphere_Sphere( bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr  ) override;
 };
 
 class GCG_Sphere_Box : public GCollisionAlgorithm
 {
 public:
+    GCG_Sphere_Box(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Capusle : public GCollisionAlgorithm
 {
 public:
+    GCG_Sphere_Capusle(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Cylinder : public GCollisionAlgorithm
 {
 public:
+    GCG_Sphere_Cylinder(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Plane : public GCollisionAlgorithm
 {
 public:
+    GCG_Sphere_Plane(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Box_Box : public GCollisionAlgorithm
 {
 public:
+    GCG_Box_Box(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
     virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 

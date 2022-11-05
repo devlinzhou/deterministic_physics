@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "glacier_physics_world.h"
+#include "glacier_collision_shape.h"
 #include "GPhysicsActor.generated.h"
 
 
@@ -19,6 +20,8 @@ public:
 	// Sets default values for this actor's properties
 	AGPhysicsActor();
 
+   static AGPhysicsActor* FindScenePhysics( class UWorld* );
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,8 +32,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-    GDynamicRigid* CreateRigidBox( GVector3 VPos, GVector3 Halfsize );
+    GDynamicRigid* CreateRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;
 
