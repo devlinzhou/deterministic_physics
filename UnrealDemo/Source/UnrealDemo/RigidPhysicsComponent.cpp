@@ -54,7 +54,10 @@ void URigidPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (m_pRigid != nullptr)
     {
-       GetOwner()->SetActorTransform(GUtility::G_to_U(m_pRigid->m_Transform));
+        GetOwner()->SetActorLocation(GUtility::Unit_G_to_U(m_pRigid->m_Transform.m_Pos));
+        GetOwner()->SetActorRotation(GUtility::G_to_U(m_pRigid->m_Transform.m_Rot));
+
+       //GetOwner()->SetActorTransform( GUtility::G_to_U(m_pRigid->m_Transform) );
     }
 }
 

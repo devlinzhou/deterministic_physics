@@ -35,7 +35,7 @@ void UStaticPhysicsComponent::BeginPlay()
 
         if(TShape != EShape_ConvexBase) 
         {
-            m_pRigid = PPhysics->CreateStaticRigidBody(
+            m_pRigid = PPhysics->CreateStaticRigidBody( 
                 GUtility::U_to_G(GetOwner()->GetTransform()),
                 GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
         }
@@ -55,6 +55,8 @@ void UStaticPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType
     if( m_pRigid != nullptr )
     {
         m_pRigid->m_Transform = GUtility::U_to_G( GetOwner()->GetTransform() );
+
+        m_pRigid->NeedUpdate();
     }
 	// ...
 }

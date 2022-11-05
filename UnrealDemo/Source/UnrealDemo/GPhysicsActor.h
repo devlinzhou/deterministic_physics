@@ -12,6 +12,16 @@
 class GStaticRigid;
 class GDynamicRigid;
 
+UENUM(meta = (Bitflags ))
+enum class EGDrawMask : uint32
+{
+    UGPDraw_Shape      ,
+    UGPDraw_LocalBox    ,
+    UGPDraw_WorldBox    ,
+    UGPDraw_CeilBox     ,
+    UGPDraw_Contact     ,
+};
+ENUM_CLASS_FLAGS(EGDrawMask);
 
 UCLASS()
 class UNREALDEMO_API AGPhysicsActor : public AActor
@@ -38,5 +48,8 @@ public:
     GDynamicRigid* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;
+
+    UPROPERTY(EditAnywhere,meta = (Bitmask, BitmaskEnum = "EGDrawMask"))
+    int32   DrawMask;
 
 };

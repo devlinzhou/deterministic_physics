@@ -45,6 +45,12 @@ public:
 
     inline uint32_t GetId()const {return m_Id;}
 
+
+    void NeedUpdate()
+    {
+        m_bNeedUpdate = true;
+    }
+
     void UpdateAABB()
     {
         m_WorldAABB = m_Transform.TransformAABB( m_LoaclAABB );

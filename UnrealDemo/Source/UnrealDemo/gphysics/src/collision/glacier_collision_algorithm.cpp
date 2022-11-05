@@ -50,7 +50,35 @@ bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCo
 
 bool GCG_Sphere_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
 {
-    return false;
+    int32_t nCount = 0;
+
+    if( m_bSwap )
+    {
+        GShapeSphere TSphere(ObjB->m_Shape.GetRaiuds());
+        GShapeBox    TBox(ObjA->m_Shape.GetHalfExtern());
+
+        GTransform_QT TransS(ObjB->m_Transform );
+        GTransform_QT TransB(ObjA->m_Transform);
+
+        nCount = GCollision_Sphere::Sphere_Box_Contact(TSphere, TransS, TBox, TransB, pContact );
+    }
+    else
+    {
+        GShapeSphere TSphere(ObjA->m_Shape.GetRaiuds());
+        GShapeBox    TBox(ObjB->m_Shape.GetHalfExtern());
+
+        GTransform_QT TransS(ObjA->m_Transform);
+        GTransform_QT TransB(ObjB->m_Transform);
+
+        nCount = GCollision_Sphere::Sphere_Box_Contact( TSphere, TransS, TBox, TransB, pContact );
+    }
+
+    if (pContact)
+    {
+        pContact->Swap = m_bSwap;
+    }
+
+    return nCount > 0;
 }
 
 bool GCG_Sphere_Capusle::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )

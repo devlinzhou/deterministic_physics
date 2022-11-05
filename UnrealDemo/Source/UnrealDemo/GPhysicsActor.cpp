@@ -51,7 +51,7 @@ void AGPhysicsActor::Tick(float DeltaTime)
 
     GPhysicsDraw TDraw(GetWorld());
 
-    m_PhysicsWorld.DebugDraw( &TDraw );
+    m_PhysicsWorld.DebugDraw( &TDraw, (uint32_t)DrawMask );
 }
 
 GStaticRigid* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
@@ -76,8 +76,6 @@ GDynamicRigid* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Tran
     m_PhysicsWorld.AddCollisionObject(pBody);
     pBody->m_Transform = Trans;
     pBody->m_VelocityMax = GMath::Makef32(10, 0, 1);
-
-    // pFloor->m_Gravity = 
 
     return pBody;
 }

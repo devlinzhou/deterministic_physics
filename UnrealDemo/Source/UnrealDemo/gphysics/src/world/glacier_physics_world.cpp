@@ -37,20 +37,30 @@ GGridPosition s_BroadPhaseNeighbourt[13] =
     GGridPosition(0,  0,  1)
 };
 
-void GGridCell::DebugDraw(IGlacierDraw* pDraw) const
+void GGridCell::DebugDraw(IGlacierDraw* pDraw, uint32_t mask) const
 {
-    pDraw->DrawBox( GTransform_QT::Identity(), GetCenter(), GetHalfSize(),0x00FFFF00 );
+    if( mask & GPDraw_CeilBox)
+        pDraw->DrawBox( GTransform_QT::Identity(), GetCenter(), GetHalfSize(), GColor::Gray() );
 
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         const GCollisionObject* pObject = m_Objects[i];
-       // GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw);
 
-        GAABB TAABB = pObject->GetAABB();
+        if( mask & GPDraw_Shape)
+            GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw, GColor::Yellow());
 
-        pDraw->DrawBox( GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(),0x00FFFF00 );
+        if (mask & GPDraw_LocalBox)
+        {
+            GAABB TAABB = pObject->GetLocalAABB();
+            pDraw->DrawBox(pObject->m_Transform, GVector3(GMath::Zero()), TAABB.GetHalfSize(), GColor::White());
+        }
+
+        if( mask & GPDraw_WorldBox)
+        {
+            GAABB TAABB = pObject->GetAABB();
+            pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
+        }
     }
-
 }
 
 bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
@@ -158,15 +168,13 @@ bool GPhysicsWorld::UpdateCollisionObject(GCollisionObject* pObject)
 
 void GPhysicsWorld::PreTick()
 {
-    GProfilerFun
+    GPRORILER_FUN
 }
-
-
 
 
 void GPhysicsWorld::Tick(f32 DetltaTime)
 {
-    GProfilerFun
+    GPRORILER_FUN
     
     PreTick();
 
@@ -204,20 +212,29 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
 }
 
 
-void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw ) const
+void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const
 {
-    GProfilerFun
-   // std::map<GGridPosition, GGridCell*> m_Grids;
+    GPRORILER_FUN
 
     for( std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter )
     {
-        iter->second->DebugDraw(pDraw);
+        iter->second->DebugDraw(pDraw, mask);
     }
+
+    if (mask & GPDraw_Contact)
+    {
+        for (uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i)
+        {
+            const GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
+            GPhyscsUtils::DrawContact( TestPair.PairContact, pDraw, GColor::White() );
+        }
+    }
+
 }
 
 void GPhysicsWorld::CollisionBroadPhase( )
 {
-    GProfilerFun
+    GPRORILER_FUN
 
     // broadphase
     m_BroadPhasePairs.clear();
@@ -228,10 +245,6 @@ void GPhysicsWorld::CollisionBroadPhase( )
         {
             GCollisionObject* pObjectA = iter->second->m_Objects[i];
 
-            if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
-            {
-                continue;
-            }
             const GAABB& BoxA = pObjectA->GetAABB();
             for (int32_t j = 0; j < i; ++j)
             {
@@ -258,10 +271,10 @@ void GPhysicsWorld::CollisionBroadPhase( )
             {
                 GCollisionObject* pObjectA = iter->second->m_Objects[LoopA];
 
-                if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
-                {
-                    continue;
-                }
+//                 if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
+//                 {
+//                     continue;
+//                 }
 
                 const GAABB& BoxA = pObjectA->GetAABB();
                 for (int32_t LoopB = 0; LoopB < (int32_t)iterB->second->m_Objects.size(); ++LoopB)
@@ -284,7 +297,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
 
 void GPhysicsWorld::CollisionNarrowPhase( )
 {
-    GProfilerFun
+    GPRORILER_FUN
     for( uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i )
     {
         GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
@@ -296,11 +309,11 @@ void GPhysicsWorld::CollisionNarrowPhase( )
 
         if( pAlgorithm != nullptr )
         {
-            GCollisionContact TContact; // todo
+            TestPair.PairContact.ClearPoint( );
 
-            if( pAlgorithm->ProcessCollision( TestPair.pObjectA, TestPair.pObjectB, &TContact ))
+            if( pAlgorithm->ProcessCollision( TestPair.pObjectA, TestPair.pObjectB, &TestPair.PairContact ))
             {
-                m_ContactManager.Add(TContact);
+               // m_ContactManager.Add(TContact);
             }
         }
     }
@@ -308,7 +321,7 @@ void GPhysicsWorld::CollisionNarrowPhase( )
 
 void GPhysicsWorld::SolveContactConstraint( )
 {
-    GProfilerFun
+    GPRORILER_FUN
     for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
     {
      
@@ -319,7 +332,7 @@ void GPhysicsWorld::SolveContactConstraint( )
 
 void GPhysicsWorld::UpdateSceneGrid( )
 {
-    GProfilerFun
+    GPRORILER_FUN
 
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {

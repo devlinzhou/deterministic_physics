@@ -31,7 +31,7 @@ public:
     static GColor Green()   { return GColor(0xFF00FF00); }
     static GColor Blue()    { return GColor(0xFF0000FF); }
     static GColor Yellow()  { return GColor(0xFFFFFF00); }
-
+    static GColor Gray()    { return GColor(0xFF808080); }
 
 
     uint32_t RawValue;

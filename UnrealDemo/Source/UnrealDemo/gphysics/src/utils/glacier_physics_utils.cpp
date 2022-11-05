@@ -14,8 +14,9 @@
 #include "glacier_plane.h"
 #include "glacier_collision_shape.h"
 #include "glacier_debug_draw.h"
+#include "glacier_contact.h"
 
-void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw )
+void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor )
 {
     switch (pShape.ShapType )
     {
@@ -26,17 +27,17 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     break;
     case  EShape::EShape_Sphere:
     {
-        pDebugDraw->DrawSphere(Trans, pShape.GetRaiuds(), GColor::White(), 18 );
+        pDebugDraw->DrawSphere(Trans, pShape.GetRaiuds(), TColor, 10 );
     }
     break;
     case  EShape::EShape_Box:
     {
-        pDebugDraw->DrawBox(Trans, GVector3::Zero(), pShape.GetHalfExtern(), GColor::White());
+        pDebugDraw->DrawBox(Trans, GVector3::Zero(), pShape.GetHalfExtern(), TColor);
     }
     break;
     case  EShape::EShape_Capsule:
     {
-        pDebugDraw->DrawCapsule(Trans, pShape.GetRaiuds(), pShape.GetHalfHeight(), GColor::White());
+        pDebugDraw->DrawCapsule(Trans, pShape.GetRaiuds(), pShape.GetHalfHeight(), TColor);
     }
     break;
     case  EShape::EShape_Cylinder:
@@ -57,7 +58,7 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     break;
     case  EShape::EShape_Plane:
     {
-         pDebugDraw->DrawPlane(Trans, GPlane( pShape.GetPlaneNormal(), GMath::Zero() ), f32(50), GColor::White());
+         pDebugDraw->DrawPlane(Trans, GPlane( pShape.GetPlaneNormal(), GMath::Zero() ), f32(50), TColor);
     }
     break;
     case  EShape::EShape_HightField:
@@ -77,3 +78,19 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
 
 }
 
+void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor )
+{
+    for (int i = 0; i < TContact.GetPointCount(); ++i)
+    {
+        const GManifoldPoint& TMn = TContact.m_Point[i];
+
+        GVector3 VPos = TMn.m_PosWorld;
+        GVector3 VNor = TMn.m_NormalOnB;
+
+        GVector3 Vdes = VPos + VNor * TMn.m_depth;
+
+        pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,10,1000), TColor, 4);
+        pDebugDraw->DrawSphere(Vdes, GMath::Makef32(0, 5, 1000), TColor, 4);
+        pDebugDraw->DrawLine( VPos, Vdes, TColor);
+    }
+}

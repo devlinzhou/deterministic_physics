@@ -132,7 +132,7 @@ public:
     bool RemoveObject(GCollisionObject* pObject);
 
 
-    void DebugDraw(IGlacierDraw* pDraw ) const;
+    void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
 
 
 private:
@@ -173,7 +173,19 @@ public:
 
     GCollisionObject* pObjectA;
     GCollisionObject* pObjectB;
+
+    GCollisionContact PairContact;
 };
+
+enum
+{
+    GPDraw_Shape        = 1 << 0,
+    GPDraw_LocalBox     = 1 << 1,
+    GPDraw_WorldBox     = 1 << 2,
+    GPDraw_CeilBox      = 1 << 3,
+    GPDraw_Contact      = 1 << 4
+};
+
 
 class GPhysicsWorld
 {
@@ -209,7 +221,7 @@ public:
 
     void PostTick();
 
-    void DebugDraw(IGlacierDraw* pDraw ) const;
+    void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
 
 
 protected:

@@ -106,28 +106,10 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         TContact.Clear();
 
         FColor TColor = FColor::Yellow;
+
         if( GCollision_Box::Box_Box_Contact_PhysX(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != 0 )
         {
-
-            for( int i = 0; i < TContact.GetPointCount(); ++i )
-            {
-                const GManifoldPoint& TMn = TContact.m_Point[i];
-
-                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
-                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
-
-                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
-
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
-       
-            }
-
-
-
-            //UKismetSystemLibrary::DrawDebugSphere( GetWorld(),  GUtility::Unit_G_to_U(TContact.VTest), 3.f, 12, FColor::White );
-
+            GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
             TColor = FColor::Red;
         }
 
@@ -148,8 +130,6 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         Tdraw.DrawCapsule( TransCapsule, GUtility::Unit_U_to_G(CapsuleRadius), GUtility::Unit_U_to_G(CapsuleHalfHeight), FColor::Yellow.DWColor(), 24 );
 
-
-
         FColor TColor = FColor::Yellow;
 
         if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeCapusle, TransCapsule, &Tdraw))
@@ -159,7 +139,6 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation(), TestSphereRadius, 20, TColor);
     }
-
 
     if( SphereShow )
     {
@@ -177,30 +156,14 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         FColor TColor = FColor::Yellow;
         if (GCollision_Sphere::Sphere_Sphere_Contact(ShapeSA, TransA, ShapeSB, TransB, &TContact) != 0)
         {
-            for (int i = 0; i < TContact.GetPointCount(); ++i)
-            {
-                const GManifoldPoint& TMn = TContact.m_Point[i];
-
-                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
-                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
-
-                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
-
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
-            }
+            GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::Yellow());
 
             TColor = FColor::Red;
         }
 
-
-
         UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SCenterA, SphereRadiusA, 16, FColor::Yellow);
         UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenterB, SphereRadiusB, 16, TColor);
-
     }
-
 
     if( TriangleShow )
     {

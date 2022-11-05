@@ -224,9 +224,12 @@ int32_t GCollision_Sphere::Sphere_Box_Contact(
     GVector3 VNormal;
     if( Sphere_Box( VALocalB, ShapA.Radius, GVector3::Zero(), ShapB.HalfExtern, VT, &VNormal ) )
     {
-        pContact->AddContactPoint(
-            TransformB.TransformPosition(VALocalB - VNormal * ShapA.Radius) ,
-            TransformB.TransformNormal( -VNormal), -GVector3::Distance( VALocalB, VT) );
+        if(pContact != nullptr )
+        {
+            pContact->AddContactPoint(
+                TransformB.TransformPosition(VALocalB - VNormal * ShapA.Radius),
+                TransformB.TransformNormal(-VNormal), -GVector3::Distance(VALocalB, VT));
+        }
         return 1;
     }
     else

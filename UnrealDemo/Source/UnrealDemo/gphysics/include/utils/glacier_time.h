@@ -26,7 +26,7 @@
 #endif
 
 
-#define  GProfilerFun GTimeProfiler GProfiler(__FUNCTION__);
+#define  GPRORILER_FUN GTimeProfiler GProfiler(__FUNCTION__);
 
 typedef std::chrono::high_resolution_clock Myclock;
 typedef std::chrono::nanoseconds Myres;

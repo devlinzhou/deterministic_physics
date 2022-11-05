@@ -14,13 +14,15 @@
 
 #include "glacier_vector.h"
 #include "glacier_transform_qt.h"
+#include "glacier_color.h"
 
 class GCollisionShape;
 class IGlacierDraw;
+class GCollisionContact;
 class GPhyscsUtils
 {
 public:
 
-     static void DrawShape( const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw );
-
+     static void DrawShape( const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor );
+     static void DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor );
 };

@@ -49,20 +49,23 @@ public:
      {
          PairId = 0;
          m_nPointCount = 0;
+         Swap = false;
      }
 
     void ClearPoint()
     {
         m_nPointCount = 0;
+        Swap =false;
     }
 
-    int32_t GetPointCount()
+    int32_t GetPointCount() const
     {
         return m_nPointCount;
     }
 
 
     uint64_t PairId;
+    bool     Swap;
 
 
     static constexpr int32_t MaxPoint = 16;
