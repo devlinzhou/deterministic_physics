@@ -21,8 +21,8 @@ public:
     static inline GTransform_QT U_to_G(const FTransform& value)     {return GTransform_QT(U_to_G(value.GetRotation()), Unit_U_to_G(value.GetTranslation())); }
     
     static inline float         G_to_U(f32 value)                   {return GMath::ToFloat(value); }
-    static inline FVector       G_to_U(const GVector3& value)       {return FVector(float(value.x.toFloat()) , float(value.y.toFloat()), float(value.z.toFloat())); }
-    static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(float(value.x.toFloat()), float(value.y.toFloat()), float(value.z.toFloat()), float(value.w.toFloat())); }
+    static inline FVector       G_to_U(const GVector3& value)       {return FVector(GMath::ToFloat(value.x) , GMath::ToFloat(value.y), GMath::ToFloat(value.z)); }
+    static inline FQuat         G_to_U(const GQuaternion& value)    {return FQuat(GMath::ToFloat(value.x), GMath::ToFloat(value.y), GMath::ToFloat(value.z), GMath::ToFloat(value.w)); }
     static inline FTransform    G_to_U(const GTransform_QT& value)  {return FTransform(G_to_U(value.m_Rot), Unit_G_to_U(value.m_Pos)); }
 
     static inline f32           Unit_U_to_G(float value)            {return U_to_G(value * fUTG);}

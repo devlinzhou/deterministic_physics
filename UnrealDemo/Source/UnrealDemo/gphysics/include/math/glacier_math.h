@@ -132,7 +132,7 @@ public:
     static inline f32 FromFloat(float value) { return value; }
     static inline float ToFloat(f32 value) { return value; }
 
-    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return a + b/c; }
+    static inline f32 Makef32( int32_t a, uint32_t b, uint32_t c ){  return (float)a + (float)b/(float)c; }
     static inline f32 Makef32(int32_t a) { return (f32)a; }
 
 #endif 
