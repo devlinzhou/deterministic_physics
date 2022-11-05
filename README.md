@@ -18,3 +18,8 @@ deterministic physics engine for lock-step game development
     - [ ] Rigd Body
 - [ ] Scene Manager
     - [x] Loose Grid
+
+## How to Start
+ * Unreal demo : UnrealDemo/UnrealDemo.uproject 
+   * UnrealDemo/Content/ThirdPersonCPP/Maps/GPhsics.umap : physics simulation
+   * UnrealDemo/Content/ThirdPersonCPP/Maps/TestCollisionGPhysics.umap : Test collision algorithm
