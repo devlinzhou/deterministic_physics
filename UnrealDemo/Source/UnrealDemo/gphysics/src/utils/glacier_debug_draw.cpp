@@ -18,24 +18,24 @@
 
 void IGlacierDraw::DrawBox(const GTransform_QT& TTrans, const GVector3& LocalCenter, const GVector3& HalfSize, GColor TColor)
 {
-    GVector3 c = LocalCenter;
-    GVector3 d = HalfSize;
-    GVector3 dx = GVector3(d.x, GMath::Zero(), GMath::Zero());
-    GVector3 dy = GVector3(GMath::Zero(), d.y, GMath::Zero());
-    GVector3 dz = GVector3(GMath::Zero(), GMath::Zero(), d.z);
+    GVector3 c  = TTrans.TransformPosition( LocalCenter );
+    GVector3 d  = HalfSize;
+    GVector3 dx = TTrans.TransformNormal( GVector3(d.x, GMath::Zero(), GMath::Zero()));
+    GVector3 dy = TTrans.TransformNormal( GVector3(GMath::Zero(), d.y, GMath::Zero()));
+    GVector3 dz = TTrans.TransformNormal( GVector3(GMath::Zero(), GMath::Zero(), d.z));
 
-    DrawLine(TTrans.TransformPosition(c + dy + dz - dx), TTrans.TransformPosition(c + dy + dz + dx), TColor);
-    DrawLine(TTrans.TransformPosition(c + dy - dz - dx), TTrans.TransformPosition(c + dy - dz + dx), TColor);
-    DrawLine(TTrans.TransformPosition(c - dy + dz - dx), TTrans.TransformPosition(c - dy + dz + dx), TColor);
-    DrawLine(TTrans.TransformPosition(c - dy - dz - dx), TTrans.TransformPosition(c - dy - dz + dx), TColor);
-    DrawLine(TTrans.TransformPosition(c + dy + dx - dz), TTrans.TransformPosition(c + dy + dx + dz), TColor);
-    DrawLine(TTrans.TransformPosition(c + dy - dx - dz), TTrans.TransformPosition(c + dy - dx + dz), TColor);
-    DrawLine(TTrans.TransformPosition(c - dy + dx - dz), TTrans.TransformPosition(c - dy + dx + dz), TColor);
-    DrawLine(TTrans.TransformPosition(c - dy - dx - dz), TTrans.TransformPosition(c - dy - dx + dz), TColor);
-    DrawLine(TTrans.TransformPosition(c + dz + dx - dy), TTrans.TransformPosition(c + dz + dx + dy), TColor);
-    DrawLine(TTrans.TransformPosition(c + dz - dx - dy), TTrans.TransformPosition(c + dz - dx + dy), TColor);
-    DrawLine(TTrans.TransformPosition(c - dz + dx - dy), TTrans.TransformPosition(c - dz + dx + dy), TColor);
-    DrawLine(TTrans.TransformPosition(c - dz - dx - dy), TTrans.TransformPosition(c - dz - dx + dy), TColor);
+    DrawLine((c + dy + dz - dx), (c + dy + dz + dx), TColor);
+    DrawLine((c + dy - dz - dx), (c + dy - dz + dx), TColor);
+    DrawLine((c - dy + dz - dx), (c - dy + dz + dx), TColor);
+    DrawLine((c - dy - dz - dx), (c - dy - dz + dx), TColor);
+    DrawLine((c + dy + dx - dz), (c + dy + dx + dz), TColor);
+    DrawLine((c + dy - dx - dz), (c + dy - dx + dz), TColor);
+    DrawLine((c - dy + dx - dz), (c - dy + dx + dz), TColor);
+    DrawLine((c - dy - dx - dz), (c - dy - dx + dz), TColor);
+    DrawLine((c + dz + dx - dy), (c + dz + dx + dy), TColor);
+    DrawLine((c + dz - dx - dy), (c + dz - dx + dy), TColor);
+    DrawLine((c - dz + dx - dy), (c - dz + dx + dy), TColor);
+    DrawLine((c - dz - dx - dy), (c - dz - dx + dy), TColor);
 }
 
 void IGlacierDraw::DrawSphere(const GTransform_QT& TTrans, f32 Radius, GColor TColor, int32_t nSeg)
@@ -239,23 +239,29 @@ void IGlacierDraw::DrawCylinder(const GTransform_QT& TTrans, f32 Radius, f32 Hal
 
 void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, f32 Size, GColor TColor)
 {
-  /*  GTransform_QT Transform;
-    Transform.m_Translation =  PlaneNormal  * PlaneDis;
-    Transform.SetRotation(FQuat::FindBetweenNormals(GVector3(GMath::Zero(), GMath::Zero(), GMath::One()), Plane.GetNormal()));
+    GTransform_QT Transform;
 
-    auto P0 = Transform.TransformPosition(GVector3(-GMath::One(), -GMath::One(), GMath::Zero()) * Size);
-    auto P1 = Transform.TransformPosition(GVector3(GMath::One(), -GMath::One(), GMath::Zero()) * Size);
-    auto P2 = Transform.TransformPosition(GVector3(GMath::One(), GMath::One(), GMath::Zero()) * Size);
-    auto P3 = Transform.TransformPosition(GVector3(-GMath::One(), GMath::One(), GMath::Zero()) * Size);
+    Transform.m_Pos = -TPlane.m_Normal  * TPlane.GetDistance( GVector3::Zero() );
+    Transform.m_Rot = GQuaternion::FindBetweenNormals(GVector3(GMath::One(), GMath::Zero(), GMath::Zero()), TPlane.m_Normal);
 
-    DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P1), TColor);
-    DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P2), TColor);
-    DrawLine(TTrans.TransformPosition(P2), TTrans.TransformPosition(P3), TColor);
-    DrawLine(TTrans.TransformPosition(P3), TTrans.TransformPosition(P0), TColor);
-    DrawLine(TTrans.TransformPosition(P0), TTrans.TransformPosition(P2), TColor);
-    DrawLine(TTrans.TransformPosition(P1), TTrans.TransformPosition(P3), TColor);
-    DrawLine(TTrans.TransformPosition(Transform.GetLocation()), TTrans.TransformPosition(Transform.GetLocation() + Plane.GetNormal() * Size * 0.5f), TColor);
-*/
+    DrawPlane( Transform, Size, TColor);
+}
+
+void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, f32 Size, GColor TColor)
+{
+    auto P0 = TTrans.TransformPosition(GVector3(GMath::Zero(), -GMath::One(),  GMath::One()) * Size);
+    auto P1 = TTrans.TransformPosition(GVector3(GMath::Zero(), -GMath::One(), -GMath::One()) * Size);
+    auto P2 = TTrans.TransformPosition(GVector3(GMath::Zero(),  GMath::One(), -GMath::One()) * Size);
+    auto P3 = TTrans.TransformPosition(GVector3(GMath::Zero(),  GMath::One(),  GMath::One()) * Size);
+
+    DrawLine((P0), (P1), TColor);
+    DrawLine((P1), (P2), TColor);
+    DrawLine((P2), (P3), TColor);
+    DrawLine((P3), (P0), TColor);
+    DrawLine((P0), (P2), TColor);
+    DrawLine((P1), (P3), TColor);
+
+    DrawLine(TTrans.m_Pos,TTrans.m_Pos + TTrans.m_Rot.RotateVector( GVector3::UnitX() * Size * GMath::Makef32(0,15,100)), TColor);
 }
 
 void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, f32 Size, GColor TColor)

@@ -158,14 +158,14 @@ public:
             pObjectA = p1;
             pObjectB = p2;
 
-            PairId = ((uint64_t)p1->GetId() << 32 ) & (uint64_t)p2->GetId();
+            PairId = ((uint64_t)p1->GetId() << 32 ) | (uint64_t)p2->GetId();
         }
         else
         {
             pObjectA = p2;
             pObjectB = p1;
 
-            PairId = ((uint64_t)p2->GetId() << 32 ) & (uint64_t)p1->GetId();
+            PairId = ((uint64_t)p2->GetId() << 32 ) | (uint64_t)p1->GetId();
         }
     }
 
@@ -214,7 +214,6 @@ public:
 
     bool UpdateCollisionObject( GCollisionObject* pObject );
 
-
     void PreTick(  );
 
     void Tick( f32 DetltaTime );
@@ -222,6 +221,20 @@ public:
     void PostTick();
 
     void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
+
+public:
+
+    static inline uint64_t GetPairId( uint32_t IdA, uint32_t IdB )
+    {
+        if (IdA < IdB)
+        {
+            return ((uint64_t)IdA << 32) | (uint64_t)IdB;
+        }
+        else
+        {
+            return ((uint64_t)IdB << 32) | (uint64_t)IdA;
+        }
+    }
 
 
 protected:
@@ -249,9 +262,10 @@ private:
     f32 m_nCellHeight;
 
     //GGrid   m_Grids;
-    std::map<GGridPosition, GGridCell*> m_Grids;
-    std::vector<GCollisionObject*>      m_Objects;
-    std::vector<GBroadPhasePair>        m_BroadPhasePairs;
+    std::map<GGridPosition, GGridCell*>     m_Grids;
+    std::map<uint32_t, GCollisionObject*>   m_ObjectMap;
+    std::vector<GCollisionObject*>          m_Objects;
+    std::vector<GBroadPhasePair>            m_BroadPhasePairs;
 
 
     GCollisionManerger                  m_CollisionManager;

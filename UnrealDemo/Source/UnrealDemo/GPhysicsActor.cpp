@@ -7,12 +7,14 @@
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AGPhysicsActor::AGPhysicsActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bTickEvenWhenPaused = true;
 }
 
 AGPhysicsActor* AGPhysicsActor::FindScenePhysics( UWorld* pWorld)
@@ -47,7 +49,8 @@ void AGPhysicsActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    m_PhysicsWorld.Tick( GMath::FromFloat(DeltaTime) );
+    if(!UGameplayStatics::IsGamePaused( GetWorld()))
+        m_PhysicsWorld.Tick( GMath::FromFloat(DeltaTime) );
 
     GPhysicsDraw TDraw(GetWorld());
 

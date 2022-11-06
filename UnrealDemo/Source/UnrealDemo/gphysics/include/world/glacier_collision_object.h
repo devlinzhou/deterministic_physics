@@ -16,6 +16,8 @@
 #include "glacier_aabb.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+#include <set>
+#include <vector>
 
 enum ECollisionObjectType
 {
@@ -24,12 +26,13 @@ enum ECollisionObjectType
 
 };
 
+class GGridCell;
 class GCollisionObject
 {
 public:
 
     GCollisionObject(  uint32_t uId, EShape TShape, ECollisionObjectType CType )
-        : m_Id(uId), m_CollisionType(CType), m_Shape(TShape), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
+        : m_Shape(TShape), m_Id(uId),  m_CollisionType(CType), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
     {
         m_Transform         = GTransform_QT::Identity();
         m_Transform_Last    = GTransform_QT::Identity();
@@ -66,10 +69,36 @@ public:
     const GAABB& GetLocalAABB() const { return m_LoaclAABB; }
 
 
+    void ClearContactPair( )
+    {
+        m_ContactObjs.clear();
+        m_ContactArray.clear();
+    }
+
+    void AddContactPair( uint64_t uPairId, int32_t id )
+    {
+        uint32_t IdA = (uint32_t)(uPairId >> 32 );
+        uint32_t IdB = (uint32_t)(uPairId & 0xFFFFFFFF);
+
+        if( IdA != m_Id ) 
+        {
+            m_ContactObjs.insert( IdA );
+        }
+
+        if (IdB != m_Id)
+        {
+            m_ContactObjs.insert(IdB);
+        }
+
+        m_ContactArray.push_back(id);
+    }
+
+
 public:
+    GCollisionShape         m_Shape;  
     uint32_t                m_Id;
     ECollisionObjectType    m_CollisionType;
-    GCollisionShape         m_Shape;  
+    
     GTransform_QT           m_Transform;
     GTransform_QT           m_Transform_Last;
 
@@ -78,7 +107,11 @@ public:
 
     uint32_t                m_UserId;
 
-    class GGridCell*        m_pGridCell;
+    GGridCell*              m_pGridCell;
     bool                    m_bNeedUpdate;
+
+
+    std::set<uint32_t>      m_ContactObjs;
+    std::vector<int32_t>    m_ContactArray;
 
 };

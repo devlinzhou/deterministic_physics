@@ -93,13 +93,13 @@ bool GGridCell::RemoveObject(GCollisionObject* pObject)
 
 bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
 {
-
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
     {
         return false;
     }
 
     m_Objects.push_back(pObject);
+    m_ObjectMap[pObject->GetId()] = pObject;
 
     GVector3 VPos = pObject->m_Transform.m_Pos;
 
@@ -236,7 +236,6 @@ void GPhysicsWorld::CollisionBroadPhase( )
 {
     GPRORILER_FUN
 
-    // broadphase
     m_BroadPhasePairs.clear();
     for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
     {
@@ -298,7 +297,12 @@ void GPhysicsWorld::CollisionBroadPhase( )
 void GPhysicsWorld::CollisionNarrowPhase( )
 {
     GPRORILER_FUN
-    for( uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i )
+    for( int32_t i = 0; i < (int32_t)m_Objects.size(); ++i )
+    {
+        m_Objects[i]->ClearContactPair();
+    }
+        
+    for( int32_t i = 0; i < (int32_t)m_BroadPhasePairs.size(); ++i )
     {
         GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
 
@@ -310,10 +314,12 @@ void GPhysicsWorld::CollisionNarrowPhase( )
         if( pAlgorithm != nullptr )
         {
             TestPair.PairContact.ClearPoint( );
+            pAlgorithm->ProcessCollision( TestPair.pObjectA, TestPair.pObjectB, &TestPair.PairContact );
 
-            if( pAlgorithm->ProcessCollision( TestPair.pObjectA, TestPair.pObjectB, &TestPair.PairContact ))
+            if( TestPair.PairContact.GetPointCount() > 0 )
             {
-               // m_ContactManager.Add(TContact);
+                TestPair.pObjectA->AddContactPair(TestPair.PairId, i);
+                TestPair.pObjectB->AddContactPair(TestPair.PairId, i);
             }
         }
     }
@@ -326,6 +332,38 @@ void GPhysicsWorld::SolveContactConstraint( )
     {
      
      
+    }
+
+    for (uint32_t i = 0; i < (uint32_t)m_Objects.size(); ++i)
+    {
+        GCollisionObject* pObj = m_Objects[i];
+
+        if( pObj->m_CollisionType == Dynamic )
+        {
+            for (int j = 0; j < pObj->m_ContactArray.size(); ++j)
+            {
+                GBroadPhasePair& TPair = m_BroadPhasePairs[pObj->m_ContactArray[j]];
+
+
+                int a = 0;
+            }
+
+
+            if( pObj->m_ContactObjs.size() != 0 )
+            {
+
+                for (std::set<uint32_t>::iterator iter = pObj->m_ContactObjs.begin(); iter != pObj->m_ContactObjs.end(); ++iter)
+                {
+                    GCollisionObject* pOther = m_ObjectMap[*iter];
+
+
+                    int a = 0;
+
+                }
+            
+            }
+        }
+
     }
 
 }

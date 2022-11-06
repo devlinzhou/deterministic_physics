@@ -32,6 +32,11 @@ public:
 	// Sets default values for this actor's properties
 	AGPhysicsActor();
 
+    bool ShouldTickIfViewportsOnly() const override
+    {
+        return true;
+    }
+
    static AGPhysicsActor* FindScenePhysics( class UWorld* );
 
 protected:

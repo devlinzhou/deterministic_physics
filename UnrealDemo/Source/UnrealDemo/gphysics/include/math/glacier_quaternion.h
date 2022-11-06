@@ -233,6 +233,32 @@ public:
         return GQuaternion( -x, -y, -z, w );
     }
 
+    static GQuaternion FindBetweenNormals( const GVector3& V1, const GVector3& V2 )
+    {
+        f32 W = GMath::One() + GVector3::DotProduct(V1, V2);
+        GQuaternion Result;
+
+        if (W >= GMath::Epsilon() )
+        {
+            Result = GQuaternion(
+                V1.y * V2.z - V1.z * V2.y,
+                V1.z * V2.x - V1.x * V2.z,
+                V1.x * V2.y - V1.y * V2.x,
+                W);
+        }
+        else
+        {
+            W = GMath::Zero();
+            Result = GMath::Abs(V1.x) > GMath::Abs(V1.y)
+                ? GQuaternion(-V1.z, GMath::Zero(), V1.x, W)
+                : GQuaternion(GMath::Zero(), -V1.z, V1.y, W);
+        }
+
+        return Result.GetNormalize();
+    }
+
+
+
     GQuaternion Exp( ) const
     {
         f32 RAngle = GMath::Sqrt( x * x + y * y + z * z );
