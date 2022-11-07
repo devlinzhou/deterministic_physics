@@ -17,7 +17,7 @@
 #include "glacier_physics_utils.h"
 #include "glacier_debug_draw.h"
 #include "glacier_collision_object.h"
-#include "glacier_rigid_dynamic.h"
+#include "glacier_rigid_body.h"
 #include "glacier_time.h"
 
 GGridPosition s_BroadPhaseNeighbourt[13] =
@@ -194,7 +194,6 @@ void GPhysicsWorld::Tick(f32 DetltaTime)
 void GPhysicsWorld::PostTick()
 {
     GTimeProfiler::DebugOut();
-
 }
 
 void GPhysicsWorld::Simulate( f32 DetltaTime )
@@ -202,11 +201,15 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         GCollisionObject* pObject = m_Objects[i];
-        if (pObject->m_CollisionType == ECollisionObjectType::CollisionObject_Rigid)
+        if (pObject->m_CollisionType == ECollisionObjectType::CollisionObject_Rigid_Body)
         {
             GRigidBody* pDynamicRigid = (GRigidBody*)pObject;
-            pDynamicRigid->Tick_PreTransform(DetltaTime);
-            pDynamicRigid->UpdateAABB();
+
+            if( pDynamicRigid->m_bDynamic )
+            {
+                pDynamicRigid->Tick_PreTransform(DetltaTime);
+                pDynamicRigid->UpdateAABB();
+            }
         }
     }
 }
@@ -338,7 +341,7 @@ void GPhysicsWorld::SolveContactConstraint( )
     {
         GCollisionObject* pObj = m_Objects[i];
 
-        if( pObj->m_CollisionType == CollisionObject_Rigid )
+        if( pObj->m_CollisionType == CollisionObject_Rigid_Body )
         {
             for (int j = 0; j < pObj->m_ContactArray.size(); ++j)
             {

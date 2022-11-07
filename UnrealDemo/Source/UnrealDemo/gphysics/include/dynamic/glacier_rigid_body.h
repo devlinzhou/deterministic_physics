@@ -20,22 +20,20 @@ public:
 
     GRigidBody(uint32_t id, EShape TShape) : GCollisionObject(id, TShape)
     {
-        m_CollisionType = CollisionObject_Rigid;
+        m_CollisionType = CollisionObject_Rigid_Body;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
+        m_bDynamic = false;
     }
 
     void Tick_PreTransform( const f32 DetalTime )
     {
-      
         GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
 
         if( VNew.SizeSquare() > (m_VelocityMax*m_VelocityMax))
         {
             VNew = VNew.GetNormalize() * m_VelocityMax;
-        
         }
-
 
         m_Transform.m_Pos += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
 
@@ -46,7 +44,7 @@ public:
 
 public:
 
-    bool            m_bStatic;
+    bool            m_bDynamic;
     GTransform_QT   m_Transform_Pre;
 
 

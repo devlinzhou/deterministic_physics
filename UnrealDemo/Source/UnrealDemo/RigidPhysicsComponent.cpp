@@ -3,7 +3,7 @@
 
 #include "RigidPhysicsComponent.h"
 #include "GPhysicsActor.h"
-#include "glacier_rigid_dynamic.h"
+#include "glacier_rigid_body.h"
 #include "GUnrealUtility.h"
 
 

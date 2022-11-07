@@ -2,7 +2,7 @@
 
 
 #include "GPhysicsActor.h"
-#include "glacier_rigid_dynamic.h"
+#include "glacier_rigid_body.h"
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
 #include "EngineUtils.h"
@@ -64,7 +64,7 @@ GRigidBody* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GV
     pBody->UpdateLocalBox();
     m_PhysicsWorld.AddCollisionObject(pBody);
     pBody->m_Transform = Trans;
-    pBody->m_bStatic = true;
+    pBody->m_bDynamic = false;
     return pBody;
 }
 
@@ -78,6 +78,6 @@ GRigidBody* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, 
     m_PhysicsWorld.AddCollisionObject(pBody);
     pBody->m_Transform = Trans;
     pBody->m_VelocityMax = GMath::Makef32(10, 0, 1);
-     pBody->m_bStatic = false;
+     pBody->m_bDynamic = true;
     return pBody;
 }

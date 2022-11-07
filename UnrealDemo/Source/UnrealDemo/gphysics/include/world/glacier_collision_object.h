@@ -22,7 +22,9 @@
 enum ECollisionObjectType
 {
     CollisionObject_Base = 0,
-    CollisionObject_Rigid,
+    CollisionObject_Rigid_Body,
+    CollisionObject_Soft_Body,
+
 
 };
 
