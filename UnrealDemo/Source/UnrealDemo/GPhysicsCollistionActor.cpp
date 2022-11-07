@@ -13,6 +13,7 @@
 #include "glacier_convexhull.h"
 #include "glacier_contact.h"
 #include "glacier_matrix.h"
+#include "glacier_physics_utils.h"
 
 #include "GUnrealUtility.h"
 

@@ -34,6 +34,6 @@ public:
     UPROPERTY(EditAnywhere)
         float  MaxVelocity;
 
-    class GDynamicRigid* m_pRigid = nullptr;
+    class GRigidBody* m_pRigid = nullptr;
 
 };

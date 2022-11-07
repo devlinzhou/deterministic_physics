@@ -10,7 +10,7 @@
 
 
 class GStaticRigid;
-class GDynamicRigid;
+class GRigidBody;
 
 UENUM(meta = (Bitflags ))
 enum class EGDrawMask : uint32
@@ -49,8 +49,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-    GStaticRigid* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
-    GDynamicRigid* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
+    GRigidBody* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
+    GRigidBody* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;
 

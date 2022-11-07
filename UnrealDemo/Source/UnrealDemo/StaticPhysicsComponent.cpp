@@ -3,7 +3,7 @@
 
 #include "StaticPhysicsComponent.h"
 #include "GPhysicsActor.h"
-#include "glacier_rigid_static.h"
+#include "glacier_rigid_dynamic.h"
 #include "GUnrealUtility.h"
 
 // Sets default values for this component's properties

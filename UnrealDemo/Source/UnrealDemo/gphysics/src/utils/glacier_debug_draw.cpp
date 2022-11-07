@@ -13,6 +13,7 @@
 
 #include "glacier_debug_draw.h"
 #include "glacier_vector.h"
+#include "glacier_plane.h"
 #include "glacier_transform_qt.h"
 #include <vector>
 

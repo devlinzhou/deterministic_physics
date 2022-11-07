@@ -202,9 +202,9 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         GCollisionObject* pObject = m_Objects[i];
-        if (pObject->m_CollisionType == ECollisionObjectType::Dynamic)
+        if (pObject->m_CollisionType == ECollisionObjectType::CollisionObject_Rigid)
         {
-            GDynamicRigid* pDynamicRigid = (GDynamicRigid*)pObject;
+            GRigidBody* pDynamicRigid = (GRigidBody*)pObject;
             pDynamicRigid->Tick_PreTransform(DetltaTime);
             pDynamicRigid->UpdateAABB();
         }
@@ -338,13 +338,13 @@ void GPhysicsWorld::SolveContactConstraint( )
     {
         GCollisionObject* pObj = m_Objects[i];
 
-        if( pObj->m_CollisionType == Dynamic )
+        if( pObj->m_CollisionType == CollisionObject_Rigid )
         {
             for (int j = 0; j < pObj->m_ContactArray.size(); ++j)
             {
                 GBroadPhasePair& TPair = m_BroadPhasePairs[pObj->m_ContactArray[j]];
 
-
+               // pObj->m_vel
                 int a = 0;
             }
 

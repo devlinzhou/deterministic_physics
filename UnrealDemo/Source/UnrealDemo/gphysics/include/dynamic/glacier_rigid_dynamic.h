@@ -12,14 +12,15 @@
  */
 #pragma once
 
-#include "glacier_rigid_body.h"
+#include "glacier_collision_object.h"
 
-class GDynamicRigid : public GRigidBody
+class GRigidBody : public GCollisionObject
 {
 public:
 
-    GDynamicRigid(uint32_t id, EShape TShape) : GRigidBody(id, TShape, ECollisionObjectType::Dynamic)
+    GRigidBody(uint32_t id, EShape TShape) : GCollisionObject(id, TShape)
     {
+        m_CollisionType = CollisionObject_Rigid;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
     }
@@ -45,7 +46,9 @@ public:
 
 public:
 
+    bool            m_bStatic;
     GTransform_QT   m_Transform_Pre;
+
 
     f32             m_Mass;
     f32             m_InvMass;

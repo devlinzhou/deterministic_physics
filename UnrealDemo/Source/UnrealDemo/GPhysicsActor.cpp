@@ -2,7 +2,6 @@
 
 
 #include "GPhysicsActor.h"
-#include "glacier_rigid_static.h"
 #include "glacier_rigid_dynamic.h"
 #include "glacier_debug_draw.h"
 #include "GUnrealUtility.h"
@@ -57,21 +56,21 @@ void AGPhysicsActor::Tick(float DeltaTime)
     m_PhysicsWorld.DebugDraw( &TDraw, (uint32_t)DrawMask );
 }
 
-GStaticRigid* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
+GRigidBody* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
 {
-    GStaticRigid* pBody = new GStaticRigid(m_PhysicsWorld.CollisionId++, TShape);
+    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);
 
     pBody->m_Shape.SetHalfExtern(Halfsize);
     pBody->UpdateLocalBox();
     m_PhysicsWorld.AddCollisionObject(pBody);
     pBody->m_Transform = Trans;
-
+    pBody->m_bStatic = true;
     return pBody;
 }
 
-GDynamicRigid* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
+GRigidBody* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
 {
-    GDynamicRigid* pBody = new GDynamicRigid(m_PhysicsWorld.CollisionId++, TShape);
+    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);
 
     pBody->m_Shape.SetHalfExtern(Halfsize);
 
@@ -79,6 +78,6 @@ GDynamicRigid* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Tran
     m_PhysicsWorld.AddCollisionObject(pBody);
     pBody->m_Transform = Trans;
     pBody->m_VelocityMax = GMath::Makef32(10, 0, 1);
-
+     pBody->m_bStatic = false;
     return pBody;
 }

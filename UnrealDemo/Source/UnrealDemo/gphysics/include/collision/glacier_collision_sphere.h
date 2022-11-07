@@ -16,6 +16,7 @@
 
 class GShapeSphere;
 class GShapePlane;
+class GShapeBox;
 class GTransform_QT;
 class GCollisionContact;
 class GCollision_Sphere

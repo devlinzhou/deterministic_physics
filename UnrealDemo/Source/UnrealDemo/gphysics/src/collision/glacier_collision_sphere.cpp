@@ -14,6 +14,7 @@
 #include "glacier_collision_sphere.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+#include "glacier_contact.h"
 
 bool GCollision_Sphere::Sphere_Box(const GVector3& center, const f32 radius, const GVector3& boxCenter, const GVector3& boxExtents, GVector3& finalCenter, GVector3* pOutNormal)
 { 

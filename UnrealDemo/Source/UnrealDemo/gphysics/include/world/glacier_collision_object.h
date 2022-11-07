@@ -21,8 +21,8 @@
 
 enum ECollisionObjectType
 {
-    Static= 0,
-    Dynamic,
+    CollisionObject_Base = 0,
+    CollisionObject_Rigid,
 
 };
 
@@ -31,14 +31,15 @@ class GCollisionObject
 {
 public:
 
-    GCollisionObject(  uint32_t uId, EShape TShape, ECollisionObjectType CType )
-        : m_Shape(TShape), m_Id(uId),  m_CollisionType(CType), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
+    GCollisionObject(  uint32_t uId, EShape TShape )
+        : m_Shape(TShape), m_Id(uId), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
     {
+        m_CollisionType     = CollisionObject_Base;
         m_Transform         = GTransform_QT::Identity();
         m_Transform_Last    = GTransform_QT::Identity();
         m_UserId            = -1;
         m_pGridCell         = nullptr;
-        m_bNeedUpdate           = true;
+        m_bNeedUpdate       = true;
     }
 
     ECollisionObjectType GetCollisionObjectType() const
