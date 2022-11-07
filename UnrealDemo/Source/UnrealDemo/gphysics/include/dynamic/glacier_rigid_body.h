@@ -26,21 +26,11 @@ public:
         m_bDynamic = false;
     }
 
-    void Tick_PreTransform( const f32 DetalTime )
-    {
-        GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
+    void Tick_PreTransform( const f32 DetalTime );
 
-        if( VNew.SizeSquare() > (m_VelocityMax*m_VelocityMax))
-        {
-            VNew = VNew.GetNormalize() * m_VelocityMax;
-        }
+    void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );
+    void AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse );
 
-        m_Transform.m_Pos += (m_Velocity + VNew) * GMath::Half() * DetalTime; 
-
-        m_Velocity = VNew;
-
-        m_bNeedUpdate = true;
-    }
 
 public:
 

@@ -14,3 +14,30 @@
 
 #include "glacier_rigid_body.h"
 
+void GRigidBody::Tick_PreTransform(const f32 DetalTime)
+{
+    GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
+
+    if (VNew.SizeSquare() > (m_VelocityMax * m_VelocityMax))
+    {
+        VNew = VNew.GetNormalize() * m_VelocityMax;
+    }
+
+    m_Transform.m_Pos += (m_Velocity + VNew) * GMath::Half() * DetalTime;
+
+    m_Velocity = VNew;
+
+    m_bNeedUpdate = true;
+}
+
+void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse)
+{
+
+
+}
+
+void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse)
+{
+
+
+}
