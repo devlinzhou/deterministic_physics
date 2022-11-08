@@ -32,12 +32,17 @@ void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 
 void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse)
 {
+    m_Velocity += VImpulse * m_InvMass;
 
+    GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
 
+    GVector3 Torque = GVector3::CrossProduct(VPos - GetMassCenterPos(), VImpulse );
+
+    m_AngleVelocity += Inv_Ineria.TransformVector( Torque); 
 }
 
 void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse)
 {
-
+    
 
 }

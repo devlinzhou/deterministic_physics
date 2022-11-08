@@ -13,6 +13,7 @@
 #pragma once
 
 #include "glacier_collision_object.h"
+#include "glacier_matrix.h"
 
 class GRigidBody : public GCollisionObject
 {
@@ -32,6 +33,16 @@ public:
     void AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse );
 
 
+    GVector3 GetMassCenterPos() const
+    {
+        return m_Transform.m_Pos;
+    }
+
+    GMatrix3 getGlobalInertiaTensorInverse() const
+    {
+        return m_MoumentInertia * GMatrix3( m_Transform.m_Rot);
+    }
+
 public:
 
     bool            m_bDynamic;
@@ -40,12 +51,18 @@ public:
 
     f32             m_Mass;
     f32             m_InvMass;
+
     GVector3        m_Velocity;
     f32             m_VelocityMax;
 
-    GVector3        m_MoumentInertia;
-    GVector3        m_InvMoumentInertia;
+    GMatrix3        m_MoumentInertia;           // local
+    GMatrix3        m_InvMoumentInertia;
+
     GVector3        m_AngleVelocity;
+    f32             m_AngleVelocityMax;
+
+
+
 
     GVector3        m_Gravity;
 };

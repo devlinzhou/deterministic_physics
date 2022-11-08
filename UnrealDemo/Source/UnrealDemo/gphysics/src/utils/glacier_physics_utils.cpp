@@ -94,3 +94,77 @@ void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw*
         pDebugDraw->DrawLine( VPos, Vdes, TColor);
     }
 }
+
+GMatrix3 GPhyscsUtils::CalculateInertiaTensor( const GCollisionShape& pShape )
+{
+
+    switch (pShape.ShapType)
+    {
+    case  EShape::EShape_ConvexBase:
+    {
+         return GMatrix3::Identity();
+    }
+    break;
+    case  EShape::EShape_Sphere:
+    {
+        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * GMath::Makef32(0,4,10);
+        return GMatrix3(
+            t, GMath::Zero(), GMath::Zero(),
+            GMath::Zero(), t, GMath::Zero(),
+            GMath::Zero(), GMath::Zero(), t );
+    }
+    break;
+    case  EShape::EShape_Box:
+    {
+        GVector3 t = ( pShape.GetHalfExtern() * pShape.GetHalfExtern() ) * GMath::Makef32(0,1,3);
+
+        return GMatrix3(
+            t.y + t.z, GMath::Zero(), GMath::Zero(),
+            GMath::Zero(), t.x + t.z, GMath::Zero(),
+            GMath::Zero(), GMath::Zero(), t.x + t.y);
+    }
+    break;
+    case  EShape::EShape_Capsule:
+    {
+       
+    }
+    break;
+    case  EShape::EShape_Cylinder:
+    {
+
+    }
+    break;
+    case  EShape::EShape_ConvexHull:
+    {
+
+    }
+    break;
+    case  EShape::EShape_ConcaveBase:
+    {
+        return GMatrix3::Identity();
+    }
+    break;
+    case  EShape::EShape_Plane:
+    {
+        return GMatrix3::Identity();
+    }
+    break;
+    case  EShape::EShape_HightField:
+    {
+        return GMatrix3::Identity();
+    }
+    break;
+    case  EShape::EShape_TriangleMesh:
+    {
+        return GMatrix3::Identity();
+    }
+    break;
+
+    default:
+        break;
+    }
+
+
+    return GMatrix3::Identity();
+
+}
