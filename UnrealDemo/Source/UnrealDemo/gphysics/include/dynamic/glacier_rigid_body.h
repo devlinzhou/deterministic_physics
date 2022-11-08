@@ -25,6 +25,7 @@ public:
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
         m_bDynamic = false;
+        m_Mass= GMath::One();
     }
 
     void Tick_PreTransform( const f32 DetalTime );
@@ -42,6 +43,8 @@ public:
     {
         return m_MoumentInertia * GMatrix3( m_Transform.m_Rot);
     }
+
+    void calculateInertiaTensor();
 
 public:
 

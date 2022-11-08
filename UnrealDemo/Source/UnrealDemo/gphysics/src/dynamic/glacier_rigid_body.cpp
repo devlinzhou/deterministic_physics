@@ -13,6 +13,7 @@
 
 
 #include "glacier_rigid_body.h"
+#include "glacier_physics_utils.h"
 
 void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 {
@@ -45,4 +46,10 @@ void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpuls
 {
     
 
+}
+
+void GRigidBody::calculateInertiaTensor()
+{
+    m_MoumentInertia = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
+    m_InvMoumentInertia = m_MoumentInertia.GetInverse();
 }
