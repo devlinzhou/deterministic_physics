@@ -32,6 +32,8 @@ void UStaticPhysicsComponent::BeginPlay()
             TShape = EShape_Sphere;
         else if( RigidShape == UGShape::UGShape_Box)
             TShape = EShape_Box;
+        else if (RigidShape == UGShape::UGShape_Plane)
+            TShape = EShape_Plane;
 
         if(TShape != EShape_ConvexBase) 
         {

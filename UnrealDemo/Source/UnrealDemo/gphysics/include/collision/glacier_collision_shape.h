@@ -30,7 +30,17 @@ enum EShape
     EShape_Max          = 10
 };
 
-class GShapeBase;
+class GShapeBase
+{
+public:
+    EShape  ShapType;
+
+    GShapeBase() : ShapType(EShape::EShape_Max)
+    {
+
+    }
+};
+
 class GCollisionShape
 {
 public:
@@ -61,16 +71,7 @@ public:
 
 };
 
-class GShapeBase
-{
-public:
-    EShape  ShapType;
 
-    GShapeBase() : ShapType(EShape::EShape_Max)
-    {
-    
-    }
-};
 
 class GShapeConvexBase : public GShapeBase
 {

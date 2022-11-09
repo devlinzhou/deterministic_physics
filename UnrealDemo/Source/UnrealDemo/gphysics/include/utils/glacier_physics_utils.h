@@ -25,6 +25,15 @@ class GPhyscsUtils
 public:
 
      static void DrawShape( const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor );
+
+     static void DrawSphere(const GTransform_QT& Trans, const GShapeSphere& pShape, IGlacierDraw* pDebugDraw, GColor TColor);
+
+     static void DrawBox(const GTransform_QT& Trans, const GShapeBox& pShape, IGlacierDraw* pDebugDraw, GColor TColor);
+
+     static void DrawCapsule(const GTransform_QT& Trans, const GShapeCapsule& pShape, IGlacierDraw* pDebugDraw, GColor TColor);
+     
+     static void DrawCoordinateSystem( IGlacierDraw* pDebugDraw, const GTransform_QT& Trans, f32 fSize );
+
      static void DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor );
 
 

@@ -16,6 +16,7 @@
 #include "glacier_debug_draw.h"
 #include "glacier_contact.h"
 
+
 void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor )
 {
     switch (pShape.ShapType )
@@ -47,7 +48,12 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     break;
     case  EShape::EShape_ConvexHull:
     {
+        if( pShape.pComplexShape != nullptr )
+        {
+            const GConvexHull* pConvex = (GConvexHull*)pShape.pComplexShape;
 
+            pConvex->Draw( pDebugDraw, Trans, TColor );
+        }
     }
     break;
 
@@ -77,6 +83,32 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     }
 
 }
+
+void GPhyscsUtils::DrawSphere(const GTransform_QT& Trans, const GShapeSphere& pShape, IGlacierDraw* pDebugDraw, GColor TColor)
+{
+    pDebugDraw->DrawSphere(Trans, pShape.Radius, TColor, 10 );
+}
+
+
+void GPhyscsUtils::DrawBox(const GTransform_QT& Trans, const GShapeBox& pShape, IGlacierDraw* pDebugDraw, GColor TColor)
+{
+    pDebugDraw->DrawBox(Trans, GVector3::Zero(), pShape.HalfExtern, TColor );
+}
+
+void GPhyscsUtils::DrawCapsule(const GTransform_QT& Trans, const GShapeCapsule& pShape, IGlacierDraw* pDebugDraw, GColor TColor)
+{
+    pDebugDraw->DrawCapsule(Trans, pShape.Raius,  pShape.HalfHeight, TColor );
+}
+
+void GPhyscsUtils::DrawCoordinateSystem(IGlacierDraw* pDebugDraw, const GTransform_QT& Trans, f32 fSize)
+{
+    GMatrix3 M33(Trans.m_Rot);
+
+    pDebugDraw->DrawLine(Trans.m_Pos, Trans.m_Pos + M33.GetRow(0), GColor::Red() );
+    pDebugDraw->DrawLine(Trans.m_Pos, Trans.m_Pos + M33.GetRow(1), GColor::Green());
+    pDebugDraw->DrawLine(Trans.m_Pos, Trans.m_Pos + M33.GetRow(2), GColor::Blue());
+}
+
 
 void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor )
 {

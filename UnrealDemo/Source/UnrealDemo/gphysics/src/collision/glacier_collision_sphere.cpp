@@ -179,7 +179,7 @@ int32_t GCollision_Sphere::Sphere_Sphere_Contact(
     else
         delta *= GMath::One() / magn;
  
-    const GVector3 contact = delta * ((sphereGeom0.Radius + magn - sphereGeom1.Radius) * -GMath::Half()) + transform0.m_Pos;
+    const GVector3 contact = transform1.m_Pos + delta * ShapB.Radius;
 
     pContact->AddContactPoint(contact, delta, magn - radiusSum);
     return 1;

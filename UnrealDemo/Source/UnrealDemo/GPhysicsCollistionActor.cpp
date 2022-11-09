@@ -75,29 +75,29 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    GQuaternion TRot( GVector3( GMath::One(), -GMath::Two(), -GMath::Three()).GetNormalize(), GMath::Two() );
-
-
-    GMatrix3 M3(TRot);
-
-    GQuaternion Rot3 = M3.ToQuat();
 
     GPhysicsDraw       Tdraw(GetWorld());
 
-    GShapeSphere    ShapeSphere(GUtility::Unit_U_to_G(TestSphereRadius));
-    GTransform_QT   TransSphere(GQuaternion::Identity(), GUtility::Unit_U_to_G(GetActorLocation()));
+    GShapeBox BoxShapeA(GUtility::Unit_U_to_G(BoxHalfSizeA));
+    GShapeBox BoxShapeB(GUtility::Unit_U_to_G(BoxHalfSizeB));
+
+    FVector     AShapePos = GetActorLocation();
+    FRotator    BoxRotA     = GetActorRotation();
+
+    GTransform_QT BoxTransA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(AShapePos));
+    GTransform_QT BoxTransB(GUtility::U_to_G(BoxRotB.Quaternion()), GUtility::Unit_U_to_G(BoxCenterB));
+
+    GShapeSphere SphereShapeA(GUtility::Unit_U_to_G(SphereRadiusA));
+    GShapeSphere SphereShapeB(GUtility::Unit_U_to_G(SphereRadiusB));
+
+    GTransform_QT SphereTransA(GQuaternion::Identity(), GUtility::Unit_U_to_G(AShapePos));
+    GTransform_QT SphereTransB(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
+
+    GShapeCapsule ShapeCapusle(GUtility::Unit_U_to_G(CapsuleHalfHeight), GUtility::Unit_U_to_G(CapsuleRadius));
+    GTransform_QT TransCapsule(GUtility::U_to_G(FQuat::FindBetween(FVector(0, 0, 1), CapsuleDir)), GUtility::Unit_U_to_G(CapsuleCenter));
 
     if( BoxShow )
     {
-        GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
-        GShapeBox ShapeBoxB(GUtility::Unit_U_to_G(BoxHalfSizeB));
-
-        FVector BoxCenterA = GetActorLocation();
-        FRotator BoxRotA = GetActorRotation();
-
-        GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
-        GTransform_QT TBoxShapeB(GUtility::U_to_G(BoxRotB.Quaternion()), GUtility::Unit_U_to_G(BoxCenterB));
-
 //         if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeBoxA, TBoxShapeA, &Tdraw))
 //         {
 //         
@@ -106,64 +106,44 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
         GCollisionContact TContact;
         TContact.Clear();
 
-        FColor TColor = FColor::Yellow;
+        GColor TColor = GColor::Yellow();
 
-        if( GCollision_Box::Box_Box_Contact_PhysX(ShapeBoxA, TBoxShapeA, ShapeBoxB, TBoxShapeB, &TContact ) != 0 )
+        if( GCollision_Box::Box_Box_Contact_PhysX(BoxShapeA, BoxTransA, BoxShapeB, BoxTransB, &TContact ) != 0 )
         {
             GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
-            TColor = FColor::Red;
+            TColor = GColor::Red();
         }
 
-        UKismetSystemLibrary::DrawDebugCoordinateSystem( GetWorld(), BoxCenterB, BoxRotB, 50. );
-
-        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, FColor::Yellow, BoxRotA);
-        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterB, BoxHalfSizeB, TColor, BoxRotB);
+        GPhyscsUtils::DrawBox(BoxTransA, BoxShapeA, &Tdraw, GColor::Yellow() );
+        GPhyscsUtils::DrawBox(BoxTransB, BoxShapeB, &Tdraw, TColor);
+        GPhyscsUtils::DrawCoordinateSystem(&Tdraw, BoxTransB, GMath::Half() );
     }
     if( CapsuleShow )
     {
-        FQuat TRotation = FQuat::FindBetween(FVector(0, 0, 1), CapsuleDir);
-
-       // UKismetSystemLibrary::DrawDebugCapsule(GetWorld(), CapsuleCenter, CapsuleHalfHeight + CapsuleRadius, CapsuleRadius, TRotation.Rotator(), FColor::Yellow);
-
-        GShapeCapsule ShapeCapusle( GUtility::Unit_U_to_G(CapsuleHalfHeight), GUtility::Unit_U_to_G(CapsuleRadius) );
-
-        GTransform_QT TransCapsule(GUtility::U_to_G(TRotation), GUtility::Unit_U_to_G(CapsuleCenter));
-
-        Tdraw.DrawCapsule( TransCapsule, GUtility::Unit_U_to_G(CapsuleRadius), GUtility::Unit_U_to_G(CapsuleHalfHeight), FColor::Yellow.DWColor(), 24 );
-
-        FColor TColor = FColor::Yellow;
-
-        if (GCollision_GJK::GJKTest(ShapeSphere, TransSphere, ShapeCapusle, TransCapsule, &Tdraw))
+        GColor TColor = GColor::Yellow();
+        if (GCollision_GJK::GJKTest(SphereShapeA, SphereTransA, ShapeCapusle, TransCapsule, &Tdraw))
         {
-            TColor = FColor::Red;
+            TColor = GColor::Red();
         }
 
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation(), TestSphereRadius, 20, TColor);
+        GPhyscsUtils::DrawCapsule( TransCapsule, ShapeCapusle, &Tdraw, TColor );
+        GPhyscsUtils::DrawSphere( SphereTransA, SphereShapeA, &Tdraw, TColor);
     }
 
     if( SphereShow )
     {
-        GShapeSphere ShapeSA(GUtility::Unit_U_to_G(SphereRadiusA));
-        GShapeSphere ShapeSB(GUtility::Unit_U_to_G(SphereRadiusB));
-
-        FVector SCenterA = GetActorLocation();
-
-        GTransform_QT TransA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SCenterA));
-        GTransform_QT TransB(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
-
         GCollisionContact TContact;
         TContact.Clear();
 
-        FColor TColor = FColor::Yellow;
-        if (GCollision_Sphere::Sphere_Sphere_Contact(ShapeSA, TransA, ShapeSB, TransB, &TContact) != 0)
+        GColor TColor = GColor::Yellow();
+        if (GCollision_Sphere::Sphere_Sphere_Contact(SphereShapeA, SphereTransA, SphereShapeB, SphereTransB, &TContact) != 0)
         {
-            GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::Yellow());
-
-            TColor = FColor::Red;
+            GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
+            TColor = GColor::Red();
         }
 
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SCenterA, SphereRadiusA, 16, FColor::Yellow);
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenterB, SphereRadiusB, 16, TColor);
+        GPhyscsUtils::DrawSphere(SphereTransA, SphereShapeA, &Tdraw, GColor::Yellow());
+        GPhyscsUtils::DrawSphere(SphereTransB, SphereShapeB, &Tdraw, TColor);
     }
 
     if( TriangleShow )
@@ -207,115 +187,21 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
     if(TestSphere_Box)
     {
-        GShapeBox ShapeBoxA(GUtility::Unit_U_to_G(BoxHalfSizeA));
-        FVector BoxCenterA = GetActorLocation();
-        FRotator BoxRotA = GetActorRotation();
-        GTransform_QT TBoxShapeA(GUtility::U_to_G(BoxRotA.Quaternion()), GUtility::Unit_U_to_G(BoxCenterA));
-
-        GShapeSphere ShapeSA(GUtility::Unit_U_to_G(SphereRadiusB));
-        GTransform_QT TransA(GQuaternion::Identity(), GUtility::Unit_U_to_G(SphereCenterB));
-
-
         GCollisionContact TContact;
         TContact.Clear();
 
-        FColor TColor = FColor::Yellow;
-        if (GCollision_Sphere::Sphere_Box_Contact(ShapeSA, TransA, ShapeBoxA, TBoxShapeA, &TContact) != 0)
+        GColor TColor = GColor::Yellow();
+        if (GCollision_Sphere::Sphere_Box_Contact(SphereShapeA, SphereTransA, BoxShapeA, BoxTransA, &TContact) != 0)
         {
-
-            for (int i = 0; i < TContact.GetPointCount(); ++i)
-            {
-                const GManifoldPoint& TMn = TContact.m_Point[i];
-
-                FVector VPos = GUtility::Unit_G_to_U(TMn.m_PosWorld);
-                FVector VNor = GUtility::Unit_G_to_U(TMn.m_NormalOnB);
-
-                FVector Vdes = VPos + VNor * GUtility::G_to_U(TMn.m_depth);
-
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VPos, 3.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugSphere(GetWorld(), Vdes, 1.f, 12, FColor::White);
-                UKismetSystemLibrary::DrawDebugLine(GetWorld(), VPos, Vdes, FColor::White);
-
-            }
-            TColor = FColor::Red;
+            GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
+            TColor = GColor::Red();
         }
 
-        UKismetSystemLibrary::DrawDebugCoordinateSystem(GetWorld(), BoxCenterB, BoxRotB, 50.);
-
-        UKismetSystemLibrary::DrawDebugBox(GetWorld(), BoxCenterA, BoxHalfSizeA, TColor, BoxRotA);
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), SphereCenterB, SphereRadiusB, 16, TColor);
-
-
+        GPhyscsUtils::DrawBox(BoxTransA, BoxShapeA, &Tdraw, GColor::Yellow() );
+        GPhyscsUtils::DrawSphere(SphereTransB, SphereShapeB, &Tdraw, TColor);
+        GPhyscsUtils::DrawCoordinateSystem(&Tdraw, BoxTransB, GMath::Half() );
     }
 
-
-//     if (GCollision_GJK::GJKTest(ShapeSphere, TransShapeA, ShapeBox, TransShapeB, &Tdraw ))
-//     {
-//       //  UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-//      //   UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-//     }
-
-
-   /* FVector VLocation = GetActorLocation();
-    FVector VT;
-    FVector OutNormal = FVector(0, 0, 0);
-
-
-    for (int i = 0; i < m_Convexs.Num() - 1; i++)
-    {
-        m_Convexs[i].Draw(GetWorld(), FTransform::Identity);
-
-        if (m_Convexs[i].CollisionTest_Sphere(VLocation, TestSphereRadius, VT, &OutNormal))
-        {
-            UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-            UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-        }
-    }
-
-    if (m_Convexs.Num() != 0)
-    {
-        m_SweepConvex.SweepFrom(Convex_Dir, m_Convexs[0]);
-        m_SweepConvex.Draw(GetWorld(), FTransform(FVector(0, 0, 1000)));
-    }
-
-
-    if (MFInterset::Sphere_Box(VLocation, TestSphereRadius, BoxCenter, BoxExtern, VT, &OutNormal))
-    {
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-        UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-    }
-
-    //     if (MFInterset::Sphere_Capsule(VLocation, TestSphereRadius, CapsuleP1, CapsuleP2, CapsuleRadius1, VT, &OutNormal))
-    //     {
-    //         UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius - 1.f, 18, FColor::Blue);
-    //         UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-    //     }
-
-    if (MFInterset::Sphere_Capsule(VLocation, TestSphereRadius, CapsuleP1, CapsuleP2, CapsuleRadius1, CapsuleRadius2, VT, &OutNormal))
-    {
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius - 1.f, 18, FColor::Blue);
-        UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-    }
-
-
-    if (MFInterset::Sphere_Sphere(VLocation, TestSphereRadius, SphereCenterInner, SphereRadiusInner, VT, &OutNormal, true))
-    {
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-        UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-    }
-
-    if (MFInterset::Sphere_Sphere(VLocation, TestSphereRadius, SphereCenterOuter, SphereRadiusOuter, VT, &OutNormal, false))
-    {
-        UKismetSystemLibrary::DrawDebugSphere(GetWorld(), VT, TestSphereRadius + 1.f, 28, FColor::Red);
-        UKismetSystemLibrary::DrawDebugLine(GetWorld(), VT, VT + OutNormal * 100.f, FColor::Black);
-    }
-
-    FColor TriangleColor = FColor::Yellow;
-
-    if (MFInterset::Capsule_Triangle(CapsuleP1, CapsuleP2, CapsuleRadius1, VLocation + Triangle_p0, VLocation + Triangle_p1, VLocation + Triangle_p2, VT))
-    {
-        TriangleColor = FColor::Red;
-    }*/
 
 }
 

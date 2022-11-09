@@ -12,6 +12,8 @@ enum class UGShape : uint8
 {
     UGShape_Sphere,
     UGShape_Box,
+    UGShape_Plane,
+
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

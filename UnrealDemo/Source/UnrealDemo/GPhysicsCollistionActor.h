@@ -94,7 +94,4 @@ public:
     class GConvexHullBuilder* pBuilder = nullptr;
 
 
-    UPROPERTY(EditAnywhere, Category = "TestSphere")
-        float           TestSphereRadius = 50.f;
-
 };

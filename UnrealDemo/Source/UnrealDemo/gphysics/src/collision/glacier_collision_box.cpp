@@ -402,8 +402,6 @@ int32_t GCollision_Box::Box_Box_Contact(
                 TransformA.TransformPosition(GVector3::Zero()),
                 TransformA.TransformNormal(-Normals[nDepth]).GetNormalize(),
                 -fDot);
-
-            pContact->VTest = TransformB.TransformPosition(VTest[nDepth]);
         }
         else if (nDepth >= 6)
         {
@@ -411,8 +409,6 @@ int32_t GCollision_Box::Box_Box_Contact(
                 TransformA.TransformPosition(Pos[nDepth]),
                 TransformA.TransformNormal(-Normals[nDepth]).GetNormalize(),
                 -fDot);
-
-            pContact->VTest = TransformB.TransformPosition(GVector3::Zero());
         }
 
     }

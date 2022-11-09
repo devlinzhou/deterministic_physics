@@ -64,17 +64,13 @@ public:
     }
 
 
-    uint64_t PairId;
-    bool     Swap;
-
+    uint64_t        PairId;
+    bool            Swap;
 
     static constexpr int32_t MaxPoint = 16;
 
     int32_t         m_nPointCount;
     GManifoldPoint  m_Point[MaxPoint];
-
-
-    GVector3 VTest;
 };
 
 
