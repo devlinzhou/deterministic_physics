@@ -131,7 +131,7 @@ void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw*
 
         GVector3 Vdes = VPos - VNor * TMn.m_depth;
 
-        pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,15, 1000), GColor::Gray(), 4);
+        pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,15, 1000), GColor::White(), 4);
         pDebugDraw->DrawSphere(Vdes, GMath::Makef32(0, 7, 1000), GColor::Gray(), 4);
         pDebugDraw->DrawLine( VPos, Vdes, TColor);
 
