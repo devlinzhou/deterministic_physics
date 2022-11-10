@@ -139,6 +139,29 @@ bool GPhysicsWorld::DeleteCollisionObject( GCObject* pObject )
     return true;
 }
 
+const GCObject* GPhysicsWorld::FindCollisionObject(uint32_t id) const
+{
+    auto iter = m_ObjectMap.find( id );
+    if( iter != m_ObjectMap.end() )
+    {
+        return iter->second;
+    }
+
+
+    for (int32_t i = 0; i < (int32_t)m_StaticLargeObj.size(); ++i)
+    {
+        GCObject* pObject = m_StaticLargeObj[i];
+
+        if( pObject->GetId() == id )
+        {
+            return pObject;
+        }
+    }
+
+
+    return nullptr;
+}
+
 bool GPhysicsWorld::AddStaticLargeObj(GCObject* pObject )
 {
     if (std::find(m_StaticLargeObj.begin(), m_StaticLargeObj.end(), pObject) != m_StaticLargeObj.end())
@@ -286,7 +309,7 @@ void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const
         for (uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i)
         {
             const GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
-            GPhyscsUtils::DrawContact( TestPair.PairContact, pDraw, GColor::White() );
+            GPhyscsUtils::DrawContact( TestPair.PairContact, pDraw, GColor::White(), this );
         }
     }
 

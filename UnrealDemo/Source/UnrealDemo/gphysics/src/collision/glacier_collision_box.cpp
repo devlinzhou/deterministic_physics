@@ -1017,7 +1017,7 @@ int32_t GCollision_Box::Plane_Box_Contact(
     GMatrix3 boxMatrix(TransformB.m_Rot);
     GMatrix3 boxToPlane(TransformB.m_Rot * TransformA.m_Rot.GetUnitInverse());
 
-    const GVector3 negPlaneNormal = TransformA.TransformNormal( GVector3::NegtiveX());
+    const GVector3 negPlaneNormal = TransformA.TransformNormal( GVector3::UnitX());
 
     const f32 limit = -VBLocalA.x;
     const f32 dx = ShapB.HalfExtern.x;

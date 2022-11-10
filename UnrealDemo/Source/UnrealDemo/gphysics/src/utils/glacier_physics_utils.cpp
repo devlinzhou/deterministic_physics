@@ -16,6 +16,7 @@
 #include "glacier_debug_draw.h"
 #include "glacier_contact.h"
 #include "glacier_convexhull.h"
+#include "glacier_physics_world.h"
 
 
 void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor )
@@ -111,8 +112,16 @@ void GPhyscsUtils::DrawCoordinateSystem(IGlacierDraw* pDebugDraw, const GTransfo
 }
 
 
-void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor )
+void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor, const GPhysicsWorld* pWorld )
 {
+    GVector3 vPosOnObj;
+    const GCObject* pObj = nullptr;
+    if( pWorld != nullptr )
+    {
+         pObj = pWorld->FindCollisionObject( TContact.PointOnSurface );
+    }
+
+
     for (int i = 0; i < TContact.GetPointCount(); ++i)
     {
         const GManifoldPoint& TMn = TContact.m_Point[i];
@@ -125,6 +134,11 @@ void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw*
         pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,10, 1000), TColor, 4);
         pDebugDraw->DrawSphere(Vdes, GMath::Makef32(0, 7, 1000), GColor::Gray(), 4);
         pDebugDraw->DrawLine( VPos, Vdes, TColor);
+
+        if (pObj != nullptr)
+        {
+            pDebugDraw->DrawLine( VPos, pObj->m_Transform.m_Pos, GColor::Gray());
+        }
     }
 }
 

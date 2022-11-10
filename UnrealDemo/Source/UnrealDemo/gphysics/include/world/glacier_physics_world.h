@@ -213,6 +213,8 @@ public:
     bool AddCollisionObject( GCObject* pObject );
     bool DeleteCollisionObject( GCObject* pObject );
 
+    const GCObject* FindCollisionObject( uint32_t id ) const; 
+
 
     bool AddStaticLargeObj(GCObject* pObject );
     bool DeleteStaticLargeObj( GCObject* pObject );

@@ -36,7 +36,7 @@ public:
      
      static void DrawCoordinateSystem( IGlacierDraw* pDebugDraw, const GTransform_QT& Trans, f32 fSize );
 
-     static void DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor );
+     static void DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor, const class GPhysicsWorld* = nullptr );
 
 
 

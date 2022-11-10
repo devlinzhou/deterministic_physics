@@ -98,17 +98,14 @@ bool GCG_Box_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, G
     GShapeBox BoxA(ObjA->m_Shape.GetHalfExtern());
     GShapeBox BoxB(ObjB->m_Shape.GetHalfExtern());
 
-    if (GCollision_Box::Box_Box_Contact( BoxA, ObjA->m_Transform, BoxB ,ObjB->m_Transform, pContact) != 0)
-    {
-        return true;
-    }
+    int32_t nCount = GCollision_Box::Box_Box_Contact_PhysX( BoxA, ObjA->m_Transform, BoxB ,ObjB->m_Transform, pContact);
 
     if (pContact)
     {
         pContact->PointOnSurface = ObjA->GetId();
     }
 
-    return false;
+    return nCount > 0;
 }
 
 bool GCG_Plane_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact)
