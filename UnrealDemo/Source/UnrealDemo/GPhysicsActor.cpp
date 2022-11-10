@@ -68,6 +68,17 @@ GRigidBody* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GV
     return pBody;
 }
 
+GRigidBody* AGPhysicsActor::CreateStaticPlane(const GTransform_QT& Trans )
+{
+    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, EShape::EShape_Plane);
+    pBody->UpdateLocalBox();
+ 
+    m_PhysicsWorld.AddStaticLargeObj(pBody);
+    pBody->m_Transform = Trans;
+    pBody->m_bDynamic = false;
+    return pBody;
+}
+
 GRigidBody* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
 {
     GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);

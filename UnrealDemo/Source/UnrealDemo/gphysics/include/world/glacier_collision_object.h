@@ -25,15 +25,14 @@ enum ECollisionObjectType
     CollisionObject_Rigid_Body,
     CollisionObject_Soft_Body,
 
-
 };
 
 class GGridCell;
-class GCollisionObject
+class GCObject // Glacier Physics Collision Object
 {
 public:
 
-    GCollisionObject(  uint32_t uId, EShape TShape )
+    GCObject(  uint32_t uId, EShape TShape )
         : m_Shape(TShape), m_Id(uId), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
     {
         m_CollisionType     = CollisionObject_Base;

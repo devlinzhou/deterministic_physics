@@ -48,8 +48,9 @@ void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpuls
 
 }
 
-void GRigidBody::calculateInertiaTensor()
+void GRigidBody::CalculateInertiaTensor()
 {
-    m_MoumentInertia = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
+    m_Mass              = m_density * GPhyscsUtils::CalculateVolume( m_Shape);
+    m_MoumentInertia    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
     m_InvMoumentInertia = m_MoumentInertia.GetInverse();
 }

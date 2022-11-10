@@ -201,7 +201,7 @@ int32_t GCollision_Sphere::Sphere_Plane_Contact(
     if (fDepth <= GMath::Zero() )
     {
         const GVector3 normal = TransformB.TransformNormal( GVector3::UnitX());
-        const GVector3 point = TransformB.m_Pos - normal * ShapA.Radius;
+        const GVector3 point = TransformA.m_Pos - normal * ShapA.Radius;
 
         pContact->AddContactPoint(point, normal, fDepth);
         return 1;
@@ -229,7 +229,7 @@ int32_t GCollision_Sphere::Sphere_Box_Contact(
         {
             pContact->AddContactPoint(
                 TransformB.TransformPosition(VALocalB - VNormal * ShapA.Radius),
-                TransformB.TransformNormal(-VNormal), -GVector3::Distance(VALocalB, VT));
+                TransformB.TransformNormal(VNormal), -GVector3::Distance(VALocalB, VT));
         }
         return 1;
     }

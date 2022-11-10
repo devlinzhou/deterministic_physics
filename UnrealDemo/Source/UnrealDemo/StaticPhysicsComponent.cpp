@@ -26,25 +26,28 @@ void UStaticPhysicsComponent::BeginPlay()
 
     if( PPhysics != nullptr )
     {
-        EShape TShape = EShape_ConvexBase;
-
-        if( RigidShape == UGShape::UGShape_Sphere)
-            TShape = EShape_Sphere;
-        else if( RigidShape == UGShape::UGShape_Box)
-            TShape = EShape_Box;
-        else if (RigidShape == UGShape::UGShape_Plane)
-            TShape = EShape_Plane;
-
-        if(TShape != EShape_ConvexBase) 
+        switch ( RigidShape )
         {
-            m_pRigid = PPhysics->CreateStaticRigidBody( 
+        case UGShape::UGShape_Sphere :
+        case UGShape::UGShape_Box :
+        {
+            m_pRigid = PPhysics->CreateStaticRigidBody(
                 GUtility::U_to_G(GetOwner()->GetTransform()),
-                GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
+                GVector3(GUtility::Unit_U_to_G(VHalfSize)),
+                RigidShape ==  UGShape::UGShape_Sphere ?  EShape::EShape_Sphere : EShape::EShape_Box );
+        }
+        break;
+        case UGShape::UGShape_Plane :
+        {
+            m_pRigid = PPhysics->CreateStaticPlane( GUtility::U_to_G(GetOwner()->GetTransform()));
+        }
+        break;
+
+        default:
+            break;
         }
 
     }
-
-	// ...
 	
 }
 

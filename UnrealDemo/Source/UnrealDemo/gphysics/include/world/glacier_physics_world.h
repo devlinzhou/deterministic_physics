@@ -81,12 +81,12 @@ struct GGridPosition
 };
 
 class IGlacierDraw;
-class GCollisionObject;
+class GCObject;
 class GGridCell
 {
 public:
     GGridPosition                   m_pos;
-    std::vector<GCollisionObject*>  m_Objects;
+    std::vector<GCObject*>  m_Objects;
     GAABB                           m_AABB;
 
 public:
@@ -127,9 +127,9 @@ public:
         return m_AABB.GetHalfSize();
     }
 
-    bool AddCollisionObject(GCollisionObject* pObject);
+    bool AddCollisionObject(GCObject* pObject);
 
-    bool RemoveObject(GCollisionObject* pObject);
+    bool RemoveObject(GCObject* pObject);
 
 
     void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
@@ -145,7 +145,7 @@ public:
 
     GBroadPhasePair() = default;
     GBroadPhasePair(const GBroadPhasePair&) = default;
-    GBroadPhasePair(GCollisionObject* p1, GCollisionObject* p2)
+    GBroadPhasePair(GCObject* p1, GCObject* p2)
     {
         if (p1->GetId() == p2->GetId())
         {
@@ -171,8 +171,8 @@ public:
 
     uint64_t          PairId;
 
-    GCollisionObject* pObjectA;
-    GCollisionObject* pObjectB;
+    GCObject* pObjectA;
+    GCObject* pObjectB;
 
     GCollisionContact PairContact;
 };
@@ -210,9 +210,14 @@ public:
             GMath::FloorToInt(VPos.z / m_nCellHeight));
     }
 
-    bool AddCollisionObject( GCollisionObject* pObject );
+    bool AddCollisionObject( GCObject* pObject );
+    bool DeleteCollisionObject( GCObject* pObject );
 
-    bool UpdateCollisionObject( GCollisionObject* pObject );
+
+    bool AddStaticLargeObj(GCObject* pObject );
+    bool DeleteStaticLargeObj( GCObject* pObject );
+
+    bool UpdateCollisionObject( GCObject* pObject );
 
     void PreTick(  );
 
@@ -220,7 +225,12 @@ public:
 
     void PostTick();
 
+    static void DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, uint32_t mask );
+
     void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
+
+
+
 
 public:
 
@@ -263,8 +273,11 @@ private:
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*>     m_Grids;
-    std::map<uint32_t, GCollisionObject*>   m_ObjectMap;
-    std::vector<GCollisionObject*>          m_Objects;
+    std::map<uint32_t, GCObject*>   m_ObjectMap;
+    std::vector<GCObject*>          m_Objects;
+    std::vector<GCObject*>          m_StaticLargeObj;
+
+
     std::vector<GBroadPhasePair>            m_BroadPhasePairs;
 
 

@@ -15,17 +15,18 @@
 #include "glacier_collision_object.h"
 #include "glacier_matrix.h"
 
-class GRigidBody : public GCollisionObject
+class GRigidBody : public GCObject
 {
 public:
 
-    GRigidBody(uint32_t id, EShape TShape) : GCollisionObject(id, TShape)
+    GRigidBody(uint32_t id, EShape TShape) : GCObject(id, TShape)
     {
         m_CollisionType = CollisionObject_Rigid_Body;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
         m_bDynamic = false;
         m_Mass= GMath::One();
+        m_density = GMath::Makef32(1000,0,1);
     }
 
     void Tick_PreTransform( const f32 DetalTime );
@@ -44,13 +45,15 @@ public:
         return m_MoumentInertia * GMatrix3( m_Transform.m_Rot);
     }
 
-    void calculateInertiaTensor();
+    void CalculateInertiaTensor();
 
 public:
 
     bool            m_bDynamic;
     GTransform_QT   m_Transform_Pre;
 
+
+    f32             m_density;
 
     f32             m_Mass;
     f32             m_InvMass;

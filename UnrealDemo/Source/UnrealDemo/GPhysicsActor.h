@@ -50,6 +50,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
     GRigidBody* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
+
+    GRigidBody* CreateStaticPlane(const GTransform_QT& Trans );
+
     GRigidBody* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;

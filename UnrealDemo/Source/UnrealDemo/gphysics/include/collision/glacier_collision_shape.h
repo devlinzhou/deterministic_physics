@@ -64,8 +64,7 @@ public:
     GVector3 GetHalfExtern() const { return HalfSize; }
     void SetHalfExtern(const GVector3& value) { HalfSize = value; }
 
-    GVector3 GetPlaneNormal() const { return HalfSize; }
-    void SetPlaneNormal(const GVector3& value) { HalfSize = value; }
+    GVector3 GetPlaneNormal() const { return GVector3::UnitX(); }
 
     GAABB GetLocalBox() const;
 

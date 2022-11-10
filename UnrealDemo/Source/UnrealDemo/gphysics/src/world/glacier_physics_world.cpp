@@ -44,26 +44,13 @@ void GGridCell::DebugDraw(IGlacierDraw* pDraw, uint32_t mask) const
 
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
-        const GCollisionObject* pObject = m_Objects[i];
+        const GCObject* pObject = m_Objects[i];
 
-        if( mask & GPDraw_Shape)
-            GPhyscsUtils::DrawShape( pObject->m_Transform, pObject->m_Shape, pDraw, GColor::Yellow());
-
-        if (mask & GPDraw_LocalBox)
-        {
-            GAABB TAABB = pObject->GetLocalAABB();
-            pDraw->DrawBox(pObject->m_Transform, GVector3(GMath::Zero()), TAABB.GetHalfSize(), GColor::White());
-        }
-
-        if( mask & GPDraw_WorldBox)
-        {
-            GAABB TAABB = pObject->GetAABB();
-            pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
-        }
+        GPhysicsWorld::DebugDrawObject( pDraw, pObject, mask );
     }
 }
 
-bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
+bool GGridCell::AddCollisionObject(GCObject* pObject)
 {
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
     {
@@ -71,12 +58,13 @@ bool GGridCell::AddCollisionObject(GCollisionObject* pObject)
     }
 
     m_Objects.push_back(pObject);
+    
     return true;
 }
 
-bool GGridCell::RemoveObject(GCollisionObject* pObject)
+bool GGridCell::RemoveObject(GCObject* pObject)
 {
-    std::vector<GCollisionObject*>::iterator iter = std::find(m_Objects.begin(), m_Objects.end(), pObject);
+    std::vector<GCObject*>::iterator iter = std::find(m_Objects.begin(), m_Objects.end(), pObject);
     if (iter != m_Objects.end())
     {
         m_Objects.erase(iter);
@@ -91,7 +79,7 @@ bool GGridCell::RemoveObject(GCollisionObject* pObject)
 
 
 
-bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
+bool GPhysicsWorld::AddCollisionObject(GCObject* pObject)
 {
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
     {
@@ -131,7 +119,54 @@ bool GPhysicsWorld::AddCollisionObject(GCollisionObject* pObject)
     return true;
 }
 
-bool GPhysicsWorld::UpdateCollisionObject(GCollisionObject* pObject)
+bool GPhysicsWorld::DeleteCollisionObject( GCObject* pObject )
+{
+    auto iter = std::find(m_Objects.begin(), m_Objects.end(), pObject);
+
+    if ( iter == m_Objects.end())
+    {
+        return false;
+    }
+
+    m_Objects.erase( iter);
+    m_ObjectMap.erase( pObject->GetId() );
+
+    if( pObject->m_pGridCell != nullptr )
+    {
+        pObject->m_pGridCell->RemoveObject( pObject );
+    }
+
+    return true;
+}
+
+bool GPhysicsWorld::AddStaticLargeObj(GCObject* pObject )
+{
+    if (std::find(m_StaticLargeObj.begin(), m_StaticLargeObj.end(), pObject) != m_StaticLargeObj.end())
+    {
+        return false;
+    }
+
+    m_StaticLargeObj.push_back(pObject);
+
+    return true;
+}
+
+bool GPhysicsWorld::DeleteStaticLargeObj( GCObject* pObject )
+{
+    auto iter = std::find(m_StaticLargeObj.begin(), m_StaticLargeObj.end(), pObject);
+
+    if (iter == m_StaticLargeObj.end())
+    {
+        return false;
+    }
+
+    m_StaticLargeObj.erase(iter);
+
+    return true;
+}
+
+
+bool GPhysicsWorld::UpdateCollisionObject(GCObject* pObject)
 {
     GVector3 VPos = pObject->m_Transform.m_Pos;
 
@@ -200,7 +235,7 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
 {
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
-        GCollisionObject* pObject = m_Objects[i];
+        GCObject* pObject = m_Objects[i];
         if (pObject->m_CollisionType == ECollisionObjectType::CollisionObject_Rigid_Body)
         {
             GRigidBody* pDynamicRigid = (GRigidBody*)pObject;
@@ -211,6 +246,28 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
                 pDynamicRigid->UpdateAABB();
             }
         }
+    }
+
+
+}
+
+void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, uint32_t mask )
+{
+    const GCObject* pObject = pObj;
+
+    if (mask & GPDraw_Shape)
+        GPhyscsUtils::DrawShape(pObject->m_Transform, pObject->m_Shape, pDraw, GColor::Yellow());
+
+    if (mask & GPDraw_LocalBox)
+    {
+        GAABB TAABB = pObject->GetLocalAABB();
+        pDraw->DrawBox(pObject->m_Transform, TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::White());
+    }
+
+    if (mask & GPDraw_WorldBox)
+    {
+        GAABB TAABB = pObject->GetAABB();
+        pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
     }
 }
 
@@ -233,6 +290,10 @@ void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const
         }
     }
 
+    for( int32_t i = 0; i < (int32_t)m_StaticLargeObj.size(); ++i )
+    {
+        DebugDrawObject( pDraw, m_StaticLargeObj[i], mask );
+    }
 }
 
 void GPhysicsWorld::CollisionBroadPhase( )
@@ -245,16 +306,27 @@ void GPhysicsWorld::CollisionBroadPhase( )
         // ceil 
         for (int32_t i = 0; i < (int32_t)iter->second->m_Objects.size(); ++i)
         {
-            GCollisionObject* pObjectA = iter->second->m_Objects[i];
+            GCObject* pObjectA = iter->second->m_Objects[i];
 
             const GAABB& BoxA = pObjectA->GetAABB();
             for (int32_t j = 0; j < i; ++j)
             {
-                GCollisionObject* pObjectB = iter->second->m_Objects[j];
+                GCObject* pObjectB = iter->second->m_Objects[j];
                 const GAABB& BoxB = pObjectB->GetAABB();
                 if (BoxA.Intersects(BoxB))
                 {
                     m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
+                }
+            }
+
+
+            for ( int32_t nLargeObj = 0; nLargeObj < (int32_t)m_StaticLargeObj.size(); ++nLargeObj )
+            {
+                GCObject* pLargeObj = m_StaticLargeObj[nLargeObj];
+                const GAABB& BoxB = pLargeObj->GetAABB();
+                if (BoxA.Intersects(BoxB))
+                {
+                    m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pLargeObj));
                 }
             }
         }
@@ -271,7 +343,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
 
             for (int32_t LoopA = 0; LoopA < (int32_t)iter->second->m_Objects.size(); ++LoopA)
             {
-                GCollisionObject* pObjectA = iter->second->m_Objects[LoopA];
+                GCObject* pObjectA = iter->second->m_Objects[LoopA];
 
 //                 if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
 //                 {
@@ -281,7 +353,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
                 const GAABB& BoxA = pObjectA->GetAABB();
                 for (int32_t LoopB = 0; LoopB < (int32_t)iterB->second->m_Objects.size(); ++LoopB)
                 {
-                    GCollisionObject* pObjectB = iter->second->m_Objects[LoopA];
+                    GCObject* pObjectB = iter->second->m_Objects[LoopA];
 
                     if (pObjectA->GetId() < pObjectB->GetId())
                     {
@@ -339,10 +411,12 @@ void GPhysicsWorld::SolveContactConstraint( )
 
     for (uint32_t i = 0; i < (uint32_t)m_Objects.size(); ++i)
     {
-        GCollisionObject* pObj = m_Objects[i];
+        GCObject* pObj = m_Objects[i];
 
         if( pObj->m_CollisionType == CollisionObject_Rigid_Body )
         {
+            GRigidBody* PRigidA = (GRigidBody*)pObj;
+
             for (int j = 0; j < pObj->m_ContactArray.size(); ++j)
             {
                 GBroadPhasePair& TPair = m_BroadPhasePairs[pObj->m_ContactArray[j]];
@@ -357,7 +431,7 @@ void GPhysicsWorld::SolveContactConstraint( )
 
                 for (std::set<uint32_t>::iterator iter = pObj->m_ContactObjs.begin(); iter != pObj->m_ContactObjs.end(); ++iter)
                 {
-                    GCollisionObject* pOther = m_ObjectMap[*iter];
+                    GCObject* pOther = m_ObjectMap[*iter];
 
 
                     int a = 0;
@@ -377,7 +451,7 @@ void GPhysicsWorld::UpdateSceneGrid( )
 
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
-        GCollisionObject* pObject = m_Objects[i];
+        GCObject* pObject = m_Objects[i];
         if( pObject->m_bNeedUpdate )
         {
             pObject->UpdateAABB();
@@ -393,6 +467,15 @@ void GPhysicsWorld::UpdateSceneGrid( )
         {
             delete iter->second;
             m_Grids.erase( iter++ );
+        }
+    }
+
+    for (int32_t i = 0; i < (int32_t)m_StaticLargeObj.size(); ++i)
+    {
+        GCObject* pObject = m_StaticLargeObj[i];
+        if (pObject->m_bNeedUpdate)
+        {
+            pObject->UpdateAABB();
         }
     }
 }

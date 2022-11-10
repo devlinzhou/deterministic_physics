@@ -17,12 +17,12 @@
 #include "glacier_collision_box.h"
 
 
-bool GCollisionAlgorithm::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCollisionAlgorithm::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Sphere_Sphere::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
     GVector3 d = ObjA->m_Transform.m_Pos - ObjB->m_Transform.m_Pos;
     f32 len2 = d.SizeSquare();
@@ -35,11 +35,11 @@ bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCo
             f32 InvLen = GMath::InvSqrt(len2);
 
             GVector3 VNormalOnB = len2 < GMath::Epsilon() ? GVector3::UnitX() : d * InvLen;
-            GVector3 VPosOnB = ObjB->m_Transform.m_Pos + VNormalOnB * ObjB->m_Shape.GetRaiuds();
-
-            pContact->ClearPoint();
+            GVector3 VPosOnB = ObjA->m_Transform.m_Pos - VNormalOnB * ObjA->m_Shape.GetRaiuds();
 
             pContact->AddContactPoint( VPosOnB, VNormalOnB, len2 * InvLen - TRadius );
+
+            pContact->PointOnSurface = ObjA->GetId();
         }
 
         return true;
@@ -48,72 +48,84 @@ bool GCG_Sphere_Sphere::ProcessCollision(const GCollisionObject* ObjA, const GCo
     return false;
 }
 
-bool GCG_Sphere_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Sphere_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
-    int32_t nCount = 0;
+    const GTransform_QT& TransS = m_bSwap ? ObjB->m_Transform : ObjA->m_Transform;
+    const GTransform_QT& TransB = m_bSwap ? ObjA->m_Transform : ObjB->m_Transform;
 
-    if( m_bSwap )
-    {
-        GShapeSphere TSphere(ObjB->m_Shape.GetRaiuds());
-        GShapeBox    TBox(ObjA->m_Shape.GetHalfExtern());
+    GShapeSphere TSphere(m_bSwap ? ObjB->m_Shape.GetRaiuds()     : ObjA->m_Shape.GetRaiuds());
+    GShapeBox    TBox(   m_bSwap ? ObjA->m_Shape.GetHalfExtern() : ObjB->m_Shape.GetHalfExtern());
 
-        GTransform_QT TransS(ObjB->m_Transform );
-        GTransform_QT TransB(ObjA->m_Transform);
-
-        nCount = GCollision_Sphere::Sphere_Box_Contact(TSphere, TransS, TBox, TransB, pContact );
-    }
-    else
-    {
-        GShapeSphere TSphere(ObjA->m_Shape.GetRaiuds());
-        GShapeBox    TBox(ObjB->m_Shape.GetHalfExtern());
-
-        GTransform_QT TransS(ObjA->m_Transform);
-        GTransform_QT TransB(ObjB->m_Transform);
-
-        nCount = GCollision_Sphere::Sphere_Box_Contact( TSphere, TransS, TBox, TransB, pContact );
-    }
+    int32_t nCount = GCollision_Sphere::Sphere_Box_Contact(TSphere, TransS, TBox, TransB, pContact );
 
     if (pContact)
     {
-        pContact->Swap = m_bSwap;
+        pContact->PointOnSurface = m_bSwap ? ObjB->GetId() : ObjA->GetId();
     }
 
     return nCount > 0;
 }
 
-bool GCG_Sphere_Capusle::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Sphere_Capusle::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Cylinder::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Sphere_Cylinder::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
     return false;
 }
 
-bool GCG_Sphere_Plane::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Sphere_Plane::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
-    return false;
+    const GTransform_QT& TransS = m_bSwap ? ObjB->m_Transform : ObjA->m_Transform;
+    const GTransform_QT& TransP = m_bSwap ? ObjA->m_Transform : ObjB->m_Transform;
+
+    GShapeSphere TSphere( m_bSwap ? ObjB->m_Shape.GetRaiuds() : ObjA->m_Shape.GetRaiuds() );
+    GShapePlane  TPlane;
+
+    int32_t nCount = GCollision_Sphere::Sphere_Plane_Contact(TSphere, TransS, TPlane, TransP, pContact);
+    if (pContact)
+    {
+        pContact->PointOnSurface =  m_bSwap ? ObjB->GetId() : ObjA->GetId();;
+    }
+
+    return nCount > 0;
 }
 
-bool GCG_Box_Box::ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact )
+bool GCG_Box_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact )
 {
-
     GShapeBox BoxA(ObjA->m_Shape.GetHalfExtern());
     GShapeBox BoxB(ObjB->m_Shape.GetHalfExtern());
 
-
-    if (GCollision_Box::Box_Box_Contact(
-        BoxA, ObjA->m_Transform,
-        BoxB ,ObjB->m_Transform,
-        pContact) != 0)
+    if (GCollision_Box::Box_Box_Contact( BoxA, ObjA->m_Transform, BoxB ,ObjB->m_Transform, pContact) != 0)
     {
-
         return true;
     }
 
-    return false;
+    if (pContact)
+    {
+        pContact->PointOnSurface = ObjA->GetId();
+    }
 
+    return false;
+}
+
+bool GCG_Plane_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact)
+{
+    const GTransform_QT& TransP = m_bSwap ? ObjB->m_Transform : ObjA->m_Transform;
+    const GTransform_QT& TransB = m_bSwap ? ObjA->m_Transform : ObjB->m_Transform;
+
+    GShapePlane  TPlane;
+    GShapeBox    TBox(m_bSwap ? ObjA->m_Shape.GetHalfExtern() : ObjB->m_Shape.GetHalfExtern());
+
+    int32_t nCount = GCollision_Box::Plane_Box_Contact(TPlane, TransP, TBox, TransB, pContact);
+    if (pContact)
+    {
+        pContact->PointOnSurface = m_bSwap ? ObjA->GetId() : ObjB->GetId();
+    }
+
+    return nCount > 0;
 }
 
 
@@ -147,10 +159,19 @@ GCollisionManerger::~GCollisionManerger()
 void GCollisionManerger::Init( )
 {
 
-    m_Algorithm[EShape_Sphere][EShape_Sphere]    = new GCG_Sphere_Sphere();
-    m_Algorithm[EShape_Box][EShape_Box]          = new GCG_Box_Box();
+    m_Algorithm[EShape_Sphere][EShape_Sphere]   = new GCG_Sphere_Sphere();
+    m_Algorithm[EShape_Box][EShape_Box]         = new GCG_Box_Box();
 
-    m_Algorithm[EShape_Sphere][EShape_Box]       = new GCG_Sphere_Box();
-    m_Algorithm[EShape_Box][EShape_Sphere]       = new GCG_Sphere_Box(true);
+    m_Algorithm[EShape_Sphere][EShape_Box]      = new GCG_Sphere_Box();
+    m_Algorithm[EShape_Box][EShape_Sphere]      = new GCG_Sphere_Box(true);
+
+
+    m_Algorithm[EShape_Sphere][EShape_Plane]    = new GCG_Sphere_Plane();
+    m_Algorithm[EShape_Plane][EShape_Sphere]    = new GCG_Sphere_Plane(true);
+
+
+    m_Algorithm[EShape_Plane][EShape_Box]       = new GCG_Plane_Box();
+    m_Algorithm[EShape_Box][EShape_Plane]       = new GCG_Plane_Box(true);
+
 
 }

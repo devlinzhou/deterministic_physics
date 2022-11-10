@@ -42,6 +42,12 @@ GAABB GCollisionShape::GetLocalBox() const
     case EShape_ConcaveBase:
         break;
     case EShape_Plane:
+    {
+        f32 BoxHalfSize = GMath::Makef32(50,1,10 );
+        GVector3 HalfExter = GVector3( BoxHalfSize, BoxHalfSize, BoxHalfSize );
+        GVector3 VCenter = GVector3(-BoxHalfSize, GMath::Zero(),  GMath::Zero() );
+        return GAABB( VCenter -HalfExter, VCenter + HalfExter);
+    }
         break;
     case EShape_HightField:
         break;

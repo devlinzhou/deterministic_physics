@@ -15,6 +15,7 @@
 #include "glacier_collision_shape.h"
 #include "glacier_debug_draw.h"
 #include "glacier_contact.h"
+#include "glacier_convexhull.h"
 
 
 void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& pShape, IGlacierDraw* pDebugDraw, GColor TColor )
@@ -43,7 +44,7 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     break;
     case  EShape::EShape_Cylinder:
     {
-
+        pDebugDraw->DrawCylinder(Trans, pShape.GetRaiuds(), pShape.GetHalfHeight(), TColor);
     }
     break;
     case  EShape::EShape_ConvexHull:
@@ -64,7 +65,7 @@ void GPhyscsUtils::DrawShape(const GTransform_QT& Trans, const GCollisionShape& 
     break;
     case  EShape::EShape_Plane:
     {
-         pDebugDraw->DrawPlane(Trans, GPlane( pShape.GetPlaneNormal(), GMath::Zero() ), f32(50), TColor);
+         pDebugDraw->DrawPlane(Trans, f32(50), TColor);
     }
     break;
     case  EShape::EShape_HightField:
@@ -117,19 +118,18 @@ void GPhyscsUtils::DrawContact( const GCollisionContact& TContact, IGlacierDraw*
         const GManifoldPoint& TMn = TContact.m_Point[i];
 
         GVector3 VPos = TMn.m_PosWorld;
-        GVector3 VNor = TMn.m_NormalOnB;
+        GVector3 VNor = TMn.m_Normal;
 
-        GVector3 Vdes = VPos + VNor * TMn.m_depth;
+        GVector3 Vdes = VPos - VNor * TMn.m_depth;
 
-        pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,10,1000), TColor, 4);
-        pDebugDraw->DrawSphere(Vdes, GMath::Makef32(0, 5, 1000), TColor, 4);
+        pDebugDraw->DrawSphere(VPos, GMath::Makef32(0,10, 1000), TColor, 4);
+        pDebugDraw->DrawSphere(Vdes, GMath::Makef32(0, 7, 1000), GColor::Gray(), 4);
         pDebugDraw->DrawLine( VPos, Vdes, TColor);
     }
 }
 
 GMatrix3 GPhyscsUtils::CalculateInertiaTensor( const GCollisionShape& pShape )
 {
-
     switch (pShape.ShapType)
     {
     case  EShape::EShape_ConvexBase:
@@ -158,12 +158,31 @@ GMatrix3 GPhyscsUtils::CalculateInertiaTensor( const GCollisionShape& pShape )
     break;
     case  EShape::EShape_Capsule:
     {
-       
+        f32 Radius = pShape.GetRaiuds();
+        f32 RSqure = Radius * Radius;
+
+        f32 I =  
+            GMath::Makef32(0,1,4) * RSqure +
+            GMath::Makef32(0,1,3) * pShape.GetHalfHeight() * pShape.GetHalfHeight();
+
+        return GMatrix3(
+            I, GMath::Zero(), GMath::Zero(),
+            GMath::Zero(), I, GMath::Zero(),
+            GMath::Zero(), GMath::Zero(), GMath::Half() * RSqure);
     }
     break;
     case  EShape::EShape_Cylinder:
     {
+        f32 HalfH = pShape.GetHalfHeight();
+        f32 Radius = pShape.GetRaiuds();
+        f32 RSqure = Radius * Radius;
 
+        f32 I = GMath::Makef32(0, 1, 4) * RSqure + GMath::Makef32(0, 1, 3) * HalfH * HalfH;
+
+        return GMatrix3(
+            I, GMath::Zero(), GMath::Zero(),
+            GMath::Zero(), I, GMath::Zero(),
+            GMath::Zero(), GMath::Zero(), GMath::Half() * RSqure);
     }
     break;
     case  EShape::EShape_ConvexHull:
@@ -199,4 +218,73 @@ GMatrix3 GPhyscsUtils::CalculateInertiaTensor( const GCollisionShape& pShape )
 
     return GMatrix3::Identity();
 
+}
+
+f32 GPhyscsUtils::CalculateVolume(const GCollisionShape& pShape)
+{
+    switch (pShape.ShapType)
+    {
+    case  EShape::EShape_ConvexBase:
+    {
+        return GMath::Zero();
+    }
+    break;
+    case  EShape::EShape_Sphere:
+    {
+        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * GMath::Makef32(0, 4, 10);
+    }
+    break;
+    case  EShape::EShape_Box:
+    {
+        f32 t = pShape.GetHalfExtern().x * pShape.GetHalfExtern().y * pShape.GetHalfExtern().z * GMath::Makef32(8,0,1) ;
+
+        return t;
+    }
+    break;
+    case  EShape::EShape_Capsule:
+    {
+        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * pShape.GetHalfHeight() * GMath::Pi_Two();
+        t += pShape.GetRaiuds() * pShape.GetRaiuds() * pShape.GetRaiuds() * GMath::Makef32(1,1,3);
+        return t;
+    }
+    break;
+    case  EShape::EShape_Cylinder:
+    {
+        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * pShape.GetHalfHeight() * GMath::Pi_Two() ;
+
+        return t;
+    }
+    break;
+    case  EShape::EShape_ConvexHull:
+    {
+
+    }
+    break;
+    case  EShape::EShape_ConcaveBase:
+    {
+         return GMath::Zero();
+    }
+    break;
+    case  EShape::EShape_Plane:
+    {
+        return GMath::Zero();
+    }
+    break;
+    case  EShape::EShape_HightField:
+    {
+        return GMath::Zero();
+    }
+    break;
+    case  EShape::EShape_TriangleMesh:
+    {
+        return GMath::Zero();
+    }
+    break;
+
+    default:
+        break;
+    }
+
+
+    return GMath::Zero();
 }

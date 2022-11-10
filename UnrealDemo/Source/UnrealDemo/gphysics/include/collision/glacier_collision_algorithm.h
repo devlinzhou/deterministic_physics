@@ -28,7 +28,7 @@ public:
     
     }
 
-    virtual bool ProcessCollision( const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr );
+    virtual bool ProcessCollision( const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr );
 
     bool    m_bSwap;
     int32_t CallTimes;
@@ -40,7 +40,7 @@ public:
     GCG_Sphere_Sphere( bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr  ) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr  ) override;
 };
 
 class GCG_Sphere_Box : public GCollisionAlgorithm
@@ -49,7 +49,7 @@ public:
     GCG_Sphere_Box(bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Capusle : public GCollisionAlgorithm
@@ -58,7 +58,7 @@ public:
     GCG_Sphere_Capusle(bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Cylinder : public GCollisionAlgorithm
@@ -67,7 +67,7 @@ public:
     GCG_Sphere_Cylinder(bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Sphere_Plane : public GCollisionAlgorithm
@@ -76,7 +76,7 @@ public:
     GCG_Sphere_Plane(bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 class GCG_Box_Box : public GCollisionAlgorithm
@@ -85,7 +85,16 @@ public:
     GCG_Box_Box(bool bSwap = false) : GCollisionAlgorithm(bSwap)
     {
     }
-    virtual bool ProcessCollision(const GCollisionObject* ObjA, const GCollisionObject* ObjB, GCollisionContact* pContact = nullptr) override;
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
+};
+
+class GCG_Plane_Box : public GCollisionAlgorithm
+{
+public:
+    GCG_Plane_Box(bool bSwap = false) : GCollisionAlgorithm(bSwap)
+    {
+    }
+    virtual bool ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, GCollisionContact* pContact = nullptr) override;
 };
 
 

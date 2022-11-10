@@ -250,19 +250,23 @@ void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, const GPlane& TPlane, 
 
 void IGlacierDraw::DrawPlane(const GTransform_QT& TTrans, f32 Size, GColor TColor)
 {
-    auto P0 = TTrans.TransformPosition(GVector3(GMath::Zero(), -GMath::One(),  GMath::One()) * Size);
-    auto P1 = TTrans.TransformPosition(GVector3(GMath::Zero(), -GMath::One(), -GMath::One()) * Size);
-    auto P2 = TTrans.TransformPosition(GVector3(GMath::Zero(),  GMath::One(), -GMath::One()) * Size);
-    auto P3 = TTrans.TransformPosition(GVector3(GMath::Zero(),  GMath::One(),  GMath::One()) * Size);
-
-    DrawLine((P0), (P1), TColor);
-    DrawLine((P1), (P2), TColor);
-    DrawLine((P2), (P3), TColor);
-    DrawLine((P3), (P0), TColor);
-    DrawLine((P0), (P2), TColor);
-    DrawLine((P1), (P3), TColor);
+    GVector3 V0 = TTrans.TransformNormal(GVector3(GMath::Zero(), GMath::One(), GMath::Zero()));
+    GVector3 V1 = TTrans.TransformNormal(GVector3(GMath::Zero(), GMath::Zero(), GMath::One()));
 
     DrawLine(TTrans.m_Pos,TTrans.m_Pos + TTrans.m_Rot.RotateVector( GVector3::UnitX() * Size * GMath::Makef32(0,15,100)), TColor);
+
+    for (f32 i = -Size; i <= Size; i += GMath::Makef32(10,0,1) )
+    {
+        GVector3 pt0 = TTrans.m_Pos + V0 * Size + i * V1;
+        GVector3 pt1 = TTrans.m_Pos - V0 * Size + i * V1;
+        GVector3 pt2 = TTrans.m_Pos + V1 * Size + i * V0;
+        GVector3 pt3 = TTrans.m_Pos - V1 * Size + i * V0;
+
+        DrawLine(pt0, pt1, TColor);
+        DrawLine(pt2, pt3, TColor);
+    }
+
+
 }
 
 void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, f32 Size, GColor TColor)

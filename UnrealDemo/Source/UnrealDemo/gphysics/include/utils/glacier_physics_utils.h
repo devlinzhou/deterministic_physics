@@ -16,10 +16,12 @@
 #include "glacier_transform_qt.h"
 #include "glacier_color.h"
 #include "glacier_matrix.h"
+#include "glacier_collision_shape.h"
 
 class GCollisionShape;
 class IGlacierDraw;
 class GCollisionContact;
+class GPhysicsWorld;
 class GPhyscsUtils
 {
 public:
@@ -39,4 +41,6 @@ public:
 
 
      static GMatrix3 CalculateInertiaTensor( const GCollisionShape& pShape );
+     static f32 CalculateVolume(const GCollisionShape& pShape);
+
 };

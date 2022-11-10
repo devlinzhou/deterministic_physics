@@ -24,7 +24,7 @@ class GManifoldPoint
 public:
 
     GVector3    m_PosWorld;
-    GVector3    m_NormalOnB;
+    GVector3    m_Normal;
     f32         m_depth;
     uint32_t    m_FaceIndex;
 };
@@ -40,8 +40,8 @@ public:
 
 
     void AddContactPoint( 
-        const GVector3& PosOnSurfaceB_World,
-        const GVector3& NormalOnB,
+        const GVector3& PosWorld,
+        const GVector3& Normal,
         f32 depth,
         uint32_t faceid = -1);
 
@@ -49,23 +49,21 @@ public:
      {
          PairId = 0;
          m_nPointCount = 0;
-         Swap = false;
+         PointOnSurface = -1;
      }
 
     void ClearPoint()
     {
         m_nPointCount = 0;
-        Swap =false;
     }
 
     int32_t GetPointCount() const
     {
-        return m_nPointCount;
+        return  m_nPointCount < MaxPoint ? m_nPointCount : MaxPoint;
     }
 
-
     uint64_t        PairId;
-    bool            Swap;
+    uint32_t        PointOnSurface;
 
     static constexpr int32_t MaxPoint = 16;
 
