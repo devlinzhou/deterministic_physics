@@ -21,11 +21,13 @@ public:
 
     GRigidBody(uint32_t id, EShape TShape) : GCObject(id, TShape)
     {
-        m_CollisionType = CollisionObject_Rigid_Body;
+        m_CollisionType = CO_Rigid_Body;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
         m_bDynamic = false;
         m_Mass= GMath::One();
+        m_InvMass = GMath::One();
+
         m_density = GMath::Makef32(1000,0,1);
     }
 

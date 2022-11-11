@@ -21,9 +21,9 @@
 
 enum ECollisionObjectType
 {
-    CollisionObject_Base = 0,
-    CollisionObject_Rigid_Body,
-    CollisionObject_Soft_Body,
+    CO_Base = 0,
+    CO_Rigid_Body,
+    CO_Soft_Body,
 
 };
 
@@ -35,7 +35,7 @@ public:
     GCObject(  uint32_t uId, EShape TShape )
         : m_Shape(TShape), m_Id(uId), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
     {
-        m_CollisionType     = CollisionObject_Base;
+        m_CollisionType     = CO_Base;
         m_Transform         = GTransform_QT::Identity();
         m_Transform_Last    = GTransform_QT::Identity();
         m_UserId            = -1;
@@ -43,7 +43,7 @@ public:
         m_bNeedUpdate       = true;
     }
 
-    ECollisionObjectType GetCollisionObjectType() const
+    ECollisionObjectType GetCOType() const
     {
         return m_CollisionType;
     }

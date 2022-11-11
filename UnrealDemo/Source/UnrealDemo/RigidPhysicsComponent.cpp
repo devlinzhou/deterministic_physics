@@ -41,7 +41,10 @@ void URigidPhysicsComponent::BeginPlay()
             m_pRigid->m_Gravity =  GUtility::U_to_G(Gravity);
             m_pRigid->m_VelocityMax = GUtility::U_to_G(MaxVelocity);
         }
-
+    }
+    else
+    {
+        int a= 0;
     }
 	
 }
@@ -58,6 +61,11 @@ void URigidPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         GetOwner()->SetActorRotation(GUtility::G_to_U(m_pRigid->m_Transform.m_Rot));
 
        //GetOwner()->SetActorTransform( GUtility::G_to_U(m_pRigid->m_Transform) );
+    }
+    else
+    {
+    
+        int a = 0;
     }
 }
 

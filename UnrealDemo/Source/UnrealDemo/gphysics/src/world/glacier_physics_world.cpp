@@ -114,6 +114,8 @@ bool GPhysicsWorld::AddCollisionObject(GCObject* pObject)
     if (pCell != nullptr)
     {
         pCell->AddCollisionObject(pObject);
+
+        pObject->m_pGridCell = pCell;
     }
 
     return true;
@@ -259,7 +261,7 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
     {
         GCObject* pObject = m_Objects[i];
-        if (pObject->m_CollisionType == ECollisionObjectType::CollisionObject_Rigid_Body)
+        if (pObject->m_CollisionType == ECollisionObjectType::CO_Rigid_Body)
         {
             GRigidBody* pDynamicRigid = (GRigidBody*)pObject;
 
@@ -279,7 +281,17 @@ void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, 
     const GCObject* pObject = pObj;
 
     if (mask & GPDraw_Shape)
-        GPhyscsUtils::DrawShape(pObject->m_Transform, pObject->m_Shape, pDraw, GColor::Yellow());
+    {
+
+        GColor TColor = GColor::Yellow(); 
+        if( pObj->m_ContactArray.size() != 0 )
+        {
+            TColor = GColor::Red(); 
+        }
+
+        GPhyscsUtils::DrawShape(pObject->m_Transform, pObject->m_Shape, pDraw, TColor);
+    }
+        
 
     if (mask & GPDraw_LocalBox)
     {
@@ -324,17 +336,17 @@ void GPhysicsWorld::CollisionBroadPhase( )
     GPRORILER_FUN
 
     m_BroadPhasePairs.clear();
-    for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
+    for (std::map<GGridPosition, GGridCell*>::const_iterator iterA = m_Grids.begin(); iterA != m_Grids.end(); ++iterA)
     {
         // ceil 
-        for (int32_t i = 0; i < (int32_t)iter->second->m_Objects.size(); ++i)
+        for (int32_t i = 0; i < (int32_t)iterA->second->m_Objects.size(); ++i)
         {
-            GCObject* pObjectA = iter->second->m_Objects[i];
+            GCObject* pObjectA = iterA->second->m_Objects[i];
 
             const GAABB& BoxA = pObjectA->GetAABB();
             for (int32_t j = 0; j < i; ++j)
             {
-                GCObject* pObjectB = iter->second->m_Objects[j];
+                GCObject* pObjectB = iterA->second->m_Objects[j];
                 const GAABB& BoxB = pObjectB->GetAABB();
                 if (BoxA.Intersects(BoxB))
                 {
@@ -357,34 +369,26 @@ void GPhysicsWorld::CollisionBroadPhase( )
 
         for (int32_t i = 0; i < 13; ++i)
         {
-            GGridPosition TPos = s_BroadPhaseNeighbourt[i] + iter->first;
+            GGridPosition TPos = s_BroadPhaseNeighbourt[i] + iterA->first;
 
             std::map<GGridPosition, GGridCell*>::const_iterator iterB = m_Grids.find(TPos);
 
             if (iterB == m_Grids.end())
                 continue;
 
-            for (int32_t LoopA = 0; LoopA < (int32_t)iter->second->m_Objects.size(); ++LoopA)
+            for (int32_t LoopA = 0; LoopA < (int32_t)iterA->second->m_Objects.size(); ++LoopA)
             {
-                GCObject* pObjectA = iter->second->m_Objects[LoopA];
+                GCObject*       pObjectA    = iterA->second->m_Objects[LoopA];
+                const GAABB&    BoxA        = pObjectA->GetAABB();
 
-//                 if (pObjectA->GetCollisionObjectType() != ECollisionObjectType::Dynamic)
-//                 {
-//                     continue;
-//                 }
 
-                const GAABB& BoxA = pObjectA->GetAABB();
                 for (int32_t LoopB = 0; LoopB < (int32_t)iterB->second->m_Objects.size(); ++LoopB)
                 {
-                    GCObject* pObjectB = iter->second->m_Objects[LoopA];
-
-                    if (pObjectA->GetId() < pObjectB->GetId())
+                    GCObject* pObjectB = iterB->second->m_Objects[LoopB];
+                    const GAABB& BoxB = pObjectB->GetAABB();
+                    if (BoxA.Intersects(BoxB))
                     {
-                        const GAABB& BoxB = pObjectB->GetAABB();
-                        if (BoxA.Intersects(BoxB))
-                        {
-                            m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
-                        }
+                        m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
                     }
                 }
             }
@@ -423,6 +427,40 @@ void GPhysicsWorld::CollisionNarrowPhase( )
     }
 }
 
+void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
+{
+    int32_t nPointCount = pPair.PairContact.GetPointCount();
+
+    bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
+
+    for( int32_t i = 0; i < nPointCount; ++i )
+    {
+        GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
+
+        GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
+
+        if( pPair.pObjectA->GetCOType() == CO_Rigid_Body )
+        {
+            GRigidBody* pRA = (GRigidBody*)pPair.pObjectA;
+
+            if( pRA->m_bDynamic )
+                pRA->AddImpulse_World(TPoint.m_PosWorld,  VNormal );
+        }
+
+        if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
+        {
+            GRigidBody* pRB = (GRigidBody*)pPair.pObjectB;
+
+            if (pRB->m_bDynamic)
+                pRB->AddImpulse_World(TPoint.m_PosWorld, -VNormal);
+        }
+    
+    }
+
+
+}
+
+
 void GPhysicsWorld::SolveContactConstraint( )
 {
     GPRORILER_FUN
@@ -432,11 +470,19 @@ void GPhysicsWorld::SolveContactConstraint( )
      
     }
 
+
+
+    for (uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i)
+    {
+        GBroadPhasePair& TPair = m_BroadPhasePairs[i];
+        SolveContactConstraint( TPair );
+    }
+
     for (uint32_t i = 0; i < (uint32_t)m_Objects.size(); ++i)
     {
         GCObject* pObj = m_Objects[i];
 
-        if( pObj->m_CollisionType == CollisionObject_Rigid_Body )
+        if( pObj->m_CollisionType == CO_Rigid_Body )
         {
             GRigidBody* PRigidA = (GRigidBody*)pObj;
 
@@ -444,7 +490,7 @@ void GPhysicsWorld::SolveContactConstraint( )
             {
                 GBroadPhasePair& TPair = m_BroadPhasePairs[pObj->m_ContactArray[j]];
 
-               // pObj->m_vel
+
                 int a = 0;
             }
 

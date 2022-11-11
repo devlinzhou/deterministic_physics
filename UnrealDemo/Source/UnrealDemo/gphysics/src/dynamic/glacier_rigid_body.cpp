@@ -53,4 +53,6 @@ void GRigidBody::CalculateInertiaTensor()
     m_Mass              = m_density * GPhyscsUtils::CalculateVolume( m_Shape);
     m_MoumentInertia    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
     m_InvMoumentInertia = m_MoumentInertia.GetInverse();
+
+    m_InvMass           = GMath::One() / m_Mass;
 }

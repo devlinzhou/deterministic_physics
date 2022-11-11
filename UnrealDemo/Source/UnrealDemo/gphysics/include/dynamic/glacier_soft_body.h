@@ -20,7 +20,7 @@ public:
 
     GSoftBody(uint32_t id, EShape TShape) : GCObject(id, TShape)
     {
-        m_CollisionType = CollisionObject_Rigid_Body;
+        m_CollisionType = CO_Rigid_Body;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_VelocityMax = GMath::Makef32(100,0,1);
         m_bDynamic = false;

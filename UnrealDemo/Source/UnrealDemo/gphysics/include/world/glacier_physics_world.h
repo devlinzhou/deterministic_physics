@@ -147,13 +147,7 @@ public:
     GBroadPhasePair(const GBroadPhasePair&) = default;
     GBroadPhasePair(GCObject* p1, GCObject* p2)
     {
-        if (p1->GetId() == p2->GetId())
-        {
-            pObjectA = nullptr;
-            pObjectB = nullptr;
-            PairId   = 0;
-        }
-        else if (p1->GetId() < p2->GetId())
+        if (p1->GetId() < p2->GetId())
         {
             pObjectA = p1;
             pObjectB = p2;
@@ -169,12 +163,11 @@ public:
         }
     }
 
-    uint64_t          PairId;
+    uint64_t            PairId;
+    GCObject*           pObjectA;
+    GCObject*           pObjectB;
 
-    GCObject* pObjectA;
-    GCObject* pObjectB;
-
-    GCollisionContact PairContact;
+    GCollisionContact   PairContact;
 };
 
 enum
@@ -257,6 +250,8 @@ protected:
 
     void CollisionNarrowPhase( );
 
+
+    void SolveContactConstraint( GBroadPhasePair& pPair );
     void SolveContactConstraint( );
 
     void UpdateSceneGrid( );
