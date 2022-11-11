@@ -87,8 +87,10 @@ GRigidBody* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, 
 
     pBody->UpdateLocalBox();
     m_PhysicsWorld.AddCollisionObject(pBody);
+
+    pBody->CalculateInertiaTensor();
     pBody->m_Transform = Trans;
-    pBody->m_VelocityMax = GMath::Makef32(10, 0, 1);
+    pBody->m_LinearVelocityMax = GMath::Makef32(10, 0, 1);
      pBody->m_bDynamic = true;
     return pBody;
 }

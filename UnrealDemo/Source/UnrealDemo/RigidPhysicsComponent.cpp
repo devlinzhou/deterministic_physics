@@ -39,7 +39,7 @@ void URigidPhysicsComponent::BeginPlay()
         {
             m_pRigid = PPhysics->CreateDynamicRigidBody( GUtility::U_to_G(GetOwner()->GetTransform()), GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
             m_pRigid->m_Gravity =  GUtility::U_to_G(Gravity);
-            m_pRigid->m_VelocityMax = GUtility::U_to_G(MaxVelocity);
+            m_pRigid->m_LinearVelocityMax = GUtility::U_to_G(MaxVelocity);
         }
     }
     else

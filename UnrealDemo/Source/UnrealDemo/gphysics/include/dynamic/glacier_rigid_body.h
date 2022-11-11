@@ -23,7 +23,8 @@ public:
     {
         m_CollisionType = CO_Rigid_Body;
         m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
-        m_VelocityMax = GMath::Makef32(100,0,1);
+        m_LinearVelocityMax = GMath::Makef32(100,0,1);
+        m_AngularVelocityMax = GMath::Makef32(100,0,1);
         m_bDynamic = false;
         m_Mass= GMath::One();
         m_InvMass = GMath::One();
@@ -60,14 +61,14 @@ public:
     f32             m_Mass;
     f32             m_InvMass;
 
-    GVector3        m_Velocity;
-    f32             m_VelocityMax;
+    GVector3        m_LinearVelocity;
+    f32             m_LinearVelocityMax;
 
     GMatrix3        m_MoumentInertia;           // local
     GMatrix3        m_InvMoumentInertia;
 
-    GVector3        m_AngleVelocity;
-    f32             m_AngleVelocityMax;
+    GVector3        m_AngularVelocity;
+    f32             m_AngularVelocityMax;
 
 
 

@@ -17,29 +17,44 @@
 
 void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 {
-    GVector3 VNew = m_Velocity + m_Gravity * DetalTime;
+    GVector3 VNew = m_LinearVelocity + m_Gravity * DetalTime;
 
-    if (VNew.SizeSquare() > (m_VelocityMax * m_VelocityMax))
+    if (VNew.SizeSquare() > (m_LinearVelocityMax * m_LinearVelocityMax))
     {
-        VNew = VNew.GetNormalize() * m_VelocityMax;
+        VNew = VNew.GetNormalize() * m_LinearVelocityMax;
     }
 
-    m_Transform.m_Pos += (m_Velocity + VNew) * GMath::Half() * DetalTime;
+    m_Transform.m_Pos += (m_LinearVelocity + VNew) * GMath::Half() * DetalTime;
 
-    m_Velocity = VNew;
+    m_LinearVelocity = VNew;
+
+
+    f32	fAngle = m_AngularVelocity.Size(); 
+
+    fAngle = GMath::Min(fAngle, m_AngularVelocityMax );
+
+    f32 fDeltaAngle = fAngle * DetalTime;
+
+    GQuaternion DeltaRot = GQuaternion( m_AngularVelocity.GetNormalize(), fDeltaAngle );
+
+
+    m_Transform.m_Rot = m_Transform.m_Rot * DeltaRot;
+
+    m_Transform.m_Rot.Normalize();
+
 
     m_bNeedUpdate = true;
 }
 
 void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse)
 {
-    m_Velocity += VImpulse * m_InvMass;
+    m_LinearVelocity += VImpulse * m_InvMass;
 
     GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
 
     GVector3 Torque = GVector3::CrossProduct(VPos - GetMassCenterPos(), VImpulse );
 
-    m_AngleVelocity += Inv_Ineria.TransformVector( Torque); 
+    m_AngularVelocity += Inv_Ineria.TransformVector( Torque); 
 }
 
 void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse)
@@ -50,7 +65,7 @@ void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpuls
 
 void GRigidBody::CalculateInertiaTensor()
 {
-    m_Mass              = m_density * GPhyscsUtils::CalculateVolume( m_Shape);
+    m_Mass              = GMath::Makef32(10,0,1);// m_density * GPhyscsUtils::CalculateVolume( m_Shape);
     m_MoumentInertia    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
     m_InvMoumentInertia = m_MoumentInertia.GetInverse();
 
