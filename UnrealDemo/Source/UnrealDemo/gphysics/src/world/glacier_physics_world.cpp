@@ -75,10 +75,6 @@ bool GGridCell::RemoveObject(GCObject* pObject)
     return false;
 }
 
-
-
-
-
 bool GPhysicsWorld::AddCollisionObject(GCObject* pObject)
 {
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
@@ -335,7 +331,9 @@ void GPhysicsWorld::CollisionBroadPhase( )
 {
     GPRORILER_FUN
 
-    m_BroadPhasePairs.clear();
+
+    ClearContactPair();
+
     for (std::map<GGridPosition, GGridCell*>::const_iterator iterA = m_Grids.begin(); iterA != m_Grids.end(); ++iterA)
     {
         // ceil 
@@ -350,7 +348,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
                 const GAABB& BoxB = pObjectB->GetAABB();
                 if (BoxA.Intersects(BoxB))
                 {
-                    m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
+                    AddContactPair(pObjectA, pObjectB);
                 }
             }
 
@@ -361,7 +359,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
                 const GAABB& BoxB = pLargeObj->GetAABB();
                 if (BoxA.Intersects(BoxB))
                 {
-                    m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pLargeObj));
+                    AddContactPair(pObjectA, pLargeObj);
                 }
             }
         }
@@ -388,7 +386,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
                     const GAABB& BoxB = pObjectB->GetAABB();
                     if (BoxA.Intersects(BoxB))
                     {
-                        m_BroadPhasePairs.push_back(GBroadPhasePair(pObjectA, pObjectB));
+                        AddContactPair(pObjectA, pObjectB);
                     }
                 }
             }
@@ -464,13 +462,6 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 void GPhysicsWorld::SolveContactConstraint( )
 {
     GPRORILER_FUN
-    for( std::map<uint64_t, uint32_t>::iterator iter = m_ContactManager.m_Finder.begin(); iter != m_ContactManager.m_Finder.end(); ++iter)
-    {
-     
-     
-    }
-
-
 
     for (uint32_t i = 0; i < (uint32_t)m_BroadPhasePairs.size(); ++i)
     {
@@ -478,39 +469,7 @@ void GPhysicsWorld::SolveContactConstraint( )
         SolveContactConstraint( TPair );
     }
 
-    for (uint32_t i = 0; i < (uint32_t)m_Objects.size(); ++i)
-    {
-        GCObject* pObj = m_Objects[i];
 
-        if( pObj->m_CollisionType == CO_Rigid_Body )
-        {
-            GRigidBody* PRigidA = (GRigidBody*)pObj;
-
-            for (int j = 0; j < pObj->m_ContactArray.size(); ++j)
-            {
-                GBroadPhasePair& TPair = m_BroadPhasePairs[pObj->m_ContactArray[j]];
-
-
-                int a = 0;
-            }
-
-
-            if( pObj->m_ContactObjs.size() != 0 )
-            {
-
-                for (std::set<uint32_t>::iterator iter = pObj->m_ContactObjs.begin(); iter != pObj->m_ContactObjs.end(); ++iter)
-                {
-                    GCObject* pOther = m_ObjectMap[*iter];
-
-
-                    int a = 0;
-
-                }
-            
-            }
-        }
-
-    }
 
 }
 
@@ -549,3 +508,16 @@ void GPhysicsWorld::UpdateSceneGrid( )
     }
 }
 
+void GPhysicsWorld::ClearContactPair()
+{
+    m_BroadPhasePairs.clear();
+    m_BroadPhaseMap.clear();
+}
+void GPhysicsWorld::AddContactPair(GCObject* p1, GCObject* p2)
+{
+    GBroadPhasePair  TPair(p1, p2);
+
+    m_BroadPhasePairs.push_back(TPair);
+
+    m_BroadPhaseMap[TPair.PairId] = TPair;
+}

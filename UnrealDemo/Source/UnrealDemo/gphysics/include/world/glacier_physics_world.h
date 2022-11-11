@@ -224,9 +224,6 @@ public:
 
     void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
 
-
-
-
 public:
 
     static inline uint64_t GetPairId( uint32_t IdA, uint32_t IdB )
@@ -250,17 +247,17 @@ protected:
 
     void CollisionNarrowPhase( );
 
-
     void SolveContactConstraint( GBroadPhasePair& pPair );
     void SolveContactConstraint( );
 
     void UpdateSceneGrid( );
 
+    void ClearContactPair();
+    void AddContactPair(GCObject* p1, GCObject* p2);
+
 public:
 
     uint32_t CollisionId;
-
-
 
 
 private:
@@ -270,14 +267,13 @@ private:
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*>     m_Grids;
-    std::map<uint32_t, GCObject*>   m_ObjectMap;
-    std::vector<GCObject*>          m_Objects;
-    std::vector<GCObject*>          m_StaticLargeObj;
-
+    std::map<uint32_t, GCObject*>           m_ObjectMap;
+    std::vector<GCObject*>                   m_Objects;
+    std::vector<GCObject*>                  m_StaticLargeObj;
 
     std::vector<GBroadPhasePair>            m_BroadPhasePairs;
+    std::map<uint64_t, GBroadPhasePair>     m_BroadPhaseMap;
 
-
-    GCollisionManerger                  m_CollisionManager;
-    GContactManerger                    m_ContactManager;
+    GCollisionManerger                      m_CollisionManager;
+    GContactManerger                        m_ContactManager;
 };
