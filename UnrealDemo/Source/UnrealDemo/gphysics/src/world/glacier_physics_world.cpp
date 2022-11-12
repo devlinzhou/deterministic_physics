@@ -431,6 +431,8 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
     bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
+    f32 factor = GMath::Makef32(0,4,10);
+
     for( int32_t i = 0; i < nPointCount; ++i )
     {
         GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
@@ -442,7 +444,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
             GRigidBody* pRA = (GRigidBody*)pPair.pObjectA;
 
             if( pRA->m_bDynamic )
-                pRA->AddImpulse_World(TPoint.m_PosWorld,  VNormal );
+                pRA->AddImpulse_World(TPoint.m_PosWorld,  VNormal * factor );
         }
 
         if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
@@ -450,7 +452,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
             GRigidBody* pRB = (GRigidBody*)pPair.pObjectB;
 
             if (pRB->m_bDynamic)
-                pRB->AddImpulse_World(TPoint.m_PosWorld, -VNormal);
+                pRB->AddImpulse_World(TPoint.m_PosWorld, -VNormal * factor);
         }
     
     }

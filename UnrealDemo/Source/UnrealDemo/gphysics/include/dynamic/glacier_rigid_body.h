@@ -45,7 +45,7 @@ public:
 
     GMatrix3 getGlobalInertiaTensorInverse() const
     {
-        return m_MoumentInertia * GMatrix3( m_Transform.m_Rot);
+        return  GMatrix3( m_Transform.m_Rot.GetUnitInverse() ) * m_InertiaTensor * GMatrix3( m_Transform.m_Rot);
     }
 
     void CalculateInertiaTensor();
@@ -64,8 +64,8 @@ public:
     GVector3        m_LinearVelocity;
     f32             m_LinearVelocityMax;
 
-    GMatrix3        m_MoumentInertia;           // local
-    GMatrix3        m_InvMoumentInertia;
+    GMatrix3        m_InertiaTensor;           // local
+    GMatrix3        m_InvInertiaTensor;
 
     GVector3        m_AngularVelocity;
     f32             m_AngularVelocityMax;

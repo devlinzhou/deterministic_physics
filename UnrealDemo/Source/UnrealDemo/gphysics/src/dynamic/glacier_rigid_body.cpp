@@ -50,11 +50,21 @@ void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpuls
 {
     m_LinearVelocity += VImpulse * m_InvMass;
 
+    if(m_LinearVelocity.Size() > m_LinearVelocityMax )
+    {
+        m_LinearVelocity = m_LinearVelocity.GetNormalize() * m_LinearVelocityMax;
+    }
+
     GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
 
     GVector3 Torque = GVector3::CrossProduct(VPos - GetMassCenterPos(), VImpulse );
 
     m_AngularVelocity += Inv_Ineria.TransformVector( Torque); 
+
+    if (m_AngularVelocity.Size() > m_AngularVelocityMax)
+    {
+        m_AngularVelocity = m_AngularVelocity.GetNormalize() * m_AngularVelocityMax;
+    }
 }
 
 void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse)
@@ -66,8 +76,8 @@ void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpuls
 void GRigidBody::CalculateInertiaTensor()
 {
     m_Mass              = GMath::Makef32(10,0,1);// m_density * GPhyscsUtils::CalculateVolume( m_Shape);
-    m_MoumentInertia    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
-    m_InvMoumentInertia = m_MoumentInertia.GetInverse();
+    m_InertiaTensor    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
+    m_InvInertiaTensor = m_InertiaTensor.GetInverse();
 
     m_InvMass           = GMath::One() / m_Mass;
 }
