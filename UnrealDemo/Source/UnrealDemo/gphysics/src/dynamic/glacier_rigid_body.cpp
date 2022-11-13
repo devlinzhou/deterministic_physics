@@ -73,6 +73,13 @@ void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpuls
 
 }
 
+GVector3 GRigidBody::GetWorldPosVelocity( const GVector3& VPos )
+{
+    GVector3 V1 = GVector3::CrossProduct( m_AngularVelocity,( VPos - m_Transform.m_Pos ));
+
+    return V1 + m_LinearVelocity;
+}
+
 void GRigidBody::CalculateInertiaTensor()
 {
     m_Mass              = GMath::Makef32(10,0,1);// m_density * GPhyscsUtils::CalculateVolume( m_Shape);

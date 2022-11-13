@@ -37,6 +37,7 @@ public:
     void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );
     void AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse );
 
+    GVector3 GetWorldPosVelocity( const GVector3& VPos );
 
     GVector3 GetMassCenterPos() const
     {

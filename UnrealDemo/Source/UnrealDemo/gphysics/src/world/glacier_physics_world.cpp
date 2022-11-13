@@ -425,37 +425,83 @@ void GPhysicsWorld::CollisionNarrowPhase( )
     }
 }
 
+GVector3 GetWorldRelative( const GVector3& VPos, GCObject* pObjectA, GCObject* pObjectB )
+{
+    GVector3 V1 = GVector3::Zero();
+    if (pObjectA->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRA = (GRigidBody*)pObjectA;
+        V1 = pRA->GetWorldPosVelocity( VPos );
+    }
+
+    GVector3 V2 = GVector3::Zero();
+    if (pObjectB->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRB = (GRigidBody*)pObjectB;
+        V2 = pRB->GetWorldPosVelocity(VPos);
+    }
+
+    return V1 - V2;
+
+}
+
 void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 {
     int32_t nPointCount = pPair.PairContact.GetPointCount();
-
-    bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
-
-    f32 factor = GMath::Makef32(0,4,10);
-
-    for( int32_t i = 0; i < nPointCount; ++i )
+    if( nPointCount > 0 )
     {
-        GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
+        bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
-        GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
+        f32 factorA = GMath::Makef32(0, 4, 10);
+        f32 factorB = -factorA;
 
-        if( pPair.pObjectA->GetCOType() == CO_Rigid_Body )
+      
+
+        for( int32_t nLoop = 0; nLoop < 100; nLoop ++ )
         {
-            GRigidBody* pRA = (GRigidBody*)pPair.pObjectA;
 
-            if( pRA->m_bDynamic )
-                pRA->AddImpulse_World(TPoint.m_PosWorld,  VNormal * factor );
+            bool bSeparate = true;
+            for (int32_t i = 0; i < nPointCount; ++i)
+            {
+                GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
+
+                GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
+
+                if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
+                {
+                    GRigidBody* pRA = (GRigidBody*)pPair.pObjectA;
+
+                    if (pRA->m_bDynamic)
+                        pRA->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorA);
+                }
+
+                if (pPair.pObjectB->GetCOType() == CO_Rigid_Body)
+                {
+                    GRigidBody* pRB = (GRigidBody*)pPair.pObjectB;
+
+                    if (pRB->m_bDynamic)
+                        pRB->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorB);
+                }
+
+                GVector3 VWorldVelocity =   GetWorldRelative( TPoint.m_PosWorld, pPair.pObjectA, pPair.pObjectB);
+
+                if( GVector3::DotProduct( VWorldVelocity, VNormal ) < GMath::Zero()  )
+                {
+                    bSeparate = false;
+                }
+
+            }
+
+            if(bSeparate)
+            {
+                break;
+            }
         }
 
-        if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
-        {
-            GRigidBody* pRB = (GRigidBody*)pPair.pObjectB;
 
-            if (pRB->m_bDynamic)
-                pRB->AddImpulse_World(TPoint.m_PosWorld, -VNormal * factor);
-        }
-    
     }
+
+
 
 
 }
