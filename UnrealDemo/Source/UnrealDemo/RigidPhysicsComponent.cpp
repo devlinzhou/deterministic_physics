@@ -28,25 +28,35 @@ void URigidPhysicsComponent::BeginPlay()
 
     if (PPhysics != nullptr)
     {
-        EShape TShape = EShape_ConvexBase;
-
-        if (RigidShape == UGShape::UGShape_Sphere)
-            TShape = EShape_Sphere;
-        else if (RigidShape == UGShape::UGShape_Box)
-            TShape = EShape_Box;
-
-        if (TShape != EShape_ConvexBase)
+        switch (RigidShape)
         {
-            m_pRigid = PPhysics->CreateDynamicRigidBody( GUtility::U_to_G(GetOwner()->GetTransform()), GVector3(GUtility::Unit_U_to_G(VHalfSize)), TShape);
-            m_pRigid->m_Gravity =  GUtility::U_to_G(Gravity);
-            m_pRigid->m_LinearVelocityMax = GUtility::U_to_G(MaxVelocity);
+        case UGShape::UGShape_Sphere:
+        case UGShape::UGShape_Box:
+        {
+            m_pRigid = PPhysics->CreateSimpleRigidBody(
+                GUtility::U_to_G(GetOwner()->GetTransform()),
+                GVector3(GUtility::Unit_U_to_G(VHalfSize)),
+                RigidShape == UGShape::UGShape_Sphere ? EShape::EShape_Sphere : EShape::EShape_Box);
+
+            m_pRigid->m_Gravity = GUtility::U_to_G(Gravity);
+            m_pRigid->m_LinearVelocityMax = GUtility::U_to_G(MaxLinearVelocity);
+            m_pRigid->m_AngularVelocityMax = GUtility::U_to_G(MaxAngularVelocity);
+
+            m_pRigid->m_bDynamic = Dynamic;
+
         }
-    }
-    else
-    {
-        int a= 0;
-    }
-	
+        break;
+        case UGShape::UGShape_Plane:
+        {
+            m_pRigid = PPhysics->CreateStaticPlane(GUtility::U_to_G(GetOwner()->GetTransform()));
+            m_pRigid->m_bDynamic = false;
+        }
+        break;
+
+        default:
+            break;
+        }
+    }	
 }
 
 
@@ -57,15 +67,16 @@ void URigidPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (m_pRigid != nullptr)
     {
-        GetOwner()->SetActorLocation(GUtility::Unit_G_to_U(m_pRigid->m_Transform.m_Pos));
-        GetOwner()->SetActorRotation(GUtility::G_to_U(m_pRigid->m_Transform.m_Rot));
-
-       //GetOwner()->SetActorTransform( GUtility::G_to_U(m_pRigid->m_Transform) );
-    }
-    else
-    {
-    
-        int a = 0;
+        if (Dynamic)
+        {
+            GetOwner()->SetActorLocation(GUtility::Unit_G_to_U(m_pRigid->m_Transform.m_Pos));
+            GetOwner()->SetActorRotation(GUtility::G_to_U(m_pRigid->m_Transform.m_Rot));
+        }
+        else
+        {
+            m_pRigid->m_Transform = GUtility::U_to_G(GetOwner()->GetTransform());
+            m_pRigid->NeedUpdate();
+        }
     }
 }
 

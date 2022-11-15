@@ -59,11 +59,8 @@ public:
     void GPysics_PostTick();
     void GPysics_DebugDraw();
 
-    GRigidBody* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
-
+    GRigidBody* CreateSimpleRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
     GRigidBody* CreateStaticPlane(const GTransform_QT& Trans );
-
-    GRigidBody* CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GPhysicsWorld m_PhysicsWorld;
 

@@ -4,9 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "StaticPhysicsComponent.h"
 #include "RigidPhysicsComponent.generated.h"
 
+UENUM()
+enum class UGShape : uint8
+{
+    UGShape_Sphere,
+    UGShape_Box,
+    UGShape_Plane,
+
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALDEMO_API URigidPhysicsComponent : public UActorComponent
@@ -26,13 +33,17 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     UPROPERTY(EditAnywhere)
-        UGShape RigidShape;
+        bool        Dynamic = false;
     UPROPERTY(EditAnywhere)
-        FVector VHalfSize;
+        UGShape     RigidShape = UGShape::UGShape_Sphere;
     UPROPERTY(EditAnywhere)
-        FVector    Gravity;
+        FVector     VHalfSize = FVector(50,50,50);
     UPROPERTY(EditAnywhere)
-        float  MaxVelocity;
+        FVector     Gravity = FVector(0,0,0);
+    UPROPERTY(EditAnywhere)
+        float       MaxLinearVelocity = 2000.f;
+    UPROPERTY(EditAnywhere)
+        float       MaxAngularVelocity = 100.f;
 
     class GRigidBody* m_pRigid = nullptr;
 

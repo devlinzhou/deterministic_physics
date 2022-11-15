@@ -127,15 +127,17 @@ void AGPhysicsActor::Tick(float DeltaTime)
     }
 }
 
-GRigidBody* AGPhysicsActor::CreateStaticRigidBody(const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
+GRigidBody* AGPhysicsActor::CreateSimpleRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape )
 {
     GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);
 
     pBody->m_Shape.SetHalfExtern(Halfsize);
     pBody->UpdateLocalBox();
-    m_PhysicsWorld.AddCollisionObject(pBody);
+    pBody->CalculateInertiaTensor();
     pBody->m_Transform = Trans;
-    pBody->m_bDynamic = false;
+
+    m_PhysicsWorld.AddCollisionObject(pBody);
+
     return pBody;
 }
 
@@ -147,21 +149,5 @@ GRigidBody* AGPhysicsActor::CreateStaticPlane(const GTransform_QT& Trans )
     m_PhysicsWorld.AddStaticLargeObj(pBody);
     pBody->m_Transform = Trans;
     pBody->m_bDynamic = false;
-    return pBody;
-}
-
-GRigidBody* AGPhysicsActor::CreateDynamicRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape)
-{
-    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);
-
-    pBody->m_Shape.SetHalfExtern(Halfsize);
-
-    pBody->UpdateLocalBox();
-    m_PhysicsWorld.AddCollisionObject(pBody);
-
-    pBody->CalculateInertiaTensor();
-    pBody->m_Transform = Trans;
-    pBody->m_LinearVelocityMax = GMath::Makef32(10, 0, 1);
-     pBody->m_bDynamic = true;
     return pBody;
 }
