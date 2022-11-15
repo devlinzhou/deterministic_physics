@@ -49,6 +49,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+    void GPysics_PreTick();
+    void GPysics_Simulate(float DeltaTime);
+    void GPysics_CollisionBroadPhase();
+    void GPysics_CollisionNarrowPhase();
+    void GPysics_SolveContactConstraint();
+    void GPysics_UpdateSceneGrid();
+    void GPysics_PostTick();
+    void GPysics_DebugDraw();
+
     GRigidBody* CreateStaticRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape );
 
     GRigidBody* CreateStaticPlane(const GTransform_QT& Trans );

@@ -239,7 +239,7 @@ public:
     }
 
 
-protected:
+public:
 
     void Simulate( f32 DetltaTime );
 
