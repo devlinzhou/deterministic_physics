@@ -128,9 +128,9 @@ public:
     }
 
     constexpr GFloat(int32_t Traw32, int32_t exp ) :
-        rawint32((Traw32 << 8) | int32_t(exp & 0x000000FF))
+        rawint32((Traw32 << 8) | int32_t( exp & 0x000000FF))
+        
     {
-
 #ifdef GLACIER_OVERFLOW_TEST
 
         if( exp < 0 || exp > 0x000000FF )
@@ -195,10 +195,17 @@ public:
         return T;
     }
 
-    static GFORCE_INLINE constexpr GFloat FromFractionAndExp(int32_t Traw32, int32_t exp)
+    static inline GFloat FromFractionAndExp(int32_t Traw32, int32_t exp)
     {
+        if (exp <= 0)
+        {
+            return GFloat::Zero();
+        }
+        exp = exp > 255 ? 255 : exp;
+
         return GFloat(Traw32, exp);
     }
+
 
     static inline GFloat FromFloat(float f)
     {
@@ -255,7 +262,7 @@ public:
         }
     }
 
-    static GFORCE_INLINE GFloat Normalize64(int64_t Trawvalue, int32_t Texponent)
+    static inline GFloat Normalize64(int64_t Trawvalue, int32_t Texponent)
     {
         if( Trawvalue == 0 )
             return GFloat(0,0);

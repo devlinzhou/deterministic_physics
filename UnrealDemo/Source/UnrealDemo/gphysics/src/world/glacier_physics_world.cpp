@@ -75,6 +75,73 @@ bool GGridCell::RemoveObject(GCObject* pObject)
     return false;
 }
 
+
+GVector3 GBroadPhasePair::GetWorldRelative(const GVector3& VPos) const
+{
+    GVector3 V1 = GVector3::Zero();
+    if (pObjectA->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectA)->m_bDynamic)
+    {
+        GRigidBody* pRA = (GRigidBody*)pObjectA;
+        V1 = pRA->GetWorldPosVelocity(VPos);
+    }
+
+    GVector3 V2 = GVector3::Zero();
+    if (pObjectB->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectB)->m_bDynamic)
+    {
+        GRigidBody* pRB = (GRigidBody*)pObjectB;
+        V2 = pRB->GetWorldPosVelocity(VPos);
+    }
+
+    return V1 - V2;
+}
+
+
+f32 GBroadPhasePair::GetContactPairEnergy() const
+{
+    f32 fEnergyA = GMath::Zero();
+    if (pObjectA->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRA = (GRigidBody*)pObjectA;
+        fEnergyA = pRA->GetEnergy();
+    }
+
+    f32 fEnergyB = GMath::Zero();
+    if (pObjectB->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRB = (GRigidBody*)pObjectB;
+        fEnergyB = pRB->GetEnergy();
+    }
+
+    return fEnergyA + fEnergyB;
+}
+
+void GBroadPhasePair::SeparatePair( )
+{
+    if( PairContact.GetPointCount() == 1 )
+    {
+        GManifoldPoint TPoint = PairContact.m_Point[0];
+
+        GVector3 VNormal = PairContact.PointOnSurface == pObjectA->GetId() ? TPoint.m_Normal : -TPoint.m_Normal;
+
+        GRigidBody* pRA = pObjectA->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectA)->m_bDynamic ? (GRigidBody*)pObjectA : nullptr;
+        GRigidBody* pRB = pObjectB->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectB)->m_bDynamic ? (GRigidBody*)pObjectB : nullptr;
+
+        if( pRA != nullptr && pRB != nullptr )
+        {
+            pRA->m_Transform.m_Pos -= VNormal * TPoint.m_depth * GMath::Half();
+            pRB->m_Transform.m_Pos += VNormal * TPoint.m_depth * GMath::Half();
+        }
+        else if( pRA != nullptr )
+        {
+            pRA->m_Transform.m_Pos -= VNormal * TPoint.m_depth;
+        }
+        else if( pRB != nullptr )
+        {
+            pRB->m_Transform.m_Pos += VNormal * TPoint.m_depth ;
+        }
+    }
+}
+
 bool GPhysicsWorld::AddCollisionObject(GCObject* pObject)
 {
     if (std::find(m_Objects.begin(), m_Objects.end(), pObject) != m_Objects.end())
@@ -275,19 +342,15 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
 void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, uint32_t mask )
 {
     const GCObject* pObject = pObj;
-
     if (mask & GPDraw_Shape)
     {
-
         GColor TColor = GColor::Yellow(); 
         if( pObj->m_ContactArray.size() != 0 )
         {
             TColor = GColor::Red(); 
         }
-
         GPhyscsUtils::DrawShape(pObject->m_Transform, pObject->m_Shape, pDraw, TColor);
     }
-        
 
     if (mask & GPDraw_LocalBox)
     {
@@ -301,7 +364,6 @@ void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, 
         pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
     }
 }
-
 
 void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const
 {
@@ -331,7 +393,6 @@ void GPhysicsWorld::CollisionBroadPhase( )
 {
     GPRORILER_FUN
 
-
     ClearContactPair();
 
     for (std::map<GGridPosition, GGridCell*>::const_iterator iterA = m_Grids.begin(); iterA != m_Grids.end(); ++iterA)
@@ -351,7 +412,6 @@ void GPhysicsWorld::CollisionBroadPhase( )
                     AddContactPair(pObjectA, pObjectB);
                 }
             }
-
 
             for ( int32_t nLargeObj = 0; nLargeObj < (int32_t)m_StaticLargeObj.size(); ++nLargeObj )
             {
@@ -452,15 +512,15 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
     {
         bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
-        f32 factorA = GMath::Makef32(0, 4, 10);
+        f32 factorA = GMath::Makef32(1, 4, 10);
         f32 factorB = -factorA;
 
-      
-
+        f32 PairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);;
+   
         for( int32_t nLoop = 0; nLoop < 100; nLoop ++ )
         {
-
             bool bSeparate = true;
+
             for (int32_t i = 0; i < nPointCount; ++i)
             {
                 GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
@@ -483,26 +543,31 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
                         pRB->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorB);
                 }
 
-                GVector3 VWorldVelocity =   GetWorldRelative( TPoint.m_PosWorld, pPair.pObjectA, pPair.pObjectB);
+                GVector3 VWorldVelocity = pPair.GetWorldRelative( TPoint.m_PosWorld);
 
                 if( GVector3::DotProduct( VWorldVelocity, VNormal ) < GMath::Zero()  )
                 {
+                    TPoint.m_bCurrentSeparate = false;
                     bSeparate = false;
                 }
-
+                else
+                {
+                    TPoint.m_bCurrentSeparate = true;
+                }
             }
 
-            if(bSeparate)
+            if(bSeparate )
             {
-                break;
+                f32 fCurrentEnergy = pPair.GetContactPairEnergy();
+
+                if( fCurrentEnergy > PairEnergy )
+                {
+                    pPair.SeparatePair();
+                    break;
+                }
             }
         }
-
-
     }
-
-
-
 
 }
 

@@ -27,6 +27,9 @@ public:
     GVector3    m_Normal;
     f32         m_depth;
     uint32_t    m_FaceIndex;
+
+
+    bool    m_bCurrentSeparate;
 };
 
 
@@ -61,6 +64,11 @@ public:
     {
         return  m_nPointCount < MaxPoint ? m_nPointCount : MaxPoint;
     }
+
+
+
+
+
 
     uint64_t        PairId;
     uint32_t        PointOnSurface;

@@ -44,15 +44,16 @@ void AGPhysicsActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 
 DECLARE_STATS_GROUP(TEXT("GPhysics)"), STATGROUP_GPhysics, STATCAT_Advanced);
-DECLARE_CYCLE_STAT(TEXT("GPhysics Total"),                 STAT_AGPhysicsActor_Tick,           STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics PreTick"),                 STAT_GPysics_PreTick,               STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics Simulate"),                STAT_GPysics_Simulate,              STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics CollisionBroadPhase"),     STAT_GPysics_CollisionBroadPhase,   STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics CollisionNarrowPhase"),    STAT_GPysics_CollisionNarrowPhase,  STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics SolveContactConstraint"),  STAT_GPysics_SolveContactConstraint, STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics UpdateSceneGrid"),         STAT_GPysics_UpdateSceneGrid,       STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics PostTick"),                STAT_GPysics_PostTick,              STATGROUP_GPhysics);
-DECLARE_CYCLE_STAT(TEXT("GPysics DebugDraw"),               STAT_GPysics_DebugDraw,             STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics ActorTick"),              STAT_AGPhysicsActor_Tick,               STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics Total"),                  STAT_GPysics_Total,                     STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics PreTick"),                STAT_GPysics_PreTick,                   STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics Simulate"),               STAT_GPysics_Simulate,                  STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics CollisionBroadPhase"),    STAT_GPysics_CollisionBroadPhase,       STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics CollisionNarrowPhase"),   STAT_GPysics_CollisionNarrowPhase,      STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics SolveContactConstraint"), STAT_GPysics_SolveContactConstraint,    STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics UpdateSceneGrid"),        STAT_GPysics_UpdateSceneGrid,           STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics PostTick"),               STAT_GPysics_PostTick,                  STATGROUP_GPhysics);
+DECLARE_CYCLE_STAT(TEXT("GPhysics DebugDraw"),              STAT_GPysics_DebugDraw,                 STATGROUP_GPhysics);
 
 
 void AGPhysicsActor::GPysics_PreTick()
@@ -107,12 +108,12 @@ void AGPhysicsActor::GPysics_DebugDraw()
 // Called every frame
 void AGPhysicsActor::Tick(float DeltaTime)
 {
+    SCOPE_CYCLE_COUNTER(STAT_AGPhysicsActor_Tick);
 	Super::Tick(DeltaTime);
     {
-         SCOPE_CYCLE_COUNTER(STAT_AGPhysicsActor_Tick);
-
         if (!UGameplayStatics::IsGamePaused(GetWorld()))
-        {
+        {   
+            SCOPE_CYCLE_COUNTER(STAT_GPysics_Total);
             GPysics_PreTick();
             GPysics_Simulate(DeltaTime);
             GPysics_CollisionBroadPhase();

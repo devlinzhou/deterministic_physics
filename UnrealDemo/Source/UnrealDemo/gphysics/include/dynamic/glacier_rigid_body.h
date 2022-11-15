@@ -29,6 +29,10 @@ public:
         m_Mass= GMath::One();
         m_InvMass = GMath::One();
 
+        m_LinearVelocity = GVector3::Zero();
+        m_AngularVelocity = GVector3::Zero();
+
+
         m_density = GMath::Makef32(1000,0,1);
     }
 
@@ -38,6 +42,24 @@ public:
     void AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse );
 
     GVector3 GetWorldPosVelocity( const GVector3& VPos );
+
+    f32 GetEnergy()
+    {
+        if( m_bDynamic) 
+        {
+            f32 fLinear = GMath::Half() * m_Mass * m_LinearVelocity.SizeSquare();
+
+            GVector3 VLocalAngular = m_Transform.m_Rot.UnRotateVector(m_AngularVelocity);
+
+            f32 fAngular = GMath::Half() * (m_InertiaTensor.TransformVector(VLocalAngular).Size()) * VLocalAngular.Size();
+
+            return fLinear + fAngular;
+        }
+        else
+        {
+            return GMath::Zero();
+        }
+    }
 
     GVector3 GetMassCenterPos() const
     {

@@ -163,6 +163,14 @@ public:
         }
     }
 
+    GVector3 GetWorldRelative(const GVector3& VPos ) const;
+
+    f32 GetContactPairEnergy( ) const;
+
+    void SeparatePair( );
+
+
+
     uint64_t            PairId;
     GCObject*           pObjectA;
     GCObject*           pObjectB;

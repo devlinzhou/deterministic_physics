@@ -43,7 +43,7 @@ public:
         m_bNeedUpdate       = true;
     }
 
-    ECollisionObjectType GetCOType() const
+    virtual ECollisionObjectType GetCOType() const
     {
         return m_CollisionType;
     }
