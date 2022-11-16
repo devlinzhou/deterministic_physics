@@ -69,11 +69,6 @@ void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpuls
     }
 }
 
-void GRigidBody::AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse)
-{
-    
-
-}
 
 GVector3 GRigidBody::GetWorldPosVelocity( const GVector3& VPos )
 {
@@ -84,9 +79,9 @@ GVector3 GRigidBody::GetWorldPosVelocity( const GVector3& VPos )
 
 void GRigidBody::CalculateInertiaTensor()
 {
-    m_Mass              = GMath::Makef32(10,0,1);// m_density * GPhyscsUtils::CalculateVolume( m_Shape);
+    m_Mass             = m_density * GPhyscsUtils::CalculateVolume( m_Shape);
     m_InertiaTensor    = m_Mass * GPhyscsUtils::CalculateInertiaTensor( m_Shape );
     m_InvInertiaTensor = m_InertiaTensor.GetInverse();
 
-    m_InvMass           = GMath::One() / m_Mass;
+    m_InvMass          = GMath::One() / m_Mass;
 }

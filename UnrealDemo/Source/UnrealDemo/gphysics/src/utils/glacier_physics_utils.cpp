@@ -245,7 +245,9 @@ f32 GPhyscsUtils::CalculateVolume(const GCollisionShape& pShape)
     break;
     case  EShape::EShape_Sphere:
     {
-        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * GMath::Makef32(0, 4, 10);
+        f32 t = pShape.GetRaiuds() * pShape.GetRaiuds() * pShape.GetRaiuds() * GMath::Makef32(1, 1, 3) * GMath::Pi();
+
+        return t;
     }
     break;
     case  EShape::EShape_Box:

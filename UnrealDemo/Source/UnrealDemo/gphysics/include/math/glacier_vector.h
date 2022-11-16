@@ -65,22 +65,22 @@ public:
         return ( x != V.x || y != V.y || z != V.z );
     }
 
-    GFORCE_INLINE GVector3 operator +( const GVector3& V ) const
+    inline GVector3 operator +( const GVector3& V ) const
     {
         return GVector3( x + V.x, y + V.y, z + V.z );
     }
 
-    GFORCE_INLINE GVector3 operator -( const GVector3& V ) const
+    inline GVector3 operator -( const GVector3& V ) const
     {
         return GVector3( x - V.x, y - V.y, z - V.z );
     }
 
-    GFORCE_INLINE GVector3 operator *( const f32 fScalar ) const
+    inline GVector3 operator *( const f32 fScalar ) const
     {
         return GVector3( x * fScalar, y * fScalar, z * fScalar );
     }
 
-    GFORCE_INLINE GVector3 operator *( const GVector3& V ) const
+    inline GVector3 operator *( const GVector3& V ) const
     {
         return GVector3( x * V.x, y * V.y, z * V.z );
     }
@@ -215,7 +215,7 @@ public:
         return ( a - V ).SizeSquare( );
     }
 
-    static GFORCE_INLINE f32 DotProduct( const GVector3& a, const GVector3& V )
+    static inline f32 DotProduct( const GVector3& a, const GVector3& V )
     {
         return a.x * V.x + a.y * V.y + a.z * V.z;
     }

@@ -15,8 +15,6 @@
 #include <stdint.h>
 #include <cmath>
 
-//#define GLACIER_OVERFLOW_TEST
-
 //#define GLACIER_MULTIPLY_NORAMLIZE_FAST
 
 #ifndef GLACIER_MULTIPLY_NORAMLIZE_FAST
@@ -32,41 +30,38 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #include <immintrin.h>
-#define GFORCE_INLINE _forceinline
-#else
-#define GFORCE_INLINE inline   
 #endif
 
 class GFloat // Get Glacier first char "G" for Name
 {
 public:
-    static inline constexpr GFloat Zero()       { return GFloat(0x000000,   0x00); };
-    static inline constexpr GFloat Half()       { return GFloat(0x400000,   0x68); };
-    static inline constexpr GFloat One()        { return GFloat(0x400000,   0x69); };
-    static inline constexpr GFloat Two()        { return GFloat(0x400000,   0x6A); };
-    static inline constexpr GFloat Three()      { return GFloat(0x300000,   0x6A); };
-    static inline constexpr GFloat Four()       { return GFloat(0x400000,   0x6B); };
-    static inline constexpr GFloat Pi()         { return GFloat(0x6487ef,   0x6a); };//Float(3,141592654, 1000000000); 
-    static inline constexpr GFloat Pi_Half()    { return GFloat(0x6487ef,   0x69); };
-    static inline constexpr GFloat Pi_Quarter() { return GFloat(0x6487ef,   0x68); };
-    static inline constexpr GFloat Pi_Two()     { return GFloat(0x6487ef,   0x6b); };
-    static inline constexpr GFloat Pi_Inv()     { return GFloat(0x517cc1,   0x67); };
-    static inline constexpr GFloat Pi_TwoInv()  { return GFloat(0x517cc1,   0x66); };
-    static inline constexpr GFloat e()          { return GFloat(0x56fc2a,   0x6a); };
-    static inline constexpr GFloat e_Inv()      { return GFloat(0x5e2d58,   0x67); };
-    static inline constexpr GFloat e_Div_2()    { return GFloat(0x5c551d,   0x69); };
-    static inline constexpr GFloat Epsilon()    { return GFloat(0x400000,   0x57); };
+    static inline constexpr GFloat Zero()       { return GFloat(0x000000, 0x00); };
+    static inline constexpr GFloat Half()       { return GFloat(0x400000, 0x68); };
+    static inline constexpr GFloat One()        { return GFloat(0x400000, 0x69); };
+    static inline constexpr GFloat Two()        { return GFloat(0x400000, 0x6A); };
+    static inline constexpr GFloat Three()      { return GFloat(0x600000, 0x6A); };
+    static inline constexpr GFloat Four()       { return GFloat(0x400000, 0x6B); };
+    static inline constexpr GFloat Pi()         { return GFloat(0x6487ef, 0x6a); };//Float(3,141592654, 1000000000); 
+    static inline constexpr GFloat Pi_Half()    { return GFloat(0x6487ef, 0x69); };
+    static inline constexpr GFloat Pi_Quarter() { return GFloat(0x6487ef, 0x68); };
+    static inline constexpr GFloat Pi_Two()     { return GFloat(0x6487ef, 0x6b); };
+    static inline constexpr GFloat Pi_Inv()     { return GFloat(0x517cc1, 0x67); };
+    static inline constexpr GFloat Pi_TwoInv()  { return GFloat(0x517cc1, 0x66); };
+    static inline constexpr GFloat e()          { return GFloat(0x56fc2a, 0x6a); };
+    static inline constexpr GFloat e_Inv()      { return GFloat(0x5e2d58, 0x67); };
+    static inline constexpr GFloat e_Div_2()    { return GFloat(0x5c551d, 0x69); };
+    static inline constexpr GFloat Epsilon()    { return GFloat(0x400000, 0x57); };
 
-    static inline const GFloat Inv_10()         { return GFloat(0, 1, 10); };
-    static inline const GFloat Inv_100()        { return GFloat(0, 1, 100); };
-    static inline const GFloat Inv_1000()       { return GFloat(0, 1, 1000); };
-    static inline const GFloat Inv_10000()      { return GFloat(0, 1, 10000); };
-    static inline const GFloat Inv_100000()     { return GFloat(0, 1, 100000); };
-    static inline const GFloat Inv_1000000()    { return GFloat(0, 1, 1000000); };
+    static inline constexpr GFloat Inv_10()     { return GFloat(0x666666, 0x65); };
+    static inline constexpr GFloat Inv_100()    { return GFloat(0x51eb85, 0x62); };
+    static inline constexpr GFloat Inv_1000()   { return GFloat(0x418937, 0x5f); };
+    static inline constexpr GFloat Inv_10000()  { return GFloat(0x68db8b, 0x5b); };
+    static inline constexpr GFloat Inv_100000() { return GFloat(0x53e2d6, 0x58); };
+    static inline constexpr GFloat Inv_1000000(){ return GFloat(0x431bde, 0x55); };
 
 
 
-    static GFORCE_INLINE uint32_t GBitScanReverse64( uint64_t num)
+    static inline uint32_t GBitScanReverse64( uint64_t num)
     {
 #ifdef _MSC_VER
         unsigned long Index;
@@ -87,7 +82,7 @@ public:
 #endif
     }
 
-    static GFORCE_INLINE uint32_t GBitScanReverse32(uint32_t num)
+    static inline uint32_t GBitScanReverse32(uint32_t num)
     {
 #ifdef _MSC_VER
         unsigned long Index;
@@ -128,10 +123,9 @@ public:
     }
 
     constexpr GFloat(int32_t Traw32, int32_t exp ) :
-        rawint32((Traw32 << 8) | int32_t( exp & 0x000000FF))
-        
+        rawint32((Traw32 << 8) | int32_t(exp & 0x000000FF))
     {
-#ifdef GLACIER_OVERFLOW_TEST
+#if 0
 
         if( exp < 0 || exp > 0x000000FF )
         {
@@ -169,35 +163,35 @@ public:
 //         FromFloat(value);
 //     }
 
-    GFORCE_INLINE constexpr int32_t getfraction() const
+    inline constexpr int32_t getfraction() const
     {
        return rawint32 >> 8 ;
     }
-    GFORCE_INLINE constexpr int32_t getfraction_NoShift() const
+    inline constexpr int32_t getfraction_NoShift() const
     {
         return int32_t(rawint32 & 0xFFFFFF00);
     }
 
-    GFORCE_INLINE constexpr int32_t getfraction(int32_t shift) const
+    inline constexpr int32_t getfraction(int32_t shift) const
     {
         return getfraction() >> ( shift);
     }
 
-    GFORCE_INLINE constexpr int32_t getexponent() const
+    inline constexpr int32_t getexponent() const
     {
         return (rawint32 & 0xFF);
     }
 
-    static GFORCE_INLINE constexpr GFloat FromRaw32(int32_t Traw32)
+    static inline constexpr GFloat FromRaw32(int32_t Traw32)
     {
         GFloat T;
         T.rawint32 = Traw32;
         return T;
     }
 
-    static inline GFloat FromFractionAndExp(int32_t Traw32, int32_t exp)
+    static inline constexpr GFloat FromFractionAndExp(int32_t Traw32, int32_t exp)
     {
-        if (exp <= 0)
+        if (exp < 0)
         {
             return GFloat::Zero();
         }
@@ -205,7 +199,6 @@ public:
 
         return GFloat(Traw32, exp);
     }
-
 
     static inline GFloat FromFloat(float f)
     {
@@ -237,13 +230,7 @@ public:
        return (float)toDouble();
     }
 
-//     inline operator float() const
-//     {
-//         return toFloat();
-//     }
-
-
-    static GFORCE_INLINE GFloat Normalize32(int32_t Trawvalue, int32_t Texponent)
+    static inline GFloat Normalize32(int32_t Trawvalue, int32_t Texponent)
     {
         if (Trawvalue == 0)
             return GFloat(0, 0);
@@ -281,7 +268,7 @@ public:
         }
     }
 
-    GFORCE_INLINE bool IsNormalize() const
+    inline bool IsNormalize() const
     {
         int32_t absRaw = abs( getfraction());
 
@@ -295,47 +282,48 @@ public:
         }
     }
 
-    GFORCE_INLINE GFloat operator +( const GFloat b) const
+    inline GFloat operator +( const GFloat b) const
     {
         int32_t a_Frac = getfraction_NoShift();
-        if( a_Frac==0) return Normalize32(b.getfraction(), b.getexponent());
-
         int32_t b_Frac = b.getfraction_NoShift();
-        if (b_Frac == 0) return Normalize32(getfraction(), getexponent());
+        int32_t a_e = getexponent();
+        int32_t b_e = b.getexponent();
 
-        int32_t a_e = getexponent();// -127;
-        int32_t b_e = b.getexponent();//-127;
+        if( a_Frac==0)
+            return Normalize32(b.getfraction(), b.getexponent());
+        if (b_Frac == 0)
+            return Normalize32(getfraction(), getexponent());
 
         if (a_e >= b_e)
         {
-            int32_t nShift = a_e - b_e > 23 ? 23 : 1+a_e - b_e;
-            return Normalize32((a_Frac>>1) + ((int64_t)b_Frac >> nShift), a_e - 7);
+            int32_t nShift = a_e - b_e > 23 ? 23 : a_e - b_e;
+            return Normalize64((int64_t)a_Frac + ((int64_t)b_Frac >> nShift), a_e - 8);
         }
         else
         {
-            int32_t nShift = b_e - a_e > 23 ? 23 : 1+b_e - a_e;
-            return Normalize32((b_Frac>>1) + ((int64_t)a_Frac >> nShift), b_e - 7);
+            int32_t nShift = b_e - a_e > 23 ? 23 : b_e - a_e;
+            return Normalize64((int64_t)b_Frac + ((int64_t)a_Frac >> nShift), b_e - 8);
         }         
 
     }
 
-    GFORCE_INLINE const GFloat operator +=(const GFloat b)
+    inline const GFloat operator +=(const GFloat b)
     {
         *this = *this + b;
         return *this;
     }
 
-    GFORCE_INLINE constexpr bool operator ==(const GFloat b) const
+    inline constexpr bool operator ==(const GFloat b) const
     {
         return rawint32 == b.rawint32;
     }
 
-    GFORCE_INLINE constexpr bool operator !=( const GFloat b) const
+    inline constexpr bool operator !=( const GFloat b) const
     {
         return rawint32 != b.rawint32;
     }
 
-    GFORCE_INLINE const GFloat operator -() const
+    inline const GFloat operator -() const
     {
         int32_t nFraction = getfraction();
 
@@ -343,12 +331,12 @@ public:
         return GFloat::Normalize32(-nFraction, getexponent());
     }
 
-    GFORCE_INLINE const GFloat operator -( const GFloat b) const
+    inline const GFloat operator -( const GFloat b) const
     {
         return *this + (-b);
     }
 
-    GFORCE_INLINE const GFloat operator -=(GFloat b)
+    inline const GFloat operator -=(GFloat b)
     {
         *this = *this - b;
         return *this;
@@ -357,10 +345,10 @@ public:
 
 #ifdef GLACIER_MULTIPLY_NORAMLIZE_FAST
 
-    GFORCE_INLINE const GFloat operator *(const GFloat b) const
+    inline const GFloat operator *(const GFloat b) const
     {
         // I assume a and b is normalized, if a or b is zero,it will get a correct result
-        int64_t Trawvalue = (int64_t)getfraction() * (int64_t)b.getfraction_NoShift();
+        int64_t Trawvalue = (int64_t)getfraction() * b.getfraction_NoShift();
         int32_t Texponent = getexponent() + b.getexponent() - 103;
 
         return GFloat::FromFractionAndExp((int32_t)(Trawvalue >> 32), Texponent);
@@ -374,13 +362,13 @@ public:
         return  GFloat::Normalize64(Trawvalue, Texponent);
     }
 #endif
-    GFORCE_INLINE const GFloat operator *=(GFloat b)
+    inline const GFloat operator *=(GFloat b)
     {
         *this = *this * b;
         return *this;
     }
 
-    GFORCE_INLINE const GFloat operator /(const GFloat b) const
+    inline const GFloat operator /(const GFloat b) const
     {
         int32_t nDivid = (int32_t)b.getfraction();
         if (nDivid == 0) // for stable
@@ -394,13 +382,13 @@ public:
         return  GFloat::Normalize64(Trawvalue, Texponent);
     }
 
-    GFORCE_INLINE const GFloat operator /=(GFloat b)
+    inline const GFloat operator /=(GFloat b)
     {
         *this = *this / b;
         return *this;
     }
 
-     GFORCE_INLINE bool operator > ( const GFloat b) const
+    inline bool operator > (const GFloat b) const
     {
         int32_t a_fra = getfraction_NoShift();
         int32_t b_fra = b.getfraction_NoShift();
@@ -423,22 +411,22 @@ public:
         }
     }
 
-    GFORCE_INLINE bool operator >= (const GFloat b) const
+    inline bool operator >= (const GFloat b) const
     {
         return (rawint32 == b.rawint32) || (*this > b);
     }
 
-    GFORCE_INLINE bool operator < (const GFloat b) const
+    inline bool operator < (const GFloat b) const
     {
         return !(*this >= b);
     }
 
-    GFORCE_INLINE bool operator <= (const GFloat b) const
+    inline bool operator <= (const GFloat b) const
     {
         return !(*this > b);
     }
 
-    GFORCE_INLINE int32_t GetWhole() const
+    inline int32_t GetWhole() const
     {
         int32_t exp = (getexponent() - 127);
         if (exp >= 0)
@@ -463,7 +451,7 @@ public:
         }
     }
 
-    GFORCE_INLINE int32_t GetWhole(GFloat& OutFraction) const
+    inline int32_t GetWhole(GFloat& OutFraction) const
     {
         int32_t exp = (getexponent() - 127);
         if (exp >= 0)
@@ -498,7 +486,7 @@ public:
         }    
     }
 
-    static GFORCE_INLINE GFloat Ceil( const GFloat value)
+    static inline GFloat Ceil( const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
 
@@ -515,7 +503,7 @@ public:
         }
     
     }
-    static GFORCE_INLINE GFloat Floor(const GFloat value)
+    static inline GFloat Floor(const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
 
@@ -531,7 +519,7 @@ public:
         }
     }
 
-    static GFORCE_INLINE int32_t FloorToInt( const GFloat value)
+    static inline int32_t FloorToInt( const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
         int32_t fra = value.getfraction();
@@ -552,7 +540,7 @@ public:
         }
     }
 
-    static GFORCE_INLINE int32_t CeilToInt(const GFloat value)
+    static inline int32_t CeilToInt(const GFloat value)
     {
         int32_t exp = (value.getexponent() - 127);
         int32_t fra = value.getfraction();
@@ -582,7 +570,7 @@ public:
         }
     }
 
-    static GFORCE_INLINE GFloat Abs(const GFloat value)
+    static inline GFloat Abs(const GFloat value)
     {
         return value.rawint32 >= 0 ? value : -value;
     }
@@ -603,8 +591,7 @@ public:
     static GFloat Pow(const GFloat base, const GFloat exponent) { if (base.rawint32 <= 0) return Zero(); return Pow2(exponent * Log2(base)); }
     static GFloat InvSqrt(const GFloat value );
     static GFloat Sqrt(const GFloat value){return value * InvSqrt(value);}
-    static GFloat Fmod(const GFloat x, const GFloat y){ GFloat t = x / y; GFloat out = Zero(); t.GetWhole(out); return out * y;   }
-
+    static GFloat Fmod(const GFloat x, const GFloat y){ GFloat t = x / y; GFloat out = Zero(); int32_t n = t.GetWhole(out); return x - GFloat(n) * y;}
 public:
     static constexpr int32_t ms_TriTableBit = 8;
     static constexpr int32_t ms_TriCount = 1 << ms_TriTableBit;

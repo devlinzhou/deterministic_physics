@@ -31,14 +31,12 @@ public:
         m_LinearVelocity        = GVector3::Zero();
         m_AngularVelocity       = GVector3::Zero();
 
-
-        m_density = GMath::Makef32(1000,0,1);
+        m_density = GMath::Makef32(100,0,1); // tenth of water's density
     }
 
     void Tick_PreTransform( const f32 DetalTime );
 
     void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );
-    void AddImpulse_Local( const GVector3& VPos, const GVector3& VImpulse );
 
     GVector3 GetWorldPosVelocity( const GVector3& VPos );
 
@@ -96,16 +94,19 @@ public:
     GTransform_QT   m_Transform_Pre;
 
     f32             m_density;
+
     f32             m_Mass;
     f32             m_InvMass;
-
-    GVector3        m_LinearVelocity;
-    f32             m_LinearVelocityMax;
 
     GMatrix3        m_InertiaTensor;           // local
     GMatrix3        m_InvInertiaTensor;
 
+    GVector3        m_LinearVelocity;
+    f32             m_LinearDamping;
+    f32             m_LinearVelocityMax;
+
     GVector3        m_AngularVelocity;
+    f32             m_AngularDamping;
     f32             m_AngularVelocityMax;
 
     GVector3        m_Gravity;
