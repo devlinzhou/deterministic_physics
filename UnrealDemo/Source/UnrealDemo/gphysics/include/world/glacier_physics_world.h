@@ -167,6 +167,9 @@ public:
 
     f32 GetContactPairEnergy( ) const;
 
+    f32 GetContactPairMomentum() const;
+
+
     void SeparatePair( );
 
 

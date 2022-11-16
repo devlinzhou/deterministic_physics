@@ -21,16 +21,15 @@ public:
 
     GRigidBody(uint32_t id, EShape TShape) : GCObject(id, TShape)
     {
-        m_CollisionType = CO_Rigid_Body;
-        m_Gravity = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
-        m_LinearVelocityMax = GMath::Makef32(100,0,1);
-        m_AngularVelocityMax = GMath::Makef32(100,0,1);
-        m_bDynamic = false;
-        m_Mass= GMath::One();
-        m_InvMass = GMath::One();
-
-        m_LinearVelocity = GVector3::Zero();
-        m_AngularVelocity = GVector3::Zero();
+        m_CollisionType         = CO_Rigid_Body;
+        m_Gravity               = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
+        m_LinearVelocityMax     = GMath::Makef32(100,0,1);
+        m_AngularVelocityMax    = GMath::Makef32(100,0,1);
+        m_bDynamic              = false;
+        m_Mass                  = GMath::One();
+        m_InvMass               = GMath::One();
+        m_LinearVelocity        = GVector3::Zero();
+        m_AngularVelocity       = GVector3::Zero();
 
 
         m_density = GMath::Makef32(1000,0,1);
@@ -61,6 +60,24 @@ public:
         }
     }
 
+    f32 GetMomentum()
+    {
+        if( m_bDynamic )
+        {
+            f32 fLinear = m_Mass * m_LinearVelocity.Size();
+
+            GVector3 VLocalAngular = m_Transform.m_Rot.UnRotateVector(m_AngularVelocity);
+
+            f32 fAngular = m_InertiaTensor.TransformVector(VLocalAngular).Size();
+
+            return fLinear + fAngular;
+        }
+        else
+        {
+            return GMath::Zero();
+        }
+    }
+
     GVector3 GetMassCenterPos() const
     {
         return m_Transform.m_Pos;
@@ -78,9 +95,7 @@ public:
     bool            m_bDynamic;
     GTransform_QT   m_Transform_Pre;
 
-
     f32             m_density;
-
     f32             m_Mass;
     f32             m_InvMass;
 
@@ -92,9 +107,6 @@ public:
 
     GVector3        m_AngularVelocity;
     f32             m_AngularVelocityMax;
-
-
-
 
     GVector3        m_Gravity;
 };
