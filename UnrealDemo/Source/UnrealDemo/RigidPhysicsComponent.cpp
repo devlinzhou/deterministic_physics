@@ -77,6 +77,11 @@ void URigidPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
             m_pRigid->m_Transform = GUtility::U_to_G(GetOwner()->GetTransform());
             m_pRigid->NeedUpdate();
         }
+
+        if( ModifySize )
+        {
+            m_pRigid->m_Shape.HalfSize = GUtility::Unit_U_to_G(VHalfSize);
+        }
     }
 }
 

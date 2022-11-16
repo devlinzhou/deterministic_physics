@@ -35,6 +35,8 @@ public:
     UPROPERTY(EditAnywhere)
         bool        Dynamic = false;
     UPROPERTY(EditAnywhere)
+        bool        ModifySize = false;
+    UPROPERTY(EditAnywhere)
         UGShape     RigidShape = UGShape::UGShape_Sphere;
     UPROPERTY(EditAnywhere)
         FVector     VHalfSize = FVector(50,50,50);

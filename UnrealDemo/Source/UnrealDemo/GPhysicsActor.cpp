@@ -58,49 +58,49 @@ DECLARE_CYCLE_STAT(TEXT("GPhysics DebugDraw"),              STAT_GPysics_DebugDr
 
 void AGPhysicsActor::GPysics_PreTick()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_PreTick);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_PreTick);
     m_PhysicsWorld.PreTick();
 }
 
 void AGPhysicsActor::GPysics_Simulate(float DeltaTime)
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_Simulate);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_Simulate);
     m_PhysicsWorld.Simulate(GMath::FromFloat(DeltaTime));
 }
 
 void AGPhysicsActor::GPysics_CollisionBroadPhase()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_CollisionBroadPhase);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_CollisionBroadPhase);
     m_PhysicsWorld.CollisionBroadPhase();
 }
 
 void AGPhysicsActor::GPysics_CollisionNarrowPhase()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_CollisionNarrowPhase);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_CollisionNarrowPhase);
     m_PhysicsWorld.CollisionNarrowPhase();
 }
 
 void AGPhysicsActor::GPysics_SolveContactConstraint()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_SolveContactConstraint);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_SolveContactConstraint);
     m_PhysicsWorld.SolveContactConstraint();
 }
 
 void AGPhysicsActor::GPysics_UpdateSceneGrid()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_UpdateSceneGrid);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_UpdateSceneGrid);
     m_PhysicsWorld.UpdateSceneGrid();
 }
 
 void AGPhysicsActor::GPysics_PostTick()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_PostTick);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_PostTick);
     m_PhysicsWorld.PostTick();
 }
 
 void AGPhysicsActor::GPysics_DebugDraw()
 {
-        SCOPE_CYCLE_COUNTER(STAT_GPysics_DebugDraw);
+    SCOPE_CYCLE_COUNTER(STAT_GPysics_DebugDraw);
     GPhysicsDraw TDraw(GetWorld());
 
     m_PhysicsWorld.DebugDraw(&TDraw, (uint32_t)DrawMask);

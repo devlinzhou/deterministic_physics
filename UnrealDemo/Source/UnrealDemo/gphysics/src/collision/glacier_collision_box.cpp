@@ -720,8 +720,8 @@ static PxI32 generateContacts(
 	return PxI32(contactBuffer.GetPointCount());
 }
 
-// use physx contact for test
-int32_t GCollision_Box::Box_Box_Contact_PhysX(
+// use px contact for test
+int32_t GCollision_Box::Box_Box_Contact_PX(
     const GShapeBox& ShapA,
     const GTransform_QT& transform0,
     const GShapeBox& ShapB,

@@ -537,7 +537,9 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
         f32 factorA = fMomentum * GMath::Makef32(0, 2, 10);
         f32 factorB = -factorA;
 
-        f32 PairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
+        f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
+
+        f32 PairEnergy = TPairEnergy / f32(nPointCount);
    
         for( int32_t nLoop = 0; nLoop < 50; nLoop ++ )
         {

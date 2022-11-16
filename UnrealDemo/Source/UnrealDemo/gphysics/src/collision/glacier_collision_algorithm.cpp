@@ -98,7 +98,7 @@ bool GCG_Box_Box::ProcessCollision(const GCObject* ObjA, const GCObject* ObjB, G
     GShapeBox BoxA(ObjA->m_Shape.GetHalfExtern());
     GShapeBox BoxB(ObjB->m_Shape.GetHalfExtern());
 
-    int32_t nCount = GCollision_Box::Box_Box_Contact_PhysX( BoxA, ObjA->m_Transform, BoxB ,ObjB->m_Transform, pContact);
+    int32_t nCount = GCollision_Box::Box_Box_Contact_PX( BoxA, ObjA->m_Transform, BoxB ,ObjB->m_Transform, pContact);
 
     if (pContact)
     {

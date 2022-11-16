@@ -36,7 +36,7 @@ public:
         const GTransform_QT&        TransformB,
         class GCollisionContact*    pContact);
 
-    static int32_t Box_Box_Contact_PhysX(
+    static int32_t Box_Box_Contact_PX(
         const GShapeBox& ShapA,
         const GTransform_QT& TransformA,
         const GShapeBox& ShapB,

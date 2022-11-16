@@ -108,7 +108,7 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         GColor TColor = GColor::Yellow();
 
-        if( GCollision_Box::Box_Box_Contact_PhysX(BoxShapeA, BoxTransA, BoxShapeB, BoxTransB, &TContact ) != 0 )
+        if( GCollision_Box::Box_Box_Contact_PX(BoxShapeA, BoxTransA, BoxShapeB, BoxTransB, &TContact ) != 0 )
         {
             GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
             TColor = GColor::Red();
