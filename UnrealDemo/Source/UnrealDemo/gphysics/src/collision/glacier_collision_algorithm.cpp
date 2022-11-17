@@ -34,10 +34,10 @@ bool GCG_Sphere_Sphere::ProcessCollision(const GCObject* ObjA, const GCObject* O
         {
             f32 InvLen = GMath::InvSqrt(len2);
 
-            GVector3 VNormalOnB = len2 < GMath::Epsilon() ? GVector3::UnitX() : d * InvLen;
-            GVector3 VPosOnB = ObjA->m_Transform.m_Pos - VNormalOnB * ObjA->m_Shape.GetRaiuds();
+            GVector3 VNormal = len2 < GMath::Epsilon() ? GVector3::UnitX() : d * InvLen;
+            GVector3 VPosOnA = ObjA->m_Transform.m_Pos - VNormal * ObjA->m_Shape.GetRaiuds();
 
-            pContact->AddContactPoint( VPosOnB, VNormalOnB, len2 * InvLen - TRadius );
+            pContact->AddContactPoint( VPosOnA, VNormal, len2 * InvLen - TRadius );
 
             pContact->PointOnSurface = ObjA->GetId();
         }

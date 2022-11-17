@@ -34,6 +34,11 @@ public:
         m_density = GMath::Makef32(100,0,1); // tenth of water's density
     }
 
+    virtual bool IsDynamic() override
+    {
+        return m_bDynamic;
+    }
+
     void Tick_PreTransform( const f32 DetalTime );
 
     void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );

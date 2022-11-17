@@ -528,7 +528,7 @@ GVector3 GetWorldRelative( const GVector3& VPos, GCObject* pObjectA, GCObject* p
 void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 {
     int32_t nPointCount = pPair.PairContact.GetPointCount();
-    if( nPointCount > 0 )
+    if( nPointCount > 0 &&( pPair.pObjectA->IsDynamic() || pPair.pObjectB->IsDynamic()) )
     {
         bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
@@ -540,8 +540,10 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
         f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
+
+
    
-        for( int32_t nLoop = 0; nLoop < 50; nLoop ++ )
+        for( int32_t nLoop = 0; nLoop < 20; nLoop ++ )
         {
             bool bSeparate = true;
 
@@ -550,6 +552,26 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
                 GManifoldPoint& TPoint = pPair.PairContact.m_Point[i];
 
                 GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
+
+
+                GVector3 VVNormal;
+                if (pPair.pObjectA->IsDynamic() && pPair.pObjectB->IsDynamic())
+                {
+                    VVNormal = (pPair.pObjectA->m_Transform.m_Pos - pPair.pObjectB->m_Transform.m_Pos).GetNormalize();
+
+                    if(GVector3::DotProduct(VNormal, VVNormal) > GMath::Zero() )
+                    {
+                        VNormal = VVNormal;
+         
+                    }
+                    else
+                    {
+                        VNormal = -VVNormal;
+                    }
+
+                    TPoint.m_PosWorld = ( pPair.pObjectA->m_Transform.m_Pos + pPair.pObjectB->m_Transform.m_Pos) * GMath::Half();
+                }
+
 
                 if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
                 {
@@ -569,7 +591,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
                 GVector3 VWorldVelocity = pPair.GetWorldRelative( TPoint.m_PosWorld);
 
-                if( GVector3::DotProduct( VWorldVelocity, VNormal ) < GMath::Zero()  )
+                if( GVector3::DotProduct( VWorldVelocity, VNormal ) <= GMath::Zero()  )
                 {
                     TPoint.m_bCurrentSeparate = false;
                     bSeparate = false;

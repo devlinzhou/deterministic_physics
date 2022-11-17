@@ -57,11 +57,18 @@ void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpuls
 
     GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
 
-    GVector3 Torque = GVector3::CrossProduct(VPos - GetMassCenterPos(), VImpulse );
+    GVector3 VPosLocal = VPos - GetMassCenterPos();
+
+    GVector3 Torque = GVector3::CrossProduct(VPosLocal, VImpulse );
 
     GVector3 VDeltaAngular = Inv_Ineria.TransformVector( Torque); 
 
     m_AngularVelocity += VDeltaAngular;
+
+    if(VDeltaAngular.Size() > GMath::Makef32(0,1,1000))
+    {
+        int a= 0;
+    }
 
     if (m_AngularVelocity.Size() > m_AngularVelocityMax)
     {

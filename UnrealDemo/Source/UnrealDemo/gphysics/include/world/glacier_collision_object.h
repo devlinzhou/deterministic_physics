@@ -50,6 +50,11 @@ public:
 
     inline uint32_t GetId()const {return m_Id;}
 
+    virtual bool IsDynamic()
+    {
+        return false;
+    }
+
 
     void NeedUpdate()
     {

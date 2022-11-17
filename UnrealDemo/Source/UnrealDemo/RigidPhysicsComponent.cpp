@@ -40,7 +40,10 @@ void URigidPhysicsComponent::BeginPlay()
 
             m_pRigid->m_Gravity = GUtility::U_to_G(Gravity);
             m_pRigid->m_LinearVelocityMax = GUtility::U_to_G(MaxLinearVelocity);
-            m_pRigid->m_AngularVelocityMax = GUtility::U_to_G(MaxAngularVelocity);
+           // m_pRigid->m_AngularVelocityMax = GUtility::U_to_G(MaxAngularVelocity);
+
+            m_pRigid->m_AngularVelocityMax = GMath::Makef32(10,0,1);
+
 
             m_pRigid->m_bDynamic = Dynamic;
 
@@ -75,6 +78,8 @@ void URigidPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         else
         {
             m_pRigid->m_Transform = GUtility::U_to_G(GetOwner()->GetTransform());
+
+            m_pRigid->m_Transform.m_Rot.Normalize();
             m_pRigid->NeedUpdate();
         }
 
