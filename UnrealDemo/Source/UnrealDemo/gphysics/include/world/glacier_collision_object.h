@@ -50,7 +50,7 @@ public:
 
     inline uint32_t GetId()const {return m_Id;}
 
-    virtual bool IsDynamic()
+    virtual bool IsDynamic() const
     {
         return false;
     }

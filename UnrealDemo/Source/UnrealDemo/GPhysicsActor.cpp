@@ -121,7 +121,6 @@ void AGPhysicsActor::Tick(float DeltaTime)
             GPysics_SolveContactConstraint();
             GPysics_UpdateSceneGrid();
             GPysics_PostTick();
-            GPysics_DebugDraw();
         }
 
         GPysics_DebugDraw();

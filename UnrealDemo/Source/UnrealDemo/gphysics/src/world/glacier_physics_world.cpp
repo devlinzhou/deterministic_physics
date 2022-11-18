@@ -135,30 +135,72 @@ f32 GBroadPhasePair::GetContactPairMomentum() const
     return fMomentumA + fMomentumB;
 }
 
-void GBroadPhasePair::SeparatePair( )
+void GBroadPhasePair::SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap )
 {
-    if( PairContact.GetPointCount() == 1 )
+    int32_t nPointCount = PairContact.GetPointCount();
+    if(nPointCount <= 0)
+        return;
+
+    GVector3 VSep = GVector3::Zero();
+
+    if( nPointCount == 1 )
     {
         GManifoldPoint TPoint = PairContact.m_Point[0];
 
-        GVector3 VNormal = PairContact.PointOnSurface == pObjectA->GetId() ? TPoint.m_Normal : -TPoint.m_Normal;
+        GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
 
-        GRigidBody* pRA = pObjectA->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectA)->m_bDynamic ? (GRigidBody*)pObjectA : nullptr;
-        GRigidBody* pRB = pObjectB->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObjectB)->m_bDynamic ? (GRigidBody*)pObjectB : nullptr;
+        VSep = VNormal * TPoint.m_depth;
+    }
+    else
+    {
+        GVector3 VNormal = GVector3::Zero();
 
-        if( pRA != nullptr && pRB != nullptr )
+        for( int32_t i = 0; i < nPointCount; ++i )
         {
-            pRA->m_Transform.m_Pos -= VNormal * TPoint.m_depth * GMath::Half();
-            pRB->m_Transform.m_Pos += VNormal * TPoint.m_depth * GMath::Half();
+            GManifoldPoint TPoint = PairContact.m_Point[i];
+
+            VNormal += bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
         }
-        else if( pRA != nullptr )
+    
+        VNormal.Normalize();
+
+        f32 fDis = GMath::Zero();
+        for (int32_t i = 0; i < nPointCount; ++i)
         {
-            pRA->m_Transform.m_Pos -= VNormal * TPoint.m_depth;
+            GManifoldPoint TPoint = PairContact.m_Point[i];
+
+            GVector3 VTNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
+
+            f32 fCos = GVector3::DotProduct( VNormal, VTNormal );
+
+            f32 fT2 = GMath::Max(fCos, GMath::Makef32(0,1,10));
+
+            fT2 = TPoint.m_depth / fT2;
+
+            if( fT2 < fDis ) 
+            {
+                fDis = fT2;
+            }
         }
-        else if( pRB != nullptr )
-        {
-            pRB->m_Transform.m_Pos += VNormal * TPoint.m_depth ;
-        }
+
+        VSep = VNormal * fDis;
+    }
+
+    if (pRA != nullptr && pRB != nullptr)
+    {
+        f32 fAlphaA = pRB->m_Mass / (pRA->m_Mass + pRB->m_Mass);
+        f32 fAlphaB = GMath::One() - fAlphaA;
+
+        pRA->m_Transform.m_Pos -= VSep * fAlphaA;
+        pRB->m_Transform.m_Pos += VSep * fAlphaB;
+    }
+    else if (pRA != nullptr)
+    {
+        pRA->m_Transform.m_Pos -= VSep;
+    }
+    else if (pRB != nullptr)
+    {
+        pRB->m_Transform.m_Pos += VSep;
     }
 }
 
@@ -383,6 +425,21 @@ void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, 
         GAABB TAABB = pObject->GetAABB();
         pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
     }
+
+    if((mask & GPDraw_Momentum) && pObject->IsDynamic() )
+    {
+        GRigidBody* pRigid = (GRigidBody*)pObject;
+
+        GVector3 VOffset = GVector3::UnitZ() * GMath::Two();
+
+        GTransform_QT Trans = pObject->m_Transform;
+        Trans.m_Pos += VOffset;
+
+        pDraw->DrawArrow(pObject->m_Transform.m_Pos, pRigid->GetLinearMomentum(),  GColor::Gray());
+        pDraw->DrawArrow(pObject->m_Transform.m_Pos, pRigid->GetAngularMomentum(), GColor::Red());
+
+    }
+
 }
 
 void GPhysicsWorld::DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const
@@ -437,7 +494,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
             {
                 GCObject* pLargeObj = m_StaticLargeObj[nLargeObj];
                 const GAABB& BoxB = pLargeObj->GetAABB();
-                if (BoxA.Intersects(BoxB))
+                //if (BoxA.Intersects(BoxB))
                 {
                     AddContactPair(pObjectA, pLargeObj);
                 }
@@ -530,20 +587,21 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
     int32_t nPointCount = pPair.PairContact.GetPointCount();
     if( nPointCount > 0 &&( pPair.pObjectA->IsDynamic() || pPair.pObjectB->IsDynamic()) )
     {
+        GRigidBody* pRA = (pPair.pObjectA->IsDynamic() && pPair.pObjectA->GetCOType() == CO_Rigid_Body) ? (GRigidBody*)pPair.pObjectA : nullptr;
+        GRigidBody* pRB = (pPair.pObjectB->IsDynamic() && pPair.pObjectB->GetCOType() == CO_Rigid_Body) ? (GRigidBody*)pPair.pObjectB : nullptr;
+
         bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
         f32 fMomentum = pPair.GetContactPairMomentum();
 
-        f32 factorA = fMomentum * GMath::Makef32(0, 2, 10);
+        f32 factorA = fMomentum * GMath::Makef32(0, 1, 10);
         f32 factorB = -factorA;
 
         f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
-
-
    
-        for( int32_t nLoop = 0; nLoop < 20; nLoop ++ )
+        for( int32_t nLoop = 0; nLoop < 50; nLoop ++ )
         {
             bool bSeparate = true;
 
@@ -553,45 +611,15 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
                 GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
 
+                if( pRA != nullptr )
+                    pRA->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorA);
 
-                GVector3 VVNormal;
-                if (pPair.pObjectA->IsDynamic() && pPair.pObjectB->IsDynamic())
-                {
-                    VVNormal = (pPair.pObjectA->m_Transform.m_Pos - pPair.pObjectB->m_Transform.m_Pos).GetNormalize();
-
-                    if(GVector3::DotProduct(VNormal, VVNormal) > GMath::Zero() )
-                    {
-                        VNormal = VVNormal;
-         
-                    }
-                    else
-                    {
-                        VNormal = -VVNormal;
-                    }
-
-                    TPoint.m_PosWorld = ( pPair.pObjectA->m_Transform.m_Pos + pPair.pObjectB->m_Transform.m_Pos) * GMath::Half();
-                }
-
-
-                if (pPair.pObjectA->GetCOType() == CO_Rigid_Body)
-                {
-                    GRigidBody* pRA = (GRigidBody*)pPair.pObjectA;
-
-                    if (pRA->m_bDynamic)
-                        pRA->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorA);
-                }
-
-                if (pPair.pObjectB->GetCOType() == CO_Rigid_Body)
-                {
-                    GRigidBody* pRB = (GRigidBody*)pPair.pObjectB;
-
-                    if (pRB->m_bDynamic)
-                        pRB->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorB);
-                }
+                if( pRB != nullptr )
+                    pRB->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorB);
 
                 GVector3 VWorldVelocity = pPair.GetWorldRelative( TPoint.m_PosWorld);
 
-                if( GVector3::DotProduct( VWorldVelocity, VNormal ) <= GMath::Zero()  )
+                if( GVector3::DotProduct( VWorldVelocity, VNormal ) <= GMath::Zero() )
                 {
                     TPoint.m_bCurrentSeparate = false;
                     bSeparate = false;
@@ -608,7 +636,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
                 if( fCurrentEnergy > PairEnergy )
                 {
-                    pPair.SeparatePair();
+                    pPair.SeparatePair(pRA, pRB, bSwap);
                     break;
                 }
             }

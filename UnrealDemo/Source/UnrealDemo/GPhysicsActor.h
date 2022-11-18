@@ -20,6 +20,8 @@ enum class EGDrawMask : uint32
     UGPDraw_WorldBox    ,
     UGPDraw_CeilBox     ,
     UGPDraw_Contact     ,
+    UGPDraw_Moumentum,
+
 };
 ENUM_CLASS_FLAGS(EGDrawMask);
 

@@ -185,7 +185,6 @@ int32_t GCollision_Sphere::Sphere_Sphere_Contact(
     return 1;
 }
 
-
 int32_t GCollision_Sphere::Sphere_Plane_Contact(
     const GShapeSphere& ShapA,
     const GTransform_QT& TransformA,
@@ -193,7 +192,6 @@ int32_t GCollision_Sphere::Sphere_Plane_Contact(
     const GTransform_QT& TransformB,
     class GCollisionContact* pContact)
 {
-
     GVector3 sphere = TransformB.m_Rot.UnRotateVector( TransformA.m_Pos - TransformB.m_Pos);
 
     const f32 fDepth = sphere.x - ShapA.Radius;

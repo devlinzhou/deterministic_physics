@@ -34,7 +34,7 @@ public:
         m_density = GMath::Makef32(100,0,1); // tenth of water's density
     }
 
-    virtual bool IsDynamic() override
+    virtual bool IsDynamic() const override
     {
         return m_bDynamic;
     }
@@ -81,6 +81,36 @@ public:
         }
     }
 
+
+    GVector3 GetLinearMomentum()
+    {
+        if (m_bDynamic)
+        {
+            return m_Mass * m_LinearVelocity;
+        }
+        else
+        {
+            return GVector3::Zero();
+        }
+    }
+
+    GVector3 GetAngularMomentum()
+    {
+        if (m_bDynamic)
+        {
+            GVector3 VLocalAngular = m_Transform.m_Rot.UnRotateVector(m_AngularVelocity);
+
+            GVector3 VlocalMomentum = m_InertiaTensor.TransformVector(VLocalAngular);
+
+            return m_Transform.m_Rot.RotateVector(VlocalMomentum);
+        }
+        else
+        {
+            return GVector3::Zero();
+        }
+    }
+
+
     GVector3 GetMassCenterPos() const
     {
         return m_Transform.m_Pos;
@@ -88,7 +118,7 @@ public:
 
     GMatrix3 getGlobalInertiaTensorInverse() const
     {
-        return  GMatrix3( m_Transform.m_Rot.GetUnitInverse() ) * m_InertiaTensor * GMatrix3( m_Transform.m_Rot);
+        return  GMatrix3( m_Transform.m_Rot.GetUnitInverse() ) * m_InvInertiaTensor * GMatrix3( m_Transform.m_Rot);
     }
 
     void CalculateInertiaTensor();

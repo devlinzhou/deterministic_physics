@@ -139,6 +139,7 @@ private:
   
 };
 
+class GRigidBody;
 class GBroadPhasePair
 {
 public:
@@ -169,10 +170,7 @@ public:
 
     f32 GetContactPairMomentum() const;
 
-
-    void SeparatePair( );
-
-
+    void SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap );
 
     uint64_t            PairId;
     GCObject*           pObjectA;
@@ -187,9 +185,9 @@ enum
     GPDraw_LocalBox     = 1 << 1,
     GPDraw_WorldBox     = 1 << 2,
     GPDraw_CeilBox      = 1 << 3,
-    GPDraw_Contact      = 1 << 4
+    GPDraw_Contact      = 1 << 4,
+    GPDraw_Momentum     = 1 << 5,
 };
-
 
 class GPhysicsWorld
 {
@@ -259,11 +257,13 @@ public:
     void CollisionNarrowPhase( );
 
     void SolveContactConstraint( GBroadPhasePair& pPair );
+
     void SolveContactConstraint( );
 
     void UpdateSceneGrid( );
 
     void ClearContactPair();
+
     void AddContactPair(GCObject* p1, GCObject* p2);
 
 public:
@@ -279,7 +279,7 @@ private:
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*>     m_Grids;
     std::map<uint32_t, GCObject*>           m_ObjectMap;
-    std::vector<GCObject*>                   m_Objects;
+    std::vector<GCObject*>                  m_Objects;
     std::vector<GCObject*>                  m_StaticLargeObj;
 
     std::vector<GBroadPhasePair>            m_BroadPhasePairs;

@@ -298,3 +298,8 @@ void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, f32
     DrawLine(VEnd, VCenter - V3 * Size * fWind, TColor);
 }
 
+void IGlacierDraw::DrawArrow(const GVector3& V0, const GVector3& VDirection, GColor TColor)
+{
+    DrawArrow(V0, VDirection.GetNormalize(), VDirection.Size(), TColor );
+}
+
