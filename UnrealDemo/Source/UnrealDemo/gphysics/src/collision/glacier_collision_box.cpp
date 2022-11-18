@@ -903,8 +903,8 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform0.m_Pos + extents0.x*axis00;
             trs.m_Rot = trsm.ToQuat();
 		}
-
-		return generateContacts(*pContact, ctcNrm, extents0.y, extents0.z, extents1, trs, transform1, contactDistance);
+        swap = false;
+		return generateContacts(*pContact, -ctcNrm, extents0.y, extents0.z, extents1, trs, transform1, contactDistance);
 
 	case AXIS_A1:
 
@@ -926,7 +926,8 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform0.m_Pos + extents0.y*axis01;
 		}
         trs.m_Rot = trsm.ToQuat();
-		return generateContacts(*pContact, ctcNrm, extents0.z, extents0.x, extents1, trs, transform1, contactDistance);
+        swap = false;
+		return generateContacts(*pContact, -ctcNrm, extents0.z, extents0.x, extents1, trs, transform1, contactDistance);
 
 	case AXIS_A2:
 		trsm.Row(2) = axis01;	// Factored out
@@ -947,7 +948,8 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform0.m_Pos + extents0.z*axis02;
 		}
         trs.m_Rot = trsm.ToQuat();
-		return generateContacts(*pContact, ctcNrm, extents0.x, extents0.y, extents1, trs, transform1, contactDistance);
+        swap = false;
+		return generateContacts(*pContact, -ctcNrm, extents0.x, extents0.y, extents1, trs, transform1, contactDistance);
 
 	case AXIS_B0:
 		if(sign)	

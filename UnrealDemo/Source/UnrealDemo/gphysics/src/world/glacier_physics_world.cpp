@@ -538,6 +538,11 @@ void GPhysicsWorld::CollisionNarrowPhase( )
     {
         m_Objects[i]->ClearContactPair();
     }
+
+    for (int32_t nLargeObj = 0; nLargeObj < (int32_t)m_StaticLargeObj.size(); ++nLargeObj)
+    {
+        m_StaticLargeObj[nLargeObj]->ClearContactPair();
+    }
         
     for( int32_t i = 0; i < (int32_t)m_BroadPhasePairs.size(); ++i )
     {

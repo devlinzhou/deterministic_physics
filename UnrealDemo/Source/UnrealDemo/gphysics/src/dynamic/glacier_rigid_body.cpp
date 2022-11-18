@@ -65,11 +65,6 @@ void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpuls
 
     m_AngularVelocity += VDeltaAngular;
 
-    if(VDeltaAngular.Size() > GMath::Makef32(10,1,1000))
-    {
-        int a= 0;
-    }
-
     if (m_AngularVelocity.Size() > m_AngularVelocityMax)
     {
        m_AngularVelocity = m_AngularVelocity.GetNormalize() * m_AngularVelocityMax;

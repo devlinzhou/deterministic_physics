@@ -43,7 +43,7 @@ public:
     UPROPERTY(EditAnywhere)
         FVector     Gravity = FVector(0,0,0);
     UPROPERTY(EditAnywhere)
-        float       MaxLinearVelocity = 2000.f;
+        float       MaxLinearVelocity = 100.f;
     UPROPERTY(EditAnywhere)
         float       MaxAngularVelocity = 100.f;
 
