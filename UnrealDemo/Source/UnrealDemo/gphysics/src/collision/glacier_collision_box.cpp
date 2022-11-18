@@ -710,8 +710,7 @@ static PxI32 generateContacts(
 
 	for(int32_t i=0; i<contactBuffer.m_nPointCount; i++)
     {
-        contactBuffer.m_Point[i].m_PosWorld = transform0.TransformPosition(
-            contactBuffer.m_Point[i].m_PosWorld);
+        contactBuffer.m_Point[i].m_PosWorld = transform0.TransformPosition(contactBuffer.m_Point[i].m_PosWorld);
 
         contactBuffer.m_Point[i].m_Normal = -contactBuffer.m_Point[i].m_Normal;
     }

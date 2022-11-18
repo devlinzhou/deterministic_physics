@@ -112,16 +112,6 @@ void AGPhysicsCollistionActor::Tick(float DeltaTime)
 
         if( GCollision_Box::Box_Box_Contact_PX(BoxShapeA, BoxTransA, BoxShapeB, BoxTransB, &TContact, bswap ) != 0 )
         {
-            if(bswap)
-            {
-                for( int i = 0; i < TContact.m_nPointCount; i++)
-                {
-                    TContact.m_Point[i].m_Normal = -TContact.m_Point[i].m_Normal;
-                }
-
-                //TContact.PointOnSurface = BoxShapeB
-            }
-
             GPhyscsUtils::DrawContact(TContact, &Tdraw, GColor::White());
             TColor = GColor::Red();
         }
