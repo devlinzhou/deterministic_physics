@@ -726,7 +726,8 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
     const GTransform_QT& transform0,
     const GShapeBox& ShapB,
     const GTransform_QT& transform1,
-    class GCollisionContact* pContact)
+    class GCollisionContact* pContact,
+    bool& swap)
 {
 
     f32 aafC[3][3];			// matrix C = A^T B, c_{ij} = Dot(A_i,B_j)
@@ -965,6 +966,8 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform1.m_Pos - extents1.x*axis10;
 		
 		}
+
+        swap = true;
 		return generateContacts(*pContact, ctcNrm, extents1.y, extents1.z, extents0, trs, transform0, contactDistance);
 
 	case AXIS_B1:
@@ -986,6 +989,7 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform1.m_Pos - extents1.y*axis11;
 		}
         trs.m_Rot = trsm.ToQuat();
+        swap = true;
 		return generateContacts(*pContact, ctcNrm, extents1.z, extents1.x, extents0, trs, transform0, contactDistance);
 
 	case AXIS_B2:
@@ -1006,6 +1010,7 @@ int32_t GCollision_Box::Box_Box_Contact_PX(
 			trs.m_Pos = transform1.m_Pos - extents1.z*axis12;
 		}
         trs.m_Rot = trsm.ToQuat();
+        swap = true;
 		return generateContacts(*pContact, ctcNrm, extents1.x, extents1.y, extents0, trs, transform0, contactDistance);
 	}
 }
