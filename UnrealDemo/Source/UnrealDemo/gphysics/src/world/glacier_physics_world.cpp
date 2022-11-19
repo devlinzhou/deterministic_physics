@@ -599,14 +599,14 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
         f32 fMomentum = pPair.GetContactPairMomentum();
 
-        f32 factorA = fMomentum * GMath::Makef32(0, 1, 10);
+        f32 factorA = fMomentum * GMath::Makef32(0, 1, 100);
         f32 factorB = -factorA;
 
         f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
    
-        for( int32_t nLoop = 0; nLoop < 50; nLoop ++ )
+        for( int32_t nLoop = 0; nLoop < 20; nLoop ++ )
         {
             bool bSeparate = true;
 
