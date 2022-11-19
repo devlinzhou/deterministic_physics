@@ -129,7 +129,7 @@ void AGPhysicsActor::Tick(float DeltaTime)
 
 GRigidBody* AGPhysicsActor::CreateSimpleRigidBody( const GTransform_QT& Trans, GVector3 Halfsize, EShape TShape )
 {
-    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, TShape);
+    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.GetNewCObjectId(), TShape);
 
     pBody->m_Shape.SetHalfExtern(Halfsize);
     pBody->UpdateLocalBox();
@@ -143,7 +143,7 @@ GRigidBody* AGPhysicsActor::CreateSimpleRigidBody( const GTransform_QT& Trans, G
 
 GRigidBody* AGPhysicsActor::CreateStaticPlane(const GTransform_QT& Trans )
 {
-    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.CollisionId++, EShape::EShape_Plane);
+    GRigidBody* pBody = new GRigidBody(m_PhysicsWorld.GetNewCObjectId(), EShape::EShape_Plane);
     pBody->UpdateLocalBox();
  
     m_PhysicsWorld.AddStaticLargeObj(pBody);

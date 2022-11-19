@@ -116,7 +116,7 @@ f32 GBroadPhasePair::GetContactPairEnergy() const
 }
 
 
-f32 GBroadPhasePair::GetContactPairMomentum() const
+f32 GBroadPhasePair::GetContactPairMomentum_world() const
 {
     f32 fMomentumA = GMath::Zero();
     if (pObjectA->GetCOType() == CO_Rigid_Body)
@@ -133,6 +133,26 @@ f32 GBroadPhasePair::GetContactPairMomentum() const
     }
 
     return fMomentumA + fMomentumB;
+}
+
+f32 GBroadPhasePair::GetContactPairMomentum_Relative() const
+{
+    f32 fMomentumA = GMath::Zero();
+    if (pObjectA->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRA = (GRigidBody*)pObjectA;
+        fMomentumA = pRA->GetMomentum();
+    }
+
+    f32 fMomentumB = GMath::Zero();
+    if (pObjectB->GetCOType() == CO_Rigid_Body)
+    {
+        GRigidBody* pRB = (GRigidBody*)pObjectB;
+        fMomentumB = pRB->GetMomentum();
+    }
+
+    return fMomentumA + fMomentumB;
+
 }
 
 void GBroadPhasePair::SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap )
@@ -597,16 +617,16 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
         bool bSwap = pPair.PairContact.PointOnSurface == pPair.pObjectA->GetId() ? false : true;
 
-        f32 fMomentum = pPair.GetContactPairMomentum();
+        f32 fMomentum = pPair.GetContactPairMomentum_world();
 
-        f32 factorA = fMomentum * GMath::Makef32(0, 1, 100);
+        f32 factorA = fMomentum * GMath::Makef32(0, 1, 10);
         f32 factorB = -factorA;
 
-        f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
+        f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 1, 20);
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
    
-        for( int32_t nLoop = 0; nLoop < 20; nLoop ++ )
+        for( int32_t nLoop = 0; nLoop < 50; nLoop ++ )
         {
             bool bSeparate = true;
 

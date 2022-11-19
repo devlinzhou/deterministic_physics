@@ -32,8 +32,11 @@ class GCObject // Glacier Physics Collision Object
 {
 public:
 
-    GCObject(  uint32_t uId, EShape TShape )
-        : m_Shape(TShape), m_Id(uId), m_LoaclAABB(GVector3::Zero()), m_WorldAABB(GVector3::Zero())
+    GCObject(  uint32_t uId, EShape TShape ): 
+        m_Shape(TShape), 
+        m_Id(uId), 
+        m_LoaclAABB(GVector3::Zero()), 
+        m_WorldAABB(GVector3::Zero())
     {
         m_CollisionType     = CO_Base;
         m_Transform         = GTransform_QT::Identity();
@@ -41,6 +44,11 @@ public:
         m_UserId            = -1;
         m_pGridCell         = nullptr;
         m_bNeedUpdate       = true;
+    }
+
+    ~GCObject()
+    {
+    
     }
 
     virtual ECollisionObjectType GetCOType() const
@@ -66,15 +74,20 @@ public:
         m_WorldAABB = m_Transform.TransformAABB( m_LoaclAABB );
     }
 
-    const GAABB& GetAABB() const { return m_WorldAABB; }
-
+    const GAABB& GetAABB() const 
+    {
+        return m_WorldAABB;
+    }
 
     void UpdateLocalBox()
     {
         m_LoaclAABB = m_Shape.GetLocalBox();
     }
-    const GAABB& GetLocalAABB() const { return m_LoaclAABB; }
 
+    const GAABB& GetLocalAABB() const
+    { 
+        return m_LoaclAABB;
+    }
 
     void ClearContactPair( )
     {

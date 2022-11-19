@@ -168,7 +168,10 @@ public:
 
     f32 GetContactPairEnergy( ) const;
 
-    f32 GetContactPairMomentum() const;
+    f32 GetContactPairMomentum_world() const;
+
+    f32 GetContactPairMomentum_Relative() const;
+
 
     void SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap );
 
@@ -197,8 +200,8 @@ public:
     {
         m_nCellWide     = f32(nCellWide);
         m_nCellHeight   = f32(nCellHeight);
-        CollisionId = 0;
-
+        m_CObjectId     = 0;
+        m_Friction      = GMath::Makef32(0,5,10);
         m_CollisionManager.Init();
     }
 
@@ -266,15 +269,21 @@ public:
 
     void AddContactPair(GCObject* p1, GCObject* p2);
 
+
+    uint32_t GetNewCObjectId()
+    {
+        return m_CObjectId++;
+    }
+
 public:
 
-    uint32_t CollisionId;
-
+    f32   m_Friction;
 
 private:
 
-    f32 m_nCellWide;
-    f32 m_nCellHeight;
+    uint32_t                                m_CObjectId;
+    f32                                     m_nCellWide;
+    f32                                     m_nCellHeight;
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*>     m_Grids;
