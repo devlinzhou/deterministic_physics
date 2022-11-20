@@ -198,10 +198,11 @@ public:
 
     void Init( int32_t nCellWide = 20, int32_t nCellHeight = 20 )
     {
-        m_nCellWide     = f32(nCellWide);
-        m_nCellHeight   = f32(nCellHeight);
-        m_CObjectId     = 0;
-        m_Friction      = GMath::Makef32(0,5,10);
+        m_nCellWide             = f32(nCellWide);
+        m_nCellHeight           = f32(nCellHeight);
+        m_CObjectId             = 0;
+        m_Friction              = GMath::Makef32(0,5,10);
+        m_FrictionVelocity      = GMath::Makef32(0,1,100);
         m_CollisionManager.Init();
     }
 
@@ -278,6 +279,7 @@ public:
 public:
 
     f32   m_Friction;
+    f32   m_FrictionVelocity;
 
 private:
 

@@ -12,6 +12,7 @@
  */
 #include "glacier_physics_world.h"
 #include "glacier_vector.h"
+#include "glacier_plane.h"
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
 #include "glacier_physics_utils.h"
@@ -622,7 +623,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
         f32 factorA = fMomentum * GMath::Makef32(0, 1, 10);
         f32 factorB = -factorA;
 
-        f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 1, 20);
+        f32 TPairEnergy = pPair.GetContactPairEnergy() * GMath::Makef32(0, 4, 10);
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
    
@@ -636,15 +637,35 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
                 GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
 
+                GVector3 VWorldVelocity0 = pPair.GetWorldRelative( TPoint.m_PosWorld);
+
+                if (GVector3::DotProduct(VWorldVelocity0, VNormal) > GMath::Zero())
+                {
+                  //  continue;
+                }
+
+                GPlane TPlane( VNormal, GMath::Zero());
+
+                GVector3 VFriNormal = TPlane.ProjectVector( VWorldVelocity0 );
+                f32 fSq = VFriNormal.SizeSquare();
+                if( fSq < (m_FrictionVelocity * m_FrictionVelocity) )
+                {
+                    VFriNormal = GVector3::Zero();
+                }
+                else
+                {
+                    VFriNormal.Normalize();
+                }
+
                 if( pRA != nullptr )
-                    pRA->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorA);
+                    pRA->AddImpulse_World(TPoint.m_PosWorld, ( VNormal - VFriNormal * m_Friction ) * factorA );
 
                 if( pRB != nullptr )
-                    pRB->AddImpulse_World(TPoint.m_PosWorld, VNormal * factorB);
+                    pRB->AddImpulse_World(TPoint.m_PosWorld, ( VNormal - VFriNormal * m_Friction ) * factorB);
 
-                GVector3 VWorldVelocity = pPair.GetWorldRelative( TPoint.m_PosWorld);
+                GVector3 VWorldVelocity1 = pPair.GetWorldRelative( TPoint.m_PosWorld);
 
-                if( GVector3::DotProduct( VWorldVelocity, VNormal ) <= GMath::Zero() )
+                if( GVector3::DotProduct( VWorldVelocity1, VNormal ) <= GMath::Zero() )
                 {
                     TPoint.m_bCurrentSeparate = false;
                     bSeparate = false;

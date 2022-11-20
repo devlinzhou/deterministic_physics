@@ -46,7 +46,7 @@ public:
         m_bNeedUpdate       = true;
     }
 
-    ~GCObject()
+    virtual ~GCObject()
     {
     
     }

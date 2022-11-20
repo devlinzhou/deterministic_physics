@@ -67,6 +67,9 @@ public:
     GPhysicsWorld m_PhysicsWorld;
 
     UPROPERTY(EditAnywhere,meta = (Bitmask, BitmaskEnum = "EGDrawMask"))
-    int32   DrawMask;
+        int32   DrawMask;
+
+   // UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "EGDrawMask"))
+    //    float   DrawMask;
 
 };
