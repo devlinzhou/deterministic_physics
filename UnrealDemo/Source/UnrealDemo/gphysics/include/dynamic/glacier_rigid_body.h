@@ -155,6 +155,8 @@ public:
     GVector3        m_Gravity;
     f32             m_density;
 
+    GTransform_QT           m_Transform_Solve;
+
     f32             m_Mass;
     f32             m_InvMass;
 

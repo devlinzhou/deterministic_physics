@@ -343,6 +343,15 @@ public:
         return GVector3(GMath::Max(a.x, b.x), GMath::Max(a.y, b.y), GMath::Max(a.z, b.z) );
     }
 
+    static inline void ClampVector(GVector3& V, f32 fSize)
+    {
+        f32 VSqr = V.SizeSquare();
+        if (VSqr > (fSize * fSize))
+        {
+            VSqr = VSqr * (GMath::InvSqrt(VSqr) * fSize);
+        }
+    }
+
     inline bool IsZero( void ) const 
     { 
         return x == GMath::Zero() && y == GMath::Zero() && z == GMath::Zero();

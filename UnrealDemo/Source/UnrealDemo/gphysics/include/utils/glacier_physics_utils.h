@@ -40,15 +40,9 @@ public:
      static void DrawContact( const GCollisionContact& TContact, IGlacierDraw* pDebugDraw, GColor TColor, const class GPhysicsWorld* = nullptr );
 
      static GMatrix3 CalculateInertiaTensor( const GCollisionShape& pShape );
+
      static f32 CalculateVolume(const GCollisionShape& pShape);
 
-     static inline void ClampVector( GVector3& V, f32 fSize )
-     {
-        f32 VSqr = V.SizeSquare();
-        if( VSqr > (fSize * fSize))
-        {
-            VSqr = VSqr *( GMath::InvSqrt(VSqr) * fSize );
-        }
-     }
+
 
 };

@@ -121,7 +121,6 @@ public:
     ECollisionObjectType    m_CollisionType;
 
     GTransform_QT           m_Transform_Last;
-    
     GTransform_QT           m_Transform;
 
 

@@ -192,16 +192,22 @@ void GBroadPhasePair::SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap
         f32 fAlphaA = pRB->m_Mass / (pRA->m_Mass + pRB->m_Mass);
         f32 fAlphaB = GMath::One() - fAlphaA;
 
-        pRA->m_Transform.m_Pos -= VSep * fAlphaA;
-        pRB->m_Transform.m_Pos += VSep * fAlphaB;
+        pRA->m_Transform_Solve.m_Pos = pRA->m_Transform.m_Pos - VSep * fAlphaA;
+
+        pRB->m_Transform_Solve.m_Pos = pRB->m_Transform.m_Pos + VSep * fAlphaB;
+
+       // pRA->m_Transform.m_Pos -= VSep * fAlphaA;
+      //  pRB->m_Transform.m_Pos += VSep * fAlphaB;
     }
     else if (pRA != nullptr)
     {
-        pRA->m_Transform.m_Pos -= VSep;
+        pRA->m_Transform_Solve.m_Pos = pRA->m_Transform.m_Pos - VSep;
+       // pRA->m_Transform.m_Pos -= VSep;
     }
     else if (pRB != nullptr)
     {
-        pRB->m_Transform.m_Pos += VSep;
+        pRB->m_Transform_Solve.m_Pos = pRB->m_Transform.m_Pos + VSep;
+       // pRB->m_Transform.m_Pos += VSep;
     }
 }
 
@@ -710,6 +716,12 @@ void GPhysicsWorld::SolveContactConstraint( )
         if (pObject->GetCOType() == CO_Rigid_Body && ((GRigidBody*)pObject)->m_bDynamic)
         {
             pObject->m_ContactStaticDepth = 1000;
+
+            GRigidBody* pRigid = (GRigidBody*)pObject;
+
+            pRigid->m_Transform_Solve = pRigid->m_Transform;
+
+
         }
         else
         {

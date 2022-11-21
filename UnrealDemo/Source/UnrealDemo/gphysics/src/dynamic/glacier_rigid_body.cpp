@@ -19,8 +19,8 @@ void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 {
     GVector3 VNewLinearVelocity = m_LinearVelocity + m_Gravity * DetalTime;
 
-    GPhyscsUtils::ClampVector(VNewLinearVelocity, m_LinearVelocityMax);
-    GPhyscsUtils::ClampVector(m_AngularVelocity, m_AngularVelocityMax);
+    GVector3::ClampVector(VNewLinearVelocity, m_LinearVelocityMax);
+    GVector3::ClampVector(m_AngularVelocity, m_AngularVelocityMax);
 
     m_Transform.m_Pos += (m_LinearVelocity + VNewLinearVelocity) * GMath::Half() * DetalTime;
 
