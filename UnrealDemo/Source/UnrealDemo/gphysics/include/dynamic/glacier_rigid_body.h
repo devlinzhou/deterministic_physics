@@ -30,8 +30,8 @@ public:
         m_InvMass               = GMath::One();
         m_LinearVelocity        = GVector3::Zero();
         m_AngularVelocity       = GVector3::Zero();
-
-        m_density = GMath::Makef32(100,0,1); // tenth of water's density
+        m_density               = GMath::Makef32(100,0,1); // tenth of water's density
+        m_ContactStaticDepth    = 0;
     }
 
     virtual bool IsDynamic() const override
@@ -44,6 +44,32 @@ public:
     void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );
 
     GVector3 GetWorldPosVelocity( const GVector3& VPos );
+
+    f32 GetEquivalentMass( const GVector3& VWorldPos, const GVector3& VImpulse )
+    {
+        if( m_bDynamic )
+        {
+            GVector3 Torque = GVector3::CrossProduct(VWorldPos - GetMassCenterPos(), VImpulse);
+
+            GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
+
+            GVector3 VDeltaAngular = Inv_Ineria.TransformVector(Torque);
+
+            GVector3 V1 = GVector3::CrossProduct(VDeltaAngular, (VWorldPos - GetMassCenterPos()));
+
+            GVector3 V2 = VImpulse * m_InvMass;
+
+            GVector3 VDeltaVelocity = V1 + V2;
+
+            f32 EquivalentMass = VImpulse.Size() / VDeltaVelocity.Size();
+
+            return EquivalentMass;
+        }
+        else
+        {
+            return GMath::Makef32(0,0,1);        
+        }
+    }
 
     f32 GetEnergy()
     {
@@ -126,8 +152,7 @@ public:
 public:
 
     bool            m_bDynamic;
-    GTransform_QT   m_Transform_Pre;
-
+    GVector3        m_Gravity;
     f32             m_density;
 
     f32             m_Mass;
@@ -143,6 +168,4 @@ public:
     GVector3        m_AngularVelocity;
     f32             m_AngularDamping;
     f32             m_AngularVelocityMax;
-
-    GVector3        m_Gravity;
 };

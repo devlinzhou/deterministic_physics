@@ -17,31 +17,24 @@
 
 void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 {
-    GVector3 VNew = m_LinearVelocity + m_Gravity * DetalTime;
+    GVector3 VNewLinearVelocity = m_LinearVelocity + m_Gravity * DetalTime;
 
-    if (VNew.SizeSquare() > (m_LinearVelocityMax * m_LinearVelocityMax))
-    {
-        VNew = VNew.GetNormalize() * m_LinearVelocityMax;
-    }
+    GPhyscsUtils::ClampVector(VNewLinearVelocity, m_LinearVelocityMax);
+    GPhyscsUtils::ClampVector(m_AngularVelocity, m_AngularVelocityMax);
 
-    m_Transform.m_Pos += (m_LinearVelocity + VNew) * GMath::Half() * DetalTime;
+    m_Transform.m_Pos += (m_LinearVelocity + VNewLinearVelocity) * GMath::Half() * DetalTime;
 
-    m_LinearVelocity = VNew;
-
+    m_LinearVelocity = VNewLinearVelocity;
 
     f32	fAngle = m_AngularVelocity.Size(); 
-
-    fAngle = GMath::Min(fAngle, m_AngularVelocityMax );
 
     f32 fDeltaAngle = fAngle * DetalTime;
 
     GQuaternion DeltaRot = GQuaternion( m_AngularVelocity.GetNormalize(), fDeltaAngle );
 
-
     m_Transform.m_Rot = m_Transform.m_Rot * DeltaRot;
 
     m_Transform.m_Rot.Normalize();
-
 
     m_bNeedUpdate = true;
 }
@@ -49,11 +42,6 @@ void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse)
 {
     m_LinearVelocity += VImpulse * m_InvMass;
-
-    if(m_LinearVelocity.Size() > m_LinearVelocityMax )
-    {
-        m_LinearVelocity = m_LinearVelocity.GetNormalize() * m_LinearVelocityMax;
-    }
 
     GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
 
@@ -64,11 +52,6 @@ void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpuls
     GVector3 VDeltaAngular = Inv_Ineria.TransformVector( Torque); 
 
     m_AngularVelocity += VDeltaAngular;
-
-    if (m_AngularVelocity.Size() > m_AngularVelocityMax)
-    {
-       m_AngularVelocity = m_AngularVelocity.GetNormalize() * m_AngularVelocityMax;
-    }
 }
 
 

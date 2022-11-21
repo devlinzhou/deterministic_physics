@@ -44,6 +44,7 @@ public:
         m_UserId            = -1;
         m_pGridCell         = nullptr;
         m_bNeedUpdate       = true;
+        m_ContactStaticDepth = 0;
     }
 
     virtual ~GCObject()
@@ -118,9 +119,12 @@ public:
     GCollisionShape         m_Shape;  
     uint32_t                m_Id;
     ECollisionObjectType    m_CollisionType;
+
+    GTransform_QT           m_Transform_Last;
     
     GTransform_QT           m_Transform;
-    GTransform_QT           m_Transform_Last;
+
+
 
     GAABB                   m_LoaclAABB;
     GAABB                   m_WorldAABB;
@@ -130,6 +134,8 @@ public:
     GGridCell*              m_pGridCell;
     bool                    m_bNeedUpdate;
 
+
+    uint32_t                m_ContactStaticDepth;
 
     std::set<uint32_t>      m_ContactObjs;
     std::vector<int32_t>    m_ContactArray;

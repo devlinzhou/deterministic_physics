@@ -85,9 +85,9 @@ class GCObject;
 class GGridCell
 {
 public:
-    GGridPosition                   m_pos;
-    std::vector<GCObject*>  m_Objects;
-    GAABB                           m_AABB;
+    GGridPosition               m_pos;
+    std::vector<GCObject*>      m_Objects;
+    GAABB                       m_AABB;
 
 public:
     GGridCell( const GGridPosition& TPos, f32 CeilWide, f32 CeilHeight ) : m_pos(TPos)
@@ -162,24 +162,44 @@ public:
 
             PairId = ((uint64_t)p2->GetId() << 32 ) | (uint64_t)p1->GetId();
         }
+
+        Solved = false;
     }
 
-    GVector3 GetWorldRelative(const GVector3& VPos ) const;
+    void CalculateContactStaticDepth( )
+    {
+        if(pObjectA->m_ContactStaticDepth > (pObjectB->m_ContactStaticDepth + 1 ) )
+        {
+            pObjectA->m_ContactStaticDepth = (pObjectB->m_ContactStaticDepth + 1 );
+        }
+
+        if (pObjectB->m_ContactStaticDepth > (pObjectA->m_ContactStaticDepth + 1))
+        {
+            pObjectB->m_ContactStaticDepth = (pObjectA->m_ContactStaticDepth + 1);
+        }
+
+        m_ContactStaticDepth = pObjectA->m_ContactStaticDepth < pObjectB->m_ContactStaticDepth ?
+            pObjectA->m_ContactStaticDepth : pObjectB->m_ContactStaticDepth;
+    }
+
+
+    GVector3 GetWorldRelativeB(const GVector3& VPos ) const;
 
     f32 GetContactPairEnergy( ) const;
 
     f32 GetContactPairMomentum_world() const;
 
-    f32 GetContactPairMomentum_Relative() const;
-
-
     void SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap );
 
     uint64_t            PairId;
+    uint32_t            m_ContactStaticDepth;
     GCObject*           pObjectA;
     GCObject*           pObjectB;
 
     GCollisionContact   PairContact;
+
+    bool                Solved;
+
 };
 
 enum
@@ -203,6 +223,7 @@ public:
         m_CObjectId             = 0;
         m_Friction              = GMath::Makef32(0,5,10);
         m_FrictionVelocity      = GMath::Makef32(0,1,100);
+        m_CollisionEnergyLost  = GMath::Makef32(0,9,10);
         m_CollisionManager.Init();
     }
 
@@ -280,6 +301,7 @@ public:
 
     f32   m_Friction;
     f32   m_FrictionVelocity;
+    f32   m_CollisionEnergyLost;
 
 private:
 
