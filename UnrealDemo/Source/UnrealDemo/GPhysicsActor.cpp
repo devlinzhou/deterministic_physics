@@ -65,9 +65,6 @@ void AGPhysicsActor::GPysics_PreTick()
 void AGPhysicsActor::GPysics_Simulate(float DeltaTime)
 {
     SCOPE_CYCLE_COUNTER(STAT_GPysics_Simulate);
-
-
-
     m_PhysicsWorld.Simulate(GMath::FromFloat(DeltaTime));
 }
 

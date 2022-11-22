@@ -223,7 +223,8 @@ public:
         m_CObjectId             = 0;
         m_Friction              = GMath::Makef32(0,5,10);
         m_FrictionVelocity      = GMath::Makef32(0,1,100);
-        m_CollisionEnergyLost  = GMath::Makef32(0,9,10);
+        m_CollisionEnergyLost   = GMath::Makef32(0,9,10);
+        m_fCollisionExtern      = GMath::Makef32(0,3,10);
         m_CollisionManager.Init();
     }
 
@@ -308,6 +309,7 @@ private:
     uint32_t                                m_CObjectId;
     f32                                     m_nCellWide;
     f32                                     m_nCellHeight;
+    f32                                     m_fCollisionExtern;
 
     //GGrid   m_Grids;
     std::map<GGridPosition, GGridCell*>     m_Grids;

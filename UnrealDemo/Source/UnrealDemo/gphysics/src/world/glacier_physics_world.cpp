@@ -196,18 +196,18 @@ void GBroadPhasePair::SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap
 
         pRB->m_Transform_Solve.m_Pos = pRB->m_Transform.m_Pos + VSep * fAlphaB;
 
-       // pRA->m_Transform.m_Pos -= VSep * fAlphaA;
-      //  pRB->m_Transform.m_Pos += VSep * fAlphaB;
+        pRA->m_Transform.m_Pos -= VSep * fAlphaA;
+        pRB->m_Transform.m_Pos += VSep * fAlphaB;
     }
     else if (pRA != nullptr)
     {
         pRA->m_Transform_Solve.m_Pos = pRA->m_Transform.m_Pos - VSep;
-       // pRA->m_Transform.m_Pos -= VSep;
+        pRA->m_Transform.m_Pos -= VSep;
     }
     else if (pRB != nullptr)
     {
         pRB->m_Transform_Solve.m_Pos = pRB->m_Transform.m_Pos + VSep;
-       // pRB->m_Transform.m_Pos += VSep;
+        pRB->m_Transform.m_Pos += VSep;
     }
 }
 
@@ -429,7 +429,7 @@ void GPhysicsWorld::DebugDrawObject( IGlacierDraw* pDraw, const GCObject* pObj, 
 
     if (mask & GPDraw_WorldBox)
     {
-        GAABB TAABB = pObject->GetAABB();
+        GAABB TAABB = pObject->GetWorldAABB();
         pDraw->DrawBox(GTransform_QT::Identity(), TAABB.GetCenter(), TAABB.GetHalfSize(), GColor::Gray());
     }
 
@@ -486,11 +486,11 @@ void GPhysicsWorld::CollisionBroadPhase( )
         {
             GCObject* pObjectA = iterA->second->m_Objects[i];
 
-            const GAABB& BoxA = pObjectA->GetAABB();
+            const GAABB& BoxA = pObjectA->GetWorldAABB(m_fCollisionExtern);
             for (int32_t j = 0; j < i; ++j)
             {
                 GCObject* pObjectB = iterA->second->m_Objects[j];
-                const GAABB& BoxB = pObjectB->GetAABB();
+                const GAABB& BoxB = pObjectB->GetWorldAABB(m_fCollisionExtern);
                 if (BoxA.Intersects(BoxB))
                 {
                     AddContactPair(pObjectA, pObjectB);
@@ -500,7 +500,7 @@ void GPhysicsWorld::CollisionBroadPhase( )
             for ( int32_t nLargeObj = 0; nLargeObj < (int32_t)m_StaticLargeObj.size(); ++nLargeObj )
             {
                 GCObject* pLargeObj = m_StaticLargeObj[nLargeObj];
-                const GAABB& BoxB = pLargeObj->GetAABB();
+                const GAABB& BoxB = pLargeObj->GetWorldAABB(m_fCollisionExtern);
                 if (BoxA.Intersects(BoxB))
                 {
                     AddContactPair(pObjectA, pLargeObj);
@@ -521,13 +521,13 @@ void GPhysicsWorld::CollisionBroadPhase( )
             for (int32_t LoopA = 0; LoopA < (int32_t)iterA->second->m_Objects.size(); ++LoopA)
             {
                 GCObject*       pObjectA    = iterA->second->m_Objects[LoopA];
-                const GAABB&    BoxA        = pObjectA->GetAABB();
+                const GAABB&    BoxA        = pObjectA->GetWorldAABB(m_fCollisionExtern);
 
 
                 for (int32_t LoopB = 0; LoopB < (int32_t)iterB->second->m_Objects.size(); ++LoopB)
                 {
                     GCObject* pObjectB = iterB->second->m_Objects[LoopB];
-                    const GAABB& BoxB = pObjectB->GetAABB();
+                    const GAABB& BoxB = pObjectB->GetWorldAABB(m_fCollisionExtern);
                     if (BoxA.Intersects(BoxB))
                     {
                         AddContactPair(pObjectA, pObjectB);
@@ -551,7 +551,7 @@ void GPhysicsWorld::CollisionNarrowPhase( )
         m_StaticLargeObj[nLargeObj]->ClearContactPair();
     }
         
-    for( int32_t i = 0; i < (int32_t)m_BroadPhasePairs.size(); ++i )
+   /* for( int32_t i = 0; i < (int32_t)m_BroadPhasePairs.size(); ++i )
     {
         GBroadPhasePair& TestPair = m_BroadPhasePairs[i];
 
@@ -571,7 +571,7 @@ void GPhysicsWorld::CollisionNarrowPhase( )
                 TestPair.pObjectB->AddContactPair(TestPair.PairId, i);
             }
         }
-    }
+    }*/
 }
 
 GVector3 GetWorldRelative( const GVector3& VPos, GCObject* pObjectA, GCObject* pObjectB )
@@ -596,6 +596,25 @@ GVector3 GetWorldRelative( const GVector3& VPos, GCObject* pObjectA, GCObject* p
 
 void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 {
+    int32_t ShapeTypeA = (int32_t)pPair.pObjectA->m_Shape.ShapType;
+    int32_t ShapeTypeB = (int32_t)pPair.pObjectB->m_Shape.ShapType;
+
+    GCollisionAlgorithm* pAlgorithm = m_CollisionManager.GetAlgrithm(ShapeTypeA, ShapeTypeB);
+
+    if (pAlgorithm != nullptr)
+    {
+        pPair.PairContact.ClearPoint();
+        pAlgorithm->ProcessCollision(pPair.pObjectA, pPair.pObjectB, &pPair.PairContact);
+
+        if (pPair.PairContact.GetPointCount() > 0)
+        {
+            pPair.pObjectA->AddContactPair(pPair.PairId, 0);
+            pPair.pObjectB->AddContactPair(pPair.PairId, 0);
+        }
+    }
+
+
+
     int32_t nPointCount = pPair.PairContact.GetPointCount();
     if( nPointCount <= 0)
         return;

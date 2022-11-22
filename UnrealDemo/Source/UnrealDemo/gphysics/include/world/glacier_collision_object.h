@@ -75,9 +75,16 @@ public:
         m_WorldAABB = m_Transform.TransformAABB( m_LoaclAABB );
     }
 
-    const GAABB& GetAABB() const 
+    const GAABB& GetWorldAABB() const 
     {
         return m_WorldAABB;
+    }
+
+    GAABB GetWorldAABB( const f32& Extern ) const
+    {
+        GAABB TBox(m_WorldAABB.m_VMin - GVector3(Extern),  m_WorldAABB.m_VMax + GVector3(Extern));
+
+        return TBox;
     }
 
     void UpdateLocalBox()
