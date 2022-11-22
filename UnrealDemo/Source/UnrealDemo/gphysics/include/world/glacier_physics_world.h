@@ -273,6 +273,10 @@ public:
         }
     }
 
+public:
+
+    f32 GetTotalEnergy();
+
 
 public:
 

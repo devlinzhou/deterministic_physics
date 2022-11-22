@@ -388,6 +388,26 @@ void GPhysicsWorld::PostTick()
     GTimeProfiler::DebugOut();
 }
 
+f32 GPhysicsWorld::GetTotalEnergy()
+{
+    f32 T = GMath::Zero();
+    for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
+    {
+        GCObject* pObject = m_Objects[i];
+        if (pObject->m_CollisionType == ECollisionObjectType::CO_Rigid_Body)
+        {
+            GRigidBody* pDynamicRigid = (GRigidBody*)pObject;
+
+            if (pDynamicRigid->m_bDynamic)
+            {
+                T += pDynamicRigid->GetEnergy();
+            }
+        }
+    }
+
+    return T;
+}
+
 void GPhysicsWorld::Simulate( f32 DetltaTime )
 {
     for (int32_t i = 0; i < (int32_t)m_Objects.size(); ++i)
@@ -711,13 +731,18 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
                 }
             }
 
-            f32 fCurrentEnergy = pPair.GetContactPairEnergy();
-            if (fCurrentEnergy > PairEnergy)
+            if( bSeparate )
             {
-                pPair.SeparatePair(pRA, pRB, bSwap);
-                pPair.Solved = true;
-                break;
+                f32 fCurrentEnergy = pPair.GetContactPairEnergy();
+                if (fCurrentEnergy > PairEnergy)
+                {
+                    // pPair.SeparatePair(pRA, pRB, bSwap);
+                    pPair.Solved = true;
+                    break;
+                }
             }
+
+
 
         }
     }
