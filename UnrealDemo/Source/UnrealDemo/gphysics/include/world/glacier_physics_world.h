@@ -223,7 +223,7 @@ public:
         m_CObjectId             = 0;
         m_Friction              = GMath::Makef32(0,5,10);
         m_FrictionVelocity      = GMath::Makef32(0,1,100);
-        m_CollisionEnergyLost   = GMath::Makef32(0,9,10);
+        m_CollisionEnergyLost   = GMath::Makef32(0,5,10);
         m_fCollisionExtern      = GMath::Makef32(0,3,10);
         m_CollisionManager.Init();
     }

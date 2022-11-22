@@ -14,6 +14,7 @@
 
 #include "glacier_collision_object.h"
 #include "glacier_matrix.h"
+#include "glacier_physics_utils.h"
 
 class GRigidBody : public GCObject
 {
@@ -57,6 +58,8 @@ public:
 
             GVector3 V1 = GVector3::CrossProduct(VDeltaAngular, (VWorldPos - GetMassCenterPos()));
 
+            V1 = GPhyscsUtils::Project_Parallel(VImpulse, V1);
+
             GVector3 V2 = VImpulse * m_InvMass;
 
             GVector3 VDeltaVelocity = V1 + V2;
@@ -67,7 +70,7 @@ public:
         }
         else
         {
-            return GMath::Makef32(0,0,1);        
+            return GMath::Makef32(0,0,1);
         }
     }
 

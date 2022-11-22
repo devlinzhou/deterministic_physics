@@ -657,18 +657,28 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
             f32 EquivalentMassA = GMath::Zero();
             f32 EquivalentMassB = GMath::Zero();
 
-            if (pRA != nullptr)
-                EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+            f32 VWorldVelocity  = GVector3::DotProduct( pPair.GetWorldRelativeB(TPoint.m_PosWorld), VNormal);
+            f32 TMomentum       = GMath::Zero();
 
-            if (pRB != nullptr)
+
+            if (pRA != nullptr && pRB != nullptr)
+            {
+                EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
                 EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
 
-            f32 TotalMass = EquivalentMassA + EquivalentMassB;
-
-            f32 VWorldVelocity = GVector3::DotProduct( pPair.GetWorldRelativeB(TPoint.m_PosWorld), VNormal);
-
-            f32 TMomentum = TotalMass * GMath::Abs(VWorldVelocity) ;
-           
+                TMomentum = GMath::Abs(VWorldVelocity) * EquivalentMassA * EquivalentMassB /( EquivalentMassB + EquivalentMassA );
+            }
+            else if( pRA != nullptr )
+            {
+                EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                TMomentum  = EquivalentMassA * GMath::Abs(VWorldVelocity);
+            }
+            else
+            {
+                EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                TMomentum  = EquivalentMassB * GMath::Abs(VWorldVelocity);
+            }
+          
             if( fMomentum < TMomentum )
             {
                 fMomentum = TMomentum;
@@ -682,7 +692,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
         f32 PairEnergy = TPairEnergy / f32(nPointCount);
    
-        for( int32_t nLoop = 0; nLoop < 20; nLoop ++ )
+        for( int32_t nLoop = 0; nLoop < 16; nLoop ++ )
         {
             bool bSeparate = true;
 
@@ -736,7 +746,7 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
                 f32 fCurrentEnergy = pPair.GetContactPairEnergy();
                 if (fCurrentEnergy > PairEnergy)
                 {
-                    // pPair.SeparatePair(pRA, pRB, bSwap);
+                     pPair.SeparatePair(pRA, pRB, bSwap);
                     pPair.Solved = true;
                     break;
                 }

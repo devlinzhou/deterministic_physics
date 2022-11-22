@@ -43,6 +43,15 @@ public:
 
      static f32 CalculateVolume(const GCollisionShape& pShape);
 
+     static inline GVector3 Project_Vertical(const GVector3& Normal, const GVector3& V)
+     {
+         return V - GVector3::DotProduct(Normal, V) * Normal;
+     }
+
+     static inline GVector3 Project_Parallel(const GVector3& Normal, const GVector3& V)
+     {
+         return GVector3::DotProduct(Normal, V) * Normal;
+     }
 
 
 };
