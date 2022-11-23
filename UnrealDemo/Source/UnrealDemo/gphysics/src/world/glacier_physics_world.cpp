@@ -829,12 +829,16 @@ void GPhysicsWorld::UpdateSceneGrid( )
         }
     }
 
-    for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); ++iter)
+    for (std::map<GGridPosition, GGridCell*>::const_iterator iter = m_Grids.begin(); iter != m_Grids.end(); )
     {
         if( iter->second->m_Objects.size() == 0 )
         {
             delete iter->second;
             m_Grids.erase( iter++ );
+        }
+        else
+        {
+            iter++;
         }
     }
 
