@@ -14,15 +14,13 @@
 
 #include "glacier_transform_qt.h"
 #include "glacier_collision_shape.h"
+#include "glacier_debug_draw.h"
 
 class IGlacierDraw;
-
 
 class GSimplex
 {
 public:
-
-
     GVector3 m_Points[4];
 };
 
@@ -72,7 +70,7 @@ public:
         return PosA - LocalBToLocalA.TransformPosition(PosB);
     }
 
-    template <typename ShapTypeA, typename ShapTypeB>
+ /*   template <typename ShapTypeA, typename ShapTypeB>
     static inline f32 GJKDistance(
         const ShapTypeA& ShapA, const GTransform_QT& TransformA,
         const ShapTypeB& ShapB, const GTransform_QT& TransformB,
@@ -95,7 +93,7 @@ public:
 
         while ( fDistance > Epsilon )
         {
-            f32 fDotTest = GVector3::DotProduct( SupportPos0 );
+            f32 fDotTest = GVector3::DotProduct( SupportPos0,SupportPos0 );
             if (fDotTest > GMath::Zero())
             {
                 return fDotTest; // not accurate
@@ -118,7 +116,7 @@ public:
 
         return fDistance;
     
-    }
+    }*/
 
 };
 
