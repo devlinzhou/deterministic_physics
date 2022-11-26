@@ -127,7 +127,7 @@ void AGPhysicsActor::Tick(float DeltaTime)
 
         if (GEngine)
         {
-            float TS = m_PhysicsWorld.GetTotalEnergy().toFloat();
+            float TS = GMath::ToFloat( m_PhysicsWorld.GetTotalEnergy());
 
             GEngine->AddOnScreenDebugMessage(1, 15.0f, FColor::Yellow, FString::Printf(TEXT("total energy: %f "), TS));
         }
