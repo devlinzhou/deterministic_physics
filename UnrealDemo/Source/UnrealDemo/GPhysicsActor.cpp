@@ -127,9 +127,19 @@ void AGPhysicsActor::Tick(float DeltaTime)
 
         if (GEngine)
         {
-            float TS = GMath::ToFloat( m_PhysicsWorld.GetTotalEnergy());
+            float TS = GMath::ToFloat(m_PhysicsWorld.GetTotalEnergy());
+            FVector LM = GUtility::G_to_U( m_PhysicsWorld.GetTotalLinearMomentum());
+            FVector AM = GUtility::G_to_U( m_PhysicsWorld.GetTotalAngularMomentum());
+
 
             GEngine->AddOnScreenDebugMessage(1, 15.0f, FColor::Yellow, FString::Printf(TEXT("total energy: %f "), TS));
+
+            GEngine->AddOnScreenDebugMessage(2, 15.0f, FColor::Yellow, 
+                FString::Printf(TEXT("Linear Momentum : %.3f, %.3f, %.3f "), LM.X, LM.Y, LM.Z));
+
+            GEngine->AddOnScreenDebugMessage(3, 15.0f, FColor::Yellow,
+                FString::Printf(TEXT("Angular Momentum : %.3f, %.3f, %.3f "), AM.X, AM.Y, AM.Z));
+
         }
     }
 }

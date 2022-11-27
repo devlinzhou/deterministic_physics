@@ -27,6 +27,12 @@ public:
         const GTransform_QT&    TransformB,
         GVector3*               pOutPosition,
         GVector3*               pOutNormal);
+
+    static bool Box_Plane(
+        const GShapeBox&        ShapA,
+        const GTransform_QT&    TransformA,
+        const GShapePlane&      ShapB,
+        const GTransform_QT&    TransformB);
    
 
     static int32_t Box_Box_Contact(

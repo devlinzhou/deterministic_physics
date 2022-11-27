@@ -88,6 +88,7 @@ public:
     GGridPosition               m_pos;
     std::vector<GCObject*>      m_Objects;
     GAABB                       m_AABB;
+    GAABB                       m_CeilAABB;
 
 public:
     GGridCell( const GGridPosition& TPos, f32 CeilWide, f32 CeilHeight ) : m_pos(TPos)
@@ -102,8 +103,7 @@ public:
             f32(TPos.y + 1) * CeilWide,
             f32(TPos.z + 1) * CeilHeight);
        
-        m_AABB = GAABB(VMin, VMax );
- 
+        m_CeilAABB = GAABB(VMin, VMax );
     }
 
     ~GGridCell() {}
@@ -127,82 +127,19 @@ public:
         return m_AABB.GetHalfSize();
     }
 
+    void UpdateAABB();
+
     bool AddCollisionObject(GCObject* pObject);
 
     bool RemoveObject(GCObject* pObject);
 
-
     void DebugDraw(IGlacierDraw* pDraw, uint32_t mask ) const;
-
 
 private:
   
 };
 
-class GRigidBody;
-class GBroadPhasePair
-{
-public:
-
-    GBroadPhasePair() = default;
-    GBroadPhasePair(const GBroadPhasePair&) = default;
-    GBroadPhasePair(GCObject* p1, GCObject* p2)
-    {
-        if (p1->GetId() < p2->GetId())
-        {
-            pObjectA = p1;
-            pObjectB = p2;
-
-            PairId = ((uint64_t)p1->GetId() << 32 ) | (uint64_t)p2->GetId();
-        }
-        else
-        {
-            pObjectA = p2;
-            pObjectB = p1;
-
-            PairId = ((uint64_t)p2->GetId() << 32 ) | (uint64_t)p1->GetId();
-        }
-
-        Solved = false;
-    }
-
-    void CalculateContactStaticDepth( )
-    {
-        if(pObjectA->m_ContactStaticDepth > (pObjectB->m_ContactStaticDepth + 1 ) )
-        {
-            pObjectA->m_ContactStaticDepth = (pObjectB->m_ContactStaticDepth + 1 );
-        }
-
-        if (pObjectB->m_ContactStaticDepth > (pObjectA->m_ContactStaticDepth + 1))
-        {
-            pObjectB->m_ContactStaticDepth = (pObjectA->m_ContactStaticDepth + 1);
-        }
-
-        m_ContactStaticDepth = pObjectA->m_ContactStaticDepth < pObjectB->m_ContactStaticDepth ?
-            pObjectA->m_ContactStaticDepth : pObjectB->m_ContactStaticDepth;
-    }
-
-
-    GVector3 GetWorldRelativeB(const GVector3& VPos ) const;
-
-    f32 GetContactPairEnergy( ) const;
-
-    f32 GetContactPairMomentum_world() const;
-
-    void SeparatePair( GRigidBody* pRA, GRigidBody* pRB, bool bSwap );
-
-    uint64_t            PairId;
-    uint32_t            m_ContactStaticDepth;
-    GCObject*           pObjectA;
-    GCObject*           pObjectB;
-
-    GCollisionContact   PairContact;
-
-    bool                Solved;
-
-};
-
-enum
+enum GPDraw
 {
     GPDraw_Shape        = 1 << 0,
     GPDraw_LocalBox     = 1 << 1,
@@ -221,9 +158,9 @@ public:
         m_nCellWide             = f32(nCellWide);
         m_nCellHeight           = f32(nCellHeight);
         m_CObjectId             = 0;
-        m_Friction              = GMath::Makef32(0,5,10);
-        m_FrictionVelocity      = GMath::Makef32(0,1,100);
-        m_CollisionEnergyLost   = GMath::Makef32(0,5,10);
+        m_Friction              = GMath::Makef32(0,1,10);
+        m_FrictionClampVelocity = GMath::Makef32(0,1,100);
+        m_CollisionEnergyLost   = GMath::Makef32(0,10,100);
         m_fCollisionExtern      = GMath::Makef32(0,3,10);
         m_CollisionManager.Init();
     }
@@ -276,6 +213,8 @@ public:
 public:
 
     f32 GetTotalEnergy();
+    GVector3 GetTotalLinearMomentum();
+    GVector3 GetTotalAngularMomentum();
 
 
 public:
@@ -305,8 +244,10 @@ public:
 public:
 
     f32   m_Friction;
-    f32   m_FrictionVelocity;
+    f32   m_FrictionClampVelocity;
     f32   m_CollisionEnergyLost;
+
+    bool solvesort = false;
 
 private:
 
@@ -325,5 +266,4 @@ private:
     std::map<uint64_t, GBroadPhasePair>     m_BroadPhaseMap;
 
     GCollisionManerger                      m_CollisionManager;
-    GContactManerger                        m_ContactManager;
 };

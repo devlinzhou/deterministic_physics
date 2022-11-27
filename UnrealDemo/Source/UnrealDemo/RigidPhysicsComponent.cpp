@@ -44,6 +44,11 @@ void URigidPhysicsComponent::BeginPlay()
 
             m_pRigid->m_AngularVelocityMax = GMath::Makef32(10,0,1);
 
+            m_pRigid->m_LinearVelocity = GUtility::Unit_U_to_G(StartLinearVeloctiy);
+            m_pRigid->m_AngularVelocity = GUtility::U_to_G(StartAngularVeloctiy);
+
+
+
 
             m_pRigid->m_bDynamic = Dynamic;
 

@@ -66,10 +66,6 @@ public:
     }
 
 
-
-
-
-
     uint64_t        PairId;
     uint32_t        PointOnSurface;
 
@@ -80,58 +76,66 @@ public:
 };
 
 
-class GContactManerger
+class GRigidBody;
+class GBroadPhasePair
 {
 public:
 
-    GContactManerger() 
+    GBroadPhasePair() = default;
+    GBroadPhasePair(const GBroadPhasePair&) = default;
+    GBroadPhasePair(GCObject* p1, GCObject* p2)
     {
-    
-    }
-
-    void Add( const GCollisionContact& TContact )
-    {
-        std::map<uint64_t, uint32_t>::iterator iter = m_Finder.find( TContact.PairId);
-        if( iter != m_Finder.end() )
+        if (p1->GetId() < p2->GetId())
         {
-            m_Contacts[iter->second] = TContact;// todo update
+            pObjectA = p1;
+            pObjectB = p2;
+
+            PairId = ((uint64_t)p1->GetId() << 32) | (uint64_t)p2->GetId();
         }
         else
         {
-            uint32_t    FreedId = -1;
-            for( int i = 0; i < m_Contacts.size(); ++i) // todo opimization
-            {
-                if( m_Finder.find( m_Contacts[i].PairId ) == m_Finder.end() )
-                {
-                    FreedId = i;
-                    break;
-                }
-            }
+            pObjectA = p2;
+            pObjectB = p1;
 
-            if( FreedId != -1 )
-            {
-                m_Finder[TContact.PairId] = FreedId;
-                m_Contacts[FreedId] = TContact;
-            }
-            else
-            {
-                m_Contacts.push_back(TContact);
-                m_Finder[TContact.PairId] = m_Contacts.size() - 1;
-            }
+            PairId = ((uint64_t)p2->GetId() << 32) | (uint64_t)p1->GetId();
         }
+
+        Solved = false;
     }
 
-    void Delete( uint64_t PairId )
+    void CalculateContactStaticDepth()
     {
-        std::map<uint64_t, uint32_t>::iterator iter = m_Finder.find(PairId);
-        if (iter != m_Finder.end())
+        if (pObjectA->m_ContactStaticDepth > (pObjectB->m_ContactStaticDepth + 1))
         {
-            m_Contacts[iter->second].Clear();
-            m_Finder.erase(iter);
+            pObjectA->m_ContactStaticDepth = (pObjectB->m_ContactStaticDepth + 1);
         }
+
+        if (pObjectB->m_ContactStaticDepth > (pObjectA->m_ContactStaticDepth + 1))
+        {
+            pObjectB->m_ContactStaticDepth = (pObjectA->m_ContactStaticDepth + 1);
+        }
+
+        m_ContactStaticDepth = pObjectA->m_ContactStaticDepth < pObjectB->m_ContactStaticDepth ?
+            pObjectA->m_ContactStaticDepth : pObjectB->m_ContactStaticDepth;
     }
 
-    std::vector<GCollisionContact>  m_Contacts;
-    std::map<uint64_t, uint32_t>    m_Finder; // todo optimization
-         
+
+    GVector3 GetWorldRelativeB(const GVector3& VPos) const;
+
+    f32 GetContactPairEnergy_World() const;
+    f32 GetContactPairEnergy_Relative(const GVector3& CenterVelocity) const;
+
+    f32 GetContactPairMomentum_world() const;
+
+    void SeparatePair(GRigidBody* pRA, GRigidBody* pRB, bool bSwap);
+
+    uint64_t            PairId;
+    uint32_t            m_ContactStaticDepth;
+    GCObject* pObjectA;
+    GCObject* pObjectB;
+
+    GCollisionContact   PairContact;
+
+    bool                Solved;
+
 };

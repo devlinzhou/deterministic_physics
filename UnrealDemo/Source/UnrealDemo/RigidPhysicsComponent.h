@@ -46,6 +46,10 @@ public:
         float       MaxLinearVelocity = 100.f;
     UPROPERTY(EditAnywhere)
         float       MaxAngularVelocity = 100.f;
+    UPROPERTY(EditAnywhere)
+        FVector     StartLinearVeloctiy = FVector(0,0,0);
+    UPROPERTY(EditAnywhere)
+        FVector     StartAngularVeloctiy = FVector(0, 0, 0);
 
     class GRigidBody* m_pRigid = nullptr;
 

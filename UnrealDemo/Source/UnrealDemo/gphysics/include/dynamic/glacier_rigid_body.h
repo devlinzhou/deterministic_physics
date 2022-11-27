@@ -42,21 +42,37 @@ public:
 
     void Tick_PreTransform( const f32 DetalTime );
 
-    void AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse );
+    void AddImpulse_World(const GVector3& VPos, const GVector3& VImpulse)
+    {
+        m_LinearVelocity += VImpulse * m_InvMass;
 
-    GVector3 GetWorldPosVelocity( const GVector3& VPos );
+        GVector3 VPosLocal = VPos - GetMassCenterPos();
+
+        GVector3 Torque = GVector3::CrossProduct(VPosLocal, VImpulse);
+
+        GVector3 VDeltaAngular = Inv_InertiaTensorTransformVector(Torque);
+
+        m_AngularVelocity += VDeltaAngular;
+    }
+
+    GVector3 GetWorldPosVelocity(const GVector3& VPos) const
+    {
+        GVector3 V1 = GVector3::CrossProduct(m_AngularVelocity, (VPos - m_Transform.m_Pos));
+
+        return V1 + m_LinearVelocity;
+    }
 
     f32 GetEquivalentMass( const GVector3& VWorldPos, const GVector3& VImpulse )
     {
         if( m_bDynamic )
         {
-            GVector3 Torque = GVector3::CrossProduct(VWorldPos - GetMassCenterPos(), VImpulse);
+            GVector3 VLocalPos = VWorldPos - GetMassCenterPos();
 
-            GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
+            GVector3 Torque = GVector3::CrossProduct(VLocalPos, VImpulse);
 
-            GVector3 VDeltaAngular = Inv_Ineria.TransformVector(Torque);
+            GVector3 VDeltaAngular = Inv_InertiaTensorTransformVector(Torque);
 
-            GVector3 V1 = GVector3::CrossProduct(VDeltaAngular, (VWorldPos - GetMassCenterPos()));
+            GVector3 V1 = GVector3::CrossProduct(VDeltaAngular, VLocalPos);
 
             V1 = GPhyscsUtils::Project_Parallel(VImpulse, V1);
 
@@ -70,7 +86,7 @@ public:
         }
         else
         {
-            return GMath::Makef32(0,0,1);
+            return GMath::Zero();
         }
     }
 
@@ -139,15 +155,18 @@ public:
         }
     }
 
-
-    GVector3 GetMassCenterPos() const
+    inline GVector3 GetMassCenterPos() const
     {
         return m_Transform.m_Pos;
     }
 
-    GMatrix3 getGlobalInertiaTensorInverse() const
+    inline GVector3 Inv_InertiaTensorTransformVector( const GVector3& Vec )
     {
-        return  GMatrix3( m_Transform.m_Rot.GetUnitInverse() ) * m_InvInertiaTensor * GMatrix3( m_Transform.m_Rot);
+        GVector3 VLocal = m_Transform.m_Rot.UnRotateVector(Vec);
+
+        GVector3 VDeltaAngular = m_InvInertiaTensor.TransformVector(VLocal);
+
+        return m_Transform.m_Rot.RotateVector( VDeltaAngular);
     }
 
     void CalculateInertiaTensor();

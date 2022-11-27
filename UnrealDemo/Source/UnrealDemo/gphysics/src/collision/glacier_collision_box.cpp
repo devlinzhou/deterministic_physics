@@ -138,6 +138,20 @@ bool GCollision_Box::Box_Box(
 }
 
 
+bool GCollision_Box::Box_Plane(
+    const GShapeBox&        ShapA,
+    const GTransform_QT&    TransformA,
+    const GShapePlane&      ShapB,
+    const GTransform_QT&    TransformB)
+{
+    GTransform_QT B_To_A = TransformB * TransformA.GetInverse_fast();
+
+    GPlane TPlane( B_To_A.TransformNormal( GVector3::UnitX()), B_To_A.m_Pos );
+
+    return TPlane.GetSide( GVector3::Zero(), ShapA.HalfExtern ) == GPlane::NO_SIDE;
+}
+
+
 static inline GVector3 BPosStart_X( const GVector3& HalfB, const GTransform_QT& A_to_B )
 {
     const GVector3 BEdgeLocal(

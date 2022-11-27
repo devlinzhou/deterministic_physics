@@ -39,29 +39,6 @@ void GRigidBody::Tick_PreTransform(const f32 DetalTime)
     m_bNeedUpdate = true;
 }
 
-void GRigidBody::AddImpulse_World( const GVector3& VPos, const GVector3& VImpulse)
-{
-    m_LinearVelocity += VImpulse * m_InvMass;
-
-    GMatrix3 Inv_Ineria = getGlobalInertiaTensorInverse();
-
-    GVector3 VPosLocal = VPos - GetMassCenterPos();
-
-    GVector3 Torque = GVector3::CrossProduct(VPosLocal, VImpulse );
-
-    GVector3 VDeltaAngular = Inv_Ineria.TransformVector( Torque); 
-
-    m_AngularVelocity += VDeltaAngular;
-}
-
-
-GVector3 GRigidBody::GetWorldPosVelocity( const GVector3& VPos )
-{
-    GVector3 V1 = GVector3::CrossProduct( m_AngularVelocity,( VPos - m_Transform.m_Pos ));
-
-    return V1 + m_LinearVelocity;
-}
-
 void GRigidBody::CalculateInertiaTensor()
 {
     m_Mass             = m_density * GPhyscsUtils::CalculateVolume( m_Shape);
