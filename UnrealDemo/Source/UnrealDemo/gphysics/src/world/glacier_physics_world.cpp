@@ -609,28 +609,23 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
 
             GVector3 VNormal = bSwap ? -TPoint.m_Normal : TPoint.m_Normal;
 
-            f32 EquivalentMassA = GMath::Zero();
-            f32 EquivalentMassB = GMath::Zero();
-
             f32 VWorldVelocity  = GVector3::DotProduct( pPair.GetWorldRelativeB(TPoint.m_PosWorld), VNormal);
             f32 TMomentum       = GMath::Zero();
-
-
             if (pRA != nullptr && pRB != nullptr)
             {
-                EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
-                EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                f32 EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                f32 EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
 
                 TMomentum = GMath::Abs(VWorldVelocity) * EquivalentMassA * EquivalentMassB /( EquivalentMassB + EquivalentMassA );
             }
             else if( pRA != nullptr )
             {
-                EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                f32 EquivalentMassA = pRA->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
                 TMomentum  = EquivalentMassA * GMath::Abs(VWorldVelocity);
             }
             else
             {
-                EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
+                f32 EquivalentMassB = pRB->GetEquivalentMass(TPoint.m_PosWorld, VNormal);
                 TMomentum  = EquivalentMassB * GMath::Abs(VWorldVelocity);
             }
           
