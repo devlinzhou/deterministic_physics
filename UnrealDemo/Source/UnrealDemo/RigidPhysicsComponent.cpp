@@ -47,7 +47,8 @@ void URigidPhysicsComponent::BeginPlay()
             m_pRigid->m_LinearVelocity = GUtility::Unit_U_to_G(StartLinearVeloctiy);
             m_pRigid->m_AngularVelocity = GUtility::U_to_G(StartAngularVeloctiy);
 
-
+			m_pRigid->m_LinearDamping	= GUtility::U_to_G(LinearDamping);
+			m_pRigid->m_AngularDamping	= GUtility::U_to_G(AngularDamping);
 
 
             m_pRigid->m_bDynamic = Dynamic;

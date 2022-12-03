@@ -350,12 +350,12 @@ void GPhysicsWorld::Simulate( f32 DetltaTime )
 
             if( pDynamicRigid->m_bDynamic )
             {
+				pDynamicRigid->AddDamping(DetltaTime);
                 pDynamicRigid->Tick_PreTransform(DetltaTime);
                 pDynamicRigid->UpdateAABB();
             }
         }
     }
-
 
 }
 
@@ -668,12 +668,13 @@ void GPhysicsWorld::SolveContactConstraint( GBroadPhasePair& pPair )
                     VFriNormal.Normalize();
                 }
 
+				GVector3 VDeltaImpulse = VNormal - VFriNormal * m_Friction;
+
                 if( pRA != nullptr )
-                    pRA->AddImpulse_World(TPoint.m_PosWorld, ( VNormal - VFriNormal * m_Friction ) * factorA );
+                    pRA->AddImpulse_World(TPoint.m_PosWorld, VDeltaImpulse * factorA );
 
                 if( pRB != nullptr )
-                    pRB->AddImpulse_World(TPoint.m_PosWorld, ( VNormal - VFriNormal * m_Friction ) * factorB);
-
+                    pRB->AddImpulse_World(TPoint.m_PosWorld, VDeltaImpulse * factorB);
             }
 
             if( nLoop == (iteraterCount -1))

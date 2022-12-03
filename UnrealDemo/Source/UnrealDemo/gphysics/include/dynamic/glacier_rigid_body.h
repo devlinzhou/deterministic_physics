@@ -25,7 +25,9 @@ public:
         m_CollisionType         = CO_Rigid_Body;
         m_Gravity               = GVector3(GMath::Zero(), GMath::Zero(), -GMath::Makef32(9,8,10) );
         m_LinearVelocityMax     = GMath::Makef32(100,0,1);
+		m_LinearDamping			= GMath::Makef32(0, 1, 10);
         m_AngularVelocityMax    = GMath::Makef32(100,0,1);
+		m_AngularDamping		= GMath::Makef32(0, 1, 10);
         m_bDynamic              = false;
         m_Mass                  = GMath::One();
         m_InvMass               = GMath::One();
@@ -42,6 +44,12 @@ public:
 
     void Tick_PreTransform( const f32 DetalTime );
 
+	void AddDamping(const f32 DetalTime)
+	{
+		m_LinearVelocity	*= GMath::Pow(GMath::One() - m_LinearDamping, DetalTime);
+		m_AngularVelocity	*= GMath::Pow(GMath::One() - m_AngularDamping, DetalTime);
+	}
+
     void AddImpulse_World(const GVector3& VPos, const GVector3& VImpulse)
     {
         m_LinearVelocity += VImpulse * m_InvMass;
@@ -50,7 +58,7 @@ public:
 
         GVector3 Torque = GVector3::CrossProduct(VPosLocal, VImpulse);
 
-        GVector3 VDeltaAngular = Inv_InertiaTensorTransformVector(Torque);
+        GVector3 VDeltaAngular = m_InvInertiaTensorWorld.TransformVector(Torque);
 
         m_AngularVelocity += VDeltaAngular;
     }
@@ -70,7 +78,7 @@ public:
 
             GVector3 Torque = GVector3::CrossProduct(VLocalPos, VImpulse);
 
-            GVector3 VDeltaAngular = Inv_InertiaTensorTransformVector(Torque);
+            GVector3 VDeltaAngular = m_InvInertiaTensorWorld.TransformVector(Torque);
 
             GVector3 V1 = GVector3::CrossProduct(VDeltaAngular, VLocalPos);
 
@@ -94,13 +102,13 @@ public:
     {
         if( m_bDynamic) 
         {
-            f32 fLinear = GMath::Half() * m_Mass * m_LinearVelocity.SizeSquare();
+            f32 fLinear =  m_Mass * m_LinearVelocity.SizeSquare();
 
             GVector3 VLocalAngular = m_Transform.m_Rot.UnRotateVector(m_AngularVelocity);
 
-            f32 fAngular = GMath::Half() * (m_InertiaTensor.TransformVector(VLocalAngular).Size()) * VLocalAngular.Size();
+            f32 fAngular = (m_InertiaTensor.TransformVector(VLocalAngular).Size()) * VLocalAngular.Size();
 
-            return fLinear + fAngular;
+            return (fLinear + fAngular ) * GMath::Half();
         }
         else
         {
@@ -160,15 +168,6 @@ public:
         return m_Transform.m_Pos;
     }
 
-    inline GVector3 Inv_InertiaTensorTransformVector( const GVector3& Vec )
-    {
-        GVector3 VLocal = m_Transform.m_Rot.UnRotateVector(Vec);
-
-        GVector3 VDeltaAngular = m_InvInertiaTensor.TransformVector(VLocal);
-
-        return m_Transform.m_Rot.RotateVector( VDeltaAngular);
-    }
-
     void CalculateInertiaTensor();
 
 public:
@@ -177,13 +176,14 @@ public:
     GVector3        m_Gravity;
     f32             m_density;
 
-    GTransform_QT           m_Transform_Solve;
+    GTransform_QT   m_Transform_Solve;
 
     f32             m_Mass;
     f32             m_InvMass;
 
     GMatrix3        m_InertiaTensor;           // local
     GMatrix3        m_InvInertiaTensor;
+	GMatrix3		m_InvInertiaTensorWorld;
 
     GVector3        m_LinearVelocity;
     f32             m_LinearDamping;

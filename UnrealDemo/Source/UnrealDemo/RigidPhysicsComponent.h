@@ -50,6 +50,10 @@ public:
         FVector     StartLinearVeloctiy = FVector(0,0,0);
     UPROPERTY(EditAnywhere)
         FVector     StartAngularVeloctiy = FVector(0, 0, 0);
+	UPROPERTY(EditAnywhere)
+		float       LinearDamping = 0.1f;
+	UPROPERTY(EditAnywhere)
+		float       AngularDamping = 0.1f;
 
     class GRigidBody* m_pRigid = nullptr;
 

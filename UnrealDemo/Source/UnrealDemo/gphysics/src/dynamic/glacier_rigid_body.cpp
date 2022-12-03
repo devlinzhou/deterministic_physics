@@ -36,6 +36,10 @@ void GRigidBody::Tick_PreTransform(const f32 DetalTime)
 
     m_Transform.m_Rot.Normalize();
 
+	GMatrix3 MRot = GMatrix3(m_Transform.m_Rot);
+
+	m_InvInertiaTensorWorld = MRot.Transpose() * m_InvInertiaTensor * MRot;
+
     m_bNeedUpdate = true;
 }
 
