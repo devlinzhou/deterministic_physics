@@ -88,9 +88,9 @@ public:
 
             GVector3 VDeltaVelocity = V1 + V2;
 
-            f32 EquivalentMass = VImpulse.Size() / VDeltaVelocity.Size();
+            f32 invEquivalentMass = VDeltaVelocity.SizeSquare() / VImpulse.SizeSquare();
 
-            return EquivalentMass;
+            return GMath::InvSqrt(invEquivalentMass);
         }
         else
         {
