@@ -75,7 +75,37 @@ struct GGridPosition
 
 class GCObject;
 
-//class GOCtree
+class GOCtree
+{
+public:
+	GOCtree(const GVector3& VMin, const GVector3& VMax, int32_t nDepth)
+	{
+		m_Box.SetBox(VMin, VMax);
+		m_Depth = nDepth;
+
+		pChild[0] = nullptr;
+		pChild[1] = nullptr;
+		pChild[2] = nullptr;
+		pChild[3] = nullptr;
+		pChild[4] = nullptr;
+		pChild[5] = nullptr;
+		pChild[6] = nullptr;
+		pChild[7] = nullptr;
+	}
+
+	void AddObject(GCObject* TObject, int32_t nDepth)
+	{
+		//nDepth
+
+	}
+
+
+public:
+	GAABB	m_Box;
+	int32_t m_Depth;
+
+	GOCtree* pChild[8];
+};
 
 class GGridCell
 {
