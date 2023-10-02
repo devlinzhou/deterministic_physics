@@ -348,7 +348,7 @@ public:
         f32 VSqr = V.SizeSquare();
         if (VSqr > (fSize * fSize))
         {
-            VSqr = VSqr * (GMath::InvSqrt(VSqr) * fSize);
+			V = V * (GMath::InvSqrt(VSqr) * fSize);
         }
     }
 
